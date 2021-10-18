@@ -1,9 +1,21 @@
-function App() {
+import { createGlobalStyle } from 'styled-components';
+
+import Sidebar from './components/sidebar/Sidebar';
+import Main from './components/main/Main';
+
+export default function App() {
   return (
-    <div>
-      Hello
-    </div>
+    <>
+      <GlobalStyle/>
+      <Sidebar/>
+      <Main />
+    </>
   );
 }
 
-export default App;
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+  }
+`;

@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
 import RowHolder from "../../shared/RowHolder";
+import StyledSVG from '../../shared/StyledSVG';
+import HorizSpacer from "../../shared/HorizSpacer";
 
 import stop from '../../../assets/stop.svg';
 import play from '../../../assets/play.svg';
@@ -11,19 +13,12 @@ export default function ButtonTray() {
     <RowHolder content={
       <>
         <StyledSVG src={stop} alt='stop' />
-        <ButtonSpacer />
+        <HorizSpacer />
         <StyledSVG src={play} alt='play' />
-        <ButtonSpacer />
+        <HorizSpacer />
         <StyledSVG src={pause} alt='pause' />
       </>
     }/>
   );
 }
 
-const ButtonSpacer = styled.div`
-  width: 20px;
-`;
-
-const StyledSVG = styled.img`
-  filter: invert(1) brightness(0.45);
-`;

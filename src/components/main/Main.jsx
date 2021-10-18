@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
-import Topbar from './Topbar';
+import Topbar from './Topbar/Topbar';
 import DataDisplay from './data-display/DataDisplay';
 import VertSpacer from '../shared/VertSpacer';
 
-export default function Main() {
+export default function Main(props) {
   return(
     <MainContainer>
-      <Topbar receiving={false} />
+      <Topbar isLive={props.isLive} receiving={false} />
       <VertSpacer />
       <DataDisplay />
     </MainContainer>

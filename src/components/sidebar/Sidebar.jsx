@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 
 import Toggle from './Toggle';
@@ -8,15 +7,13 @@ import VertSpacer from '../shared/VertSpacer';
 
 import logo from '../../assets/logo.png';
 
-export default function Sidebar() {
-  const [liveStatus, toggleLive] = useState(false);
-
+export default function Sidebar(props) {
   return (
     <SidebarContainer>
       <img src={logo} alt='NU Formula Logo' />
       <VertSpacer />
       <BasicContainer content={
-        <Toggle active={liveStatus} handleClick={() => {toggleLive(prevLiveStatus => !prevLiveStatus)}} />
+        <Toggle active={props.isLive} handleClick={() => {props.toggleLive(prev => !prev)}} />
       }/>
       <VertSpacer />
       <SensorSelector />

@@ -7,5 +7,5 @@ export default function ButtonTray(props) {
 }
 
 const StyledSVG = styled.img`
-  filter: invert(1) brightness(0.45);
+  filter: invert(1) brightness(0.6);
 `;

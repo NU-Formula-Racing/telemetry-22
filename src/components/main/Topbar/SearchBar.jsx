@@ -12,5 +12,5 @@ const SearchContainer = styled.input`
   padding: 8px;
   flex: 1;
   margin-top: 10px;
-  margin-bottom: 9px;
+  margin-bottom: 10px; // Renders weird on web but works in electron
 `;

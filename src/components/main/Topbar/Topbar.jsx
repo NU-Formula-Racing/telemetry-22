@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
-import ButtonTray from '../button-tray/ButtonTray';
+import ButtonTray from './ButtonTray';
 import SearchBar from './SearchBar';
 import Upload from './Upload';
 import RowHolder from '../../shared/RowHolder';
 
 export default function Topbar(props) {
+  var display;
   if (props.isLive) {
-    var display =
+    display =
       <>
         <RowHolder content={
           <>
@@ -21,7 +22,7 @@ export default function Topbar(props) {
         <ButtonTray />
       </>;
   } else {
-    var display =
+    display =
     <>
       <SearchBar />
       <Upload />

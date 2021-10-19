@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import styled from 'styled-components';
 
 import ButtonTray from './ButtonTray';
@@ -5,9 +6,13 @@ import SearchBar from './SearchBar';
 import Upload from './Upload';
 import RowHolder from '../../shared/RowHolder';
 
+import { Context } from '../../shared/Context';
+
 export default function Topbar(props) {
+  let context = useContext(Context);
+
   var display;
-  if (props.isLive) {
+  if (context.isLive) {
     display =
       <>
         <RowHolder>

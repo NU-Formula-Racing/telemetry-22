@@ -1,18 +1,17 @@
-import { useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
 import Main from './components/main/Main';
 
-export default function App() {
-  const [isLive, toggleLive] = useState(false);
+import { ContextProvider } from './components/shared/Context';
 
+export default function App() {
   return (
-    <>
+    <ContextProvider>
       <GlobalStyle/>
-      <Sidebar isLive={isLive} toggleLive={toggleLive}/>
-      <Main isLive={isLive} />
-    </>
+      <Sidebar />
+      <Main />
+    </ContextProvider>
   );
 }
 

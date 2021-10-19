@@ -1,19 +1,22 @@
+import { useContext } from 'react';
 import styled from 'styled-components';
 
-export default function Toggle(props) {
+import { Context } from '../shared/Context';
+
+export default function Toggle() {
+  let context = useContext(Context);
+
   return (
     <Holder>
       <Label>
         Live Data:
       </Label>
-      <ToggleButton
-        active={props.active}
-        onClick={() => {
-          props.handleClick()
-        }}
-      >
-        <Circle active={props.active} />
-      </ToggleButton>
+        <ToggleButton
+          active={context.isLive}
+          onClick={context.setIsLive}
+        >
+          <Circle active={context.isLive} />
+        </ToggleButton>
     </Holder>
   );
 }

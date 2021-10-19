@@ -13,7 +13,7 @@ export default function Sidebar(props) {
       <img src={logo} alt='NU Formula Logo' />
       <VertSpacer />
       <BasicContainer>
-        <Toggle active={props.isLive} handleClick={() => {props.toggleLive(prev => !prev)}} />
+        <Toggle />
       </BasicContainer>
       <VertSpacer />
       <SensorSelector />

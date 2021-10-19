@@ -4,10 +4,10 @@ import Topbar from './Topbar/Topbar';
 import DataDisplay from './data-display/DataDisplay';
 import VertSpacer from '../shared/VertSpacer';
 
-export default function Main(props) {
+export default function Main() {
   return(
     <MainContainer>
-      <Topbar isLive={props.isLive} receiving={false} />
+      <Topbar receiving={false} />
       <VertSpacer />
       <DataDisplay />
     </MainContainer>

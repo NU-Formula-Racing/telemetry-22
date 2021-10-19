@@ -11,6 +11,8 @@ export default function DataDisplay(props) {
   let content = (dispType==='graphs') ? <Graphs /> : <Numbers />;
 
   return(
-    <BasicContainer expand content={content}/>
+    <BasicContainer expand>
+      {content}
+    </BasicContainer>
   );
 }

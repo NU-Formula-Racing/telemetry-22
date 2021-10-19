@@ -7,14 +7,12 @@ import pause from '../../../assets/pause.svg';
 
 export default function ButtonTray() {
   return(
-    <RowHolder content={
-      <>
-        <img src={stop} alt='stop' />
-        <HorizSpacer />
-        <img src={play} alt='play' />
-        <HorizSpacer />
-        <img src={pause} alt='pause' />
-      </>
-    }/>
+    <RowHolder>
+      <img src={stop} alt='stop' />
+      <HorizSpacer />
+      <img src={play} alt='play' />
+      <HorizSpacer />
+      <img src={pause} alt='pause' />
+    </RowHolder>
   )
 }

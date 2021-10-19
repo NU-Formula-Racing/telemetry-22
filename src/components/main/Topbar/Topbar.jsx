@@ -10,15 +10,13 @@ export default function Topbar(props) {
   if (props.isLive) {
     display =
       <>
-        <RowHolder content={
-          <>
-            Status:
-            {props.receiving
-              ? <StyledStatus receiving> Reading Live Data</StyledStatus> // Keep whitespace before text
-              : <StyledStatus> No Data Received</StyledStatus>            // Keep whitespace before text
-            }
-          </>
-        }/>
+        <RowHolder>
+          Status:
+          {props.receiving
+            ? <StyledStatus receiving> Reading Live Data</StyledStatus> // Keep whitespace before text
+            : <StyledStatus> No Data Received</StyledStatus>            // Keep whitespace before text
+          }
+        </RowHolder>
         <ButtonTray />
       </>;
   } else {

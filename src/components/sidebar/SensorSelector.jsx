@@ -6,13 +6,13 @@ import VertSpacer from '../shared/VertSpacer';
 export default function SensorSelector() {
   return(
     <SelectorContainer>
-      <BasicContainer content={
+      <BasicContainer>
         <div>** DROPDOWN PLACEHOLDER **</div>
-      }/>
+      </BasicContainer>
       <VertSpacer />
-      <BasicContainer expand content={
+      <BasicContainer expand>
         <div>** SENSORS PLACEHOLDER **</div>
-      }/>
+      </BasicContainer>
     </SelectorContainer>
   );
 }

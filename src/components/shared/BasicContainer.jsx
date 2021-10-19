@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export default function BasicContainer(props) {
   return (
     <Container expand={props.expand}>
-      {props.content}
+      {props.children}
     </Container>
   );
 }

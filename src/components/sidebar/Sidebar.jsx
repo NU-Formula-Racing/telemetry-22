@@ -7,7 +7,7 @@ import VertSpacer from '../shared/VertSpacer';
 
 import logo from '../../assets/logo.png';
 
-export default function Sidebar(props) {
+export default function Sidebar(props, asjfiowejf) {
   return (
     <SidebarContainer>
       <img src={logo} alt='NU Formula Logo' />

@@ -8,15 +8,15 @@ export default function Toggle() {
 
   return (
     <Holder>
-      <Label>
+      <>
         Live Data:
-      </Label>
-        <ToggleButton
-          active={context.isLive}
-          onClick={context.setIsLive}
-        >
-          <Circle active={context.isLive} />
-        </ToggleButton>
+      </>
+      <ToggleButton
+        active={context.isLive}
+        onClick={context.setIsLive}
+      >
+        <Circle active={context.isLive} />
+      </ToggleButton>
     </Holder>
   );
 }
@@ -26,9 +26,6 @@ const Holder = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-`;
-
-const Label = styled.div`
 `;
 
 const ToggleButton = styled.div`

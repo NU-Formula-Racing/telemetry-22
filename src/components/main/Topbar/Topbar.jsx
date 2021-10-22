@@ -3,15 +3,10 @@ import styled from 'styled-components';
 
 import SearchBar from './SearchBar';
 import Upload from './Upload';
-import SVGButton from './SVGButton';
+import ButtonTray from './ButtonTray';
 import RowHolder from '../../shared/RowHolder';
-import HorizSpacer from '../../shared/HorizSpacer';
 
 import { Context } from '../../shared/Context';
-
-import stop from '../../../assets/stop.svg';
-import play from '../../../assets/play.svg';
-import pause from '../../../assets/pause.svg';
 
 export default function Topbar(props) {
   let context = useContext(Context);
@@ -27,28 +22,7 @@ export default function Topbar(props) {
             : <StyledStatus> No Data Received</StyledStatus>            // Keep whitespace before text
           }
         </RowHolder>
-        <RowHolder>
-          <SVGButton
-            src={stop}
-            label={'stop'}
-            setViewState={props.setViewState}
-            selected = {props.viewState === 'stop'}
-          />
-          <HorizSpacer />
-          <SVGButton
-            src={play}
-            label={'play'}
-            setViewState={props.setViewState}
-            selected = {props.viewState === 'play'}
-          />
-          <HorizSpacer />
-          <SVGButton
-            src={pause}
-            label={'pause'}
-            setViewState={props.setViewState}
-            selected = {props.viewState === 'pause'}
-          />
-        </RowHolder>
+        <ButtonTray viewState={props.viewState} setViewState={props.setViewState} />
       </>;
   } else {
     display =

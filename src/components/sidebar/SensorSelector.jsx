@@ -2,12 +2,13 @@ import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
 import VertSpacer from '../shared/VertSpacer';
+import Dropdown from './Dropdown';
 
 export default function SensorSelector() {
   return(
     <SelectorContainer>
       <BasicContainer>
-        <div>** DROPDOWN PLACEHOLDER **</div>
+        <Dropdown/>
       </BasicContainer>
       <VertSpacer />
       <BasicContainer expand>

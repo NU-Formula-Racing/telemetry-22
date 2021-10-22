@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Topbar from './Topbar/Topbar';
@@ -5,11 +6,21 @@ import DataDisplay from './data-display/DataDisplay';
 import VertSpacer from '../shared/VertSpacer';
 
 export default function Main() {
+  let [viewState, setViewState] = useState('stop');
+
+  /*useEffect(() => {
+    console.log(viewState);
+  })*/
+
   return(
     <MainContainer>
-      <Topbar receiving={false} />
+      <Topbar
+        receiving={false}
+        viewState={viewState}
+        setViewState={(newState) => setViewState(newState)}
+      />
       <VertSpacer />
-      <DataDisplay />
+      <DataDisplay viewState={viewState}/>
     </MainContainer>
   );
 }

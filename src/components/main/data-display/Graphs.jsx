@@ -1,9 +1,9 @@
 //import styled from 'styled-components';
 
-export default function Graphs() {
+export default function Graphs(props) {
   return(
     <div>
-      **GRAPHS PLACEHOLDER**
+      ** {props.viewState} **
     </div>
   );
 }

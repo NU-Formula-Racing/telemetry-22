@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {Multiselect} from 'multiselect-react-dropdown';
+import styled from 'styled-components';
+
 
 // https://wdeva22.medium.com/implement-multi-select-box-in-reactjs-6fa222ccd9f9
 
@@ -14,12 +16,18 @@ export default function Dropdown() {
    const [options] = useState(data);
    return (
         <div>
-           <div>Select Sensor Group</div>
+           <div>Select Sensor Group:</div>
+           <SmallVertSpacer/>
            <Multiselect options={options} displayValue="group" />
+           <SmallVertSpacer/>
         </div>
    );
 };
 
+
+const SmallVertSpacer = styled.div`
+  height: 10px;
+`;
 
 
 

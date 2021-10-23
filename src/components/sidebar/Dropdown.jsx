@@ -6,27 +6,41 @@ import styled from 'styled-components';
 // https://wdeva22.medium.com/implement-multi-select-box-in-reactjs-6fa222ccd9f9
 
 export default function Dropdown() {
-    const data = [
-        {id:1,group:"Saftey Sensors"},
-        {id:2,group:"Chasis Sensors"},
-        {id:3,group:"Aero Sensors"},
-        {id:4,group:"Suspension Sensors"},
-        {id:5,group:"Powertrain Sensors"}
+    const groups = [
+        {group:"Saftey Sensors"},
+        {group:"Chasis Sensors"},
+        {group:"Aero Sensors"},
+        {group:"Suspension Sensors"},
+        {group:"Powertrain Sensors"}
      ]
-   const [options] = useState(data);
+
+     const style = {
+         chips: {
+             background: "Indigo",
+             "font-size": "14px",
+         },
+         searchBox: {
+             border: "none",  
+         },
+         inputField: {
+            "font-size": "16px",
+         }
+     }
+
+
+
+   const [options] = useState(groups);
    return (
         <div>
-           <div>Select Sensor Group:</div>
            <SmallVertSpacer/>
-           <Multiselect options={options} displayValue="group" />
+           <Multiselect placeholder="Select Sensor Group" options={options} style = {style} displayValue="group" avoidHighlightFirstOption = "true" showArrow = "true"/>
            <SmallVertSpacer/>
         </div>
    );
 };
 
-
 const SmallVertSpacer = styled.div`
-  height: 10px;
+  height: 5px;
 `;
 
 

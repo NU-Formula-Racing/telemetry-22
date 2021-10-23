@@ -13,13 +13,18 @@ export default function Dropdown() {
         {id:4,group:"Suspension Sensors"},
         {id:5,group:"Powertrain Sensors"}
      ]
+
    const [options] = useState(data);
+
    return (
         <div>
-           <div>Select Sensor Group:</div>
-           <SmallVertSpacer/>
-           <Multiselect options={options} displayValue="group" />
-           <SmallVertSpacer/>
+            <div>Select Sensor Group:</div>
+            <SmallVertSpacer/>
+            <Multiselect
+                options={options}
+                displayValue="group"
+            />
+            <SmallVertSpacer/>
         </div>
    );
 };

@@ -1,32 +1,39 @@
 import { useState } from "react";
-import {Multiselect} from 'multiselect-react-dropdown';
+import { Multiselect } from 'multiselect-react-dropdown';
 import styled from 'styled-components';
 
 
 // https://wdeva22.medium.com/implement-multi-select-box-in-reactjs-6fa222ccd9f9
 
-export default function Dropdown() {
-    const data = [
+export default function Dropdown(props) {
+    const [options] = useState([
         {id:1,group:"Saftey Sensors"},
         {id:2,group:"Chasis Sensors"},
         {id:3,group:"Aero Sensors"},
         {id:4,group:"Suspension Sensors"},
         {id:5,group:"Powertrain Sensors"}
-     ]
+    ]);
 
-   const [options] = useState(data);
+    const onSelect = (selectedList) => {
+        props.setSensorGroup(selectedList);
+    }
+    const onRemove = (selectedList) => {
+        props.setSensorGroup(selectedList);
+    }
 
-   return (
+    return (
         <div>
             <div>Select Sensor Group:</div>
             <SmallVertSpacer/>
             <Multiselect
                 options={options}
                 displayValue="group"
+                onSelect={onSelect}
+                onRemove={onRemove}
             />
             <SmallVertSpacer/>
         </div>
-   );
+    );
 };
 
 

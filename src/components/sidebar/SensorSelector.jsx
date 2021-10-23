@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
@@ -5,14 +6,16 @@ import VertSpacer from '../shared/VertSpacer';
 import Dropdown from './Dropdown';
 
 export default function SensorSelector() {
+  let [sensorGroup, setSensorGroup] = useState({});
+
   return(
     <SelectorContainer>
       <BasicContainer>
-        <Dropdown/>
+        <Dropdown setSensorGroup={(next) => setSensorGroup(next)} />
       </BasicContainer>
       <VertSpacer />
       <BasicContainer expand>
-        <div>** SENSORS PLACEHOLDER **</div>
+        <div>** SENSORS PLACEHOLDER **</div>{/* pass sensors sensorGroup */}
       </BasicContainer>
     </SelectorContainer>
   );

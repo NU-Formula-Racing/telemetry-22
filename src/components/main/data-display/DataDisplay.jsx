@@ -1,5 +1,5 @@
 import { useState } from 'react';
-//import styled from "styled-components";
+import styled from "styled-components";
 
 import BasicContainer from "../../shared/BasicContainer";
 import Graphs from './Graphs';
@@ -12,8 +12,10 @@ export default function DataDisplay(props) {
                                       : <Numbers viewState={props.viewState} />;
 
   return(
+    
     <BasicContainer expand>
       {content}
     </BasicContainer>
+    
   );
 }

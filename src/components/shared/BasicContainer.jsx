@@ -14,4 +14,5 @@ const Container = styled.div`
   border-radius: 9px;
   padding: 8px;
   height: ${props => (props.expand ? '100%' : 'auto')};
+  overflow: scroll;
 `;

@@ -2,17 +2,17 @@ import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
 import VertSpacer from '../shared/VertSpacer';
-import Dropdown from './Dropdown';
+import Dropdown from './SensorDropdown';
 
 export default function SensorSelector() {
   return(
     <SelectorContainer>
       <BasicContainer>
-        <Dropdown/>
+        <div>** Groups PLACEHOLDER **</div>
       </BasicContainer>
       <VertSpacer />
       <BasicContainer expand>
-        <div>** SENSORS PLACEHOLDER **</div>
+        <Dropdown/>
       </BasicContainer>
     </SelectorContainer>
   );

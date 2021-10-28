@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
@@ -5,6 +6,8 @@ import VertSpacer from '../shared/VertSpacer';
 import Dropdown from './SensorDropdown';
 
 export default function SensorSelector() {
+  let [sensorGroup, setSensorGroup] = useState({});
+
   return(
     <SelectorContainer>
       <BasicContainer>

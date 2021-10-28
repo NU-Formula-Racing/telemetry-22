@@ -1,10 +1,11 @@
 import { useState } from "react";
-import {Multiselect} from 'multiselect-react-dropdown';
+import { Multiselect } from 'multiselect-react-dropdown';
 import styled from 'styled-components';
 
 
 // https://wdeva22.medium.com/implement-multi-select-box-in-reactjs-6fa222ccd9f9
 
+<<<<<<< HEAD:src/components/sidebar/SensorDropdown.jsx
 export default function Dropdown() {
     const groups = [
         {group:"Saftey Sensors"},
@@ -35,8 +36,37 @@ export default function Dropdown() {
            <SmallVertSpacer/>
            <Multiselect placeholder="Select Sensor Group" options={options} style = {style} displayValue="group" avoidHighlightFirstOption = "true" showArrow = "true"/>
            <SmallVertSpacer/>
+=======
+export default function Dropdown(props) {
+    const [options] = useState([
+        {id:1,group:"Saftey Sensors"},
+        {id:2,group:"Chasis Sensors"},
+        {id:3,group:"Aero Sensors"},
+        {id:4,group:"Suspension Sensors"},
+        {id:5,group:"Powertrain Sensors"}
+    ]);
+
+    const onSelect = (selectedList) => {
+        props.setSensorGroup(selectedList);
+    }
+    const onRemove = (selectedList) => {
+        props.setSensorGroup(selectedList);
+    }
+
+    return (
+        <div>
+            <div>Select Sensor Group:</div>
+            <SmallVertSpacer/>
+            <Multiselect
+                options={options}
+                displayValue="group"
+                onSelect={onSelect}
+                onRemove={onRemove}
+            />
+            <SmallVertSpacer/>
+>>>>>>> ba43ee8f0022edac1f6a8fdafac50017cff23a10:src/components/sidebar/Dropdown.jsx
         </div>
-   );
+    );
 };
 
 const SmallVertSpacer = styled.div`

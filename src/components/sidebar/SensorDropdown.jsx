@@ -1,131 +1,77 @@
-import { useState } from "react";
-import { Multiselect } from 'multiselect-react-dropdown';
+import React, {Component} from 'react';
 import styled from 'styled-components';
+import Select from 'react-select'
 
 
 // https://wdeva22.medium.com/implement-multi-select-box-in-reactjs-6fa222ccd9f9
 
-<<<<<<< HEAD:src/components/sidebar/SensorDropdown.jsx
-export default function Dropdown() {
-    const groups = [
-        {group:"Saftey Sensors"},
-        {group:"Chasis Sensors"},
-        {group:"Aero Sensors"},
-        {group:"Suspension Sensors"},
-        {group:"Powertrain Sensors"}
-     ]
-
-     const style = {
-         chips: {
-             background: "Indigo",
-             "font-size": "14px",
-         },
-         searchBox: {
-             border: "none",  
-         },
-         inputField: {
-            "font-size": "16px",
-         }
-     }
-
-
-
-   const [options] = useState(groups);
-   return (
-        <div>
-           <SmallVertSpacer/>
-           <Multiselect placeholder="Select Sensor Group" options={options} style = {style} displayValue="group" avoidHighlightFirstOption = "true" showArrow = "true"/>
-           <SmallVertSpacer/>
-=======
-export default function Dropdown(props) {
-    const [options] = useState([
-        {id:1,group:"Saftey Sensors"},
-        {id:2,group:"Chasis Sensors"},
-        {id:3,group:"Aero Sensors"},
-        {id:4,group:"Suspension Sensors"},
-        {id:5,group:"Powertrain Sensors"}
-    ]);
-
-    const onSelect = (selectedList) => {
-        props.setSensorGroup(selectedList);
-    }
-    const onRemove = (selectedList) => {
-        props.setSensorGroup(selectedList);
+export default class SensorDropdown extends Component{
+    constructor(props){
+        super(props)
+        // the current selected drop down group
+        this.state = {selectedGroup: this.props.selectedGroup}
+        // all available sensor options
+        this.options = []
+        // only sensors selected by user from available options
+        this.selected = []
     }
 
-    return (
-        <div>
-            <div>Select Sensor Group:</div>
-            <SmallVertSpacer/>
-            <Multiselect
-                options={options}
-                displayValue="group"
-                onSelect={onSelect}
-                onRemove={onRemove}
-            />
-            <SmallVertSpacer/>
->>>>>>> ba43ee8f0022edac1f6a8fdafac50017cff23a10:src/components/sidebar/Dropdown.jsx
-        </div>
-    );
-};
+    componentDidUpdate(prevProps) {                                           
+        if (prevProps.selectedGroup !== this.props.selectedGroup) {
+            this.updateSelectedGroup(this.props.selectedGroup)
+            this.updateOptions(this.props.selectedGroup)
+            this.selected = []
+        }
+    }
+    updateSelectedGroup(newSelectedGroup) {
+        this.setState({selectedGroup: newSelectedGroup}) 
+    }
+    updateOptions(newSelectedGroup) {
+        this.options = ExampleSensorsByGroups.map((e1) => (e1.group === newSelectedGroup? e1.sensors.map((e2) => ({value: e2, label: e2})) : [])).flat()
+        console.log(this.options)
+    }
+    updateSelected(values){
+        this.selected = values
+    }
 
-const SmallVertSpacer = styled.div`
-  height: 5px;
-`;
+    render() {
+        return (
 
-
-
-
-
-
-
-
-
-
-
-
-
+            <>
+                <Select
+                placeholder={"Select " + this.props.selectedGroup + "..."}
+                isMulti={true}
+                options={this.options}
+                onChange={(x) => this.updateSelected(x)}
+                />
+                {this.selected.map((x) => (<p>{x.label}</p>))}
+            </>
 
 
 
+        )
+    }
+}
 
+//ExampleSensorsByGroups.map((e1) => (e1.group === newSelectedGroup? e1.sensors.map((e2) => ({sensor: e2})) : []))
+//THis styles the multiselect
+const style = {
+    chips: {
+        background: "Indigo",
+        "font-size": "14px",
+    },
+    searchBox: {
+        border: "none",  
+    },
+    inputField: {
+       "font-size": "16px",
+    }
+}
 
-
-
-
-
-/* 
-import { MultiSelect } from "@progress/kendo-react-dropdowns";  
-import { useState } from "react";  
-
-
-
-npm install --save @progress/kendo-react-dropdowns @progress/kendo-react-treeview 
-@progress/kendo-react-animation @progress/kendo-react-intl @progress/kendo-react-data-tools 
-@progress/kendo-react-common @progress/kendo-data-query @progress/kendo-react-buttons 
-@progress/kendo-react-dateinputs @progress/kendo-react-inputs @progress/kendo-drawing
-@progress/kendo-licensing @progress/kendo-theme-default 
-
-
-const groups = [
-    "Saftey Sensors",
-    "Chasis Sensors",
-    "Aero Sensors",
-    "Suspension Sensors",
-    "Powertrain Sensors"
-];
-
-export default function Dropdown(){
-    const [selectedGroups, setSelectedGroups] = useState([]);  
-    const onChange = event => setSelectedGroups([...event.value]);  
-
-    return(
-        <div>
-            <MultiSelect data={groups} value={selectedGroups} onChange={onChange}/>
-        </div>  
-    );
-};
-
-
-
-*/
+let ExampleSensorsByGroups = [
+    {group:"Saftey Sensors", sensors: ["Sensor A", "Sensor B", "Sensor C", "Sensor Q", "Sensor R", "Sensor S", "Sensor T", "Sensor U", "Sensor V"]},
+    {group:"Chasis Sensors", sensors: ["Sensor D", "Sensor E", "Sensor F"]},
+    {group:"Aero Sensors", sensors: ["Sensor G", "Sensor H", "Sensor I"]},
+    {group:"Suspension Sensors", sensors: ["Sensor J", "Sensor K", "Sensor L"]},
+    {group:"Powertrain Sensors", sensors: ["Sensor M", "Sensor N", "Sensor O"]}
+  ];

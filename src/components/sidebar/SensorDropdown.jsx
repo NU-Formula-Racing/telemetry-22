@@ -1,9 +1,5 @@
 import React, {Component} from 'react';
-import styled from 'styled-components';
 import Select from 'react-select'
-
-
-// https://wdeva22.medium.com/implement-multi-select-box-in-reactjs-6fa222ccd9f9
 
 export default class SensorDropdown extends Component{
     constructor(props){
@@ -18,9 +14,10 @@ export default class SensorDropdown extends Component{
 
     componentDidUpdate(prevProps) {                                           
         if (prevProps.selectedGroup !== this.props.selectedGroup) {
+            this.selected = []
             this.updateSelectedGroup(this.props.selectedGroup)
             this.updateOptions(this.props.selectedGroup)
-            this.selected = []
+
         }
     }
     updateSelectedGroup(newSelectedGroup) {
@@ -28,10 +25,11 @@ export default class SensorDropdown extends Component{
     }
     updateOptions(newSelectedGroup) {
         this.options = ExampleSensorsByGroups.map((e1) => (e1.group === newSelectedGroup? e1.sensors.map((e2) => ({value: e2, label: e2})) : [])).flat()
-        console.log(this.options)
+
     }
     updateSelected(values){
         this.selected = values
+        this.forceUpdate()
     }
 
     render() {
@@ -42,9 +40,10 @@ export default class SensorDropdown extends Component{
                 placeholder={"Select " + this.props.selectedGroup + "..."}
                 isMulti={true}
                 options={this.options}
+                value={this.selected}
                 onChange={(x) => this.updateSelected(x)}
                 />
-                {this.selected.map((x) => (<p>{x.label}</p>))}
+
             </>
 
 
@@ -53,21 +52,7 @@ export default class SensorDropdown extends Component{
     }
 }
 
-//ExampleSensorsByGroups.map((e1) => (e1.group === newSelectedGroup? e1.sensors.map((e2) => ({sensor: e2})) : []))
-//THis styles the multiselect
-const style = {
-    chips: {
-        background: "Indigo",
-        "font-size": "14px",
-    },
-    searchBox: {
-        border: "none",  
-    },
-    inputField: {
-       "font-size": "16px",
-    }
-}
-
+//{this.selected.map((x) => (<p>{x.label}</p>))}
 let ExampleSensorsByGroups = [
     {group:"Saftey Sensors", sensors: ["Sensor A", "Sensor B", "Sensor C", "Sensor Q", "Sensor R", "Sensor S", "Sensor T", "Sensor U", "Sensor V"]},
     {group:"Chasis Sensors", sensors: ["Sensor D", "Sensor E", "Sensor F"]},

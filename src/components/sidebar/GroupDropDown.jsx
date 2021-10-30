@@ -8,9 +8,7 @@ export default function GroupDropDown(props){
     const handleOption = (i) => {
         props.setSelectedGroup(i.target.value)
     }
-
-
-    
+ 
     return (
         <>
             <StyledSelect onChange={handleOption}>
@@ -28,8 +26,6 @@ export const StyledSelect = styled.select`
   height: 30px;
 `;
 
-
-
 let ExampleGroups = [
     {id: 1, group:"Saftey Sensors"},
     {id: 2, group:"Chasis Sensors"},
@@ -37,8 +33,6 @@ let ExampleGroups = [
     {id: 4, group:"Suspension Sensors"},
     {id: 5, group:"Powertrain Sensors"}
   ];
-
-
 
   const DropDownButton = styled.button`
   background: #ffffff;

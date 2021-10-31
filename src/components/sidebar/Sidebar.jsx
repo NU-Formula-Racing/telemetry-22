@@ -2,8 +2,10 @@ import styled from 'styled-components';
 
 import Toggle from './Toggle';
 import SensorSelector from './SensorSelector';
+import NameInput from './NameInput';
 import BasicContainer from '../shared/BasicContainer';
 import VertSpacer from '../shared/VertSpacer';
+
 
 import logo from '../../assets/logo.png';
 
@@ -15,6 +17,8 @@ export default function Sidebar() {
       <BasicContainer>
         <Toggle />
       </BasicContainer>
+      <VertSpacer />
+      <NameInput />
       <VertSpacer />
       <SensorSelector />
     </SidebarContainer>

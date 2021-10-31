@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import Topbar from './topbar/Topbar';
@@ -7,10 +7,6 @@ import VertSpacer from '../shared/VertSpacer';
 
 export default function Main() {
   let [viewState, setViewState] = useState('stop');
-
-  /*useEffect(() => {
-    console.log(viewState);
-  })*/
 
   return(
     <MainContainer>
@@ -29,7 +25,7 @@ const MainContainer = styled.div`
   position: absolute;
   top: 0;
   left: 360px;
-  height: calc(100vh - 80px);
+  height: 100vh;
   width: calc(100vw - 420px);
   display: flex;
   flex-direction: column;

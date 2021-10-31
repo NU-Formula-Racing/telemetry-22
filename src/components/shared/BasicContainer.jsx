@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export default function BasicContainer(props) {
   return (
-    <Container expand={props.expand}>
+    <Container expand={props.expand} scroll={props.scroll}>
       {props.children}
     </Container>
   );
@@ -14,5 +14,5 @@ const Container = styled.div`
   border-radius: 9px;
   padding: 8px;
   height: ${props => (props.expand ? '100%' : 'auto')};
-  overflow: scroll;
+  overflow-y: ${props => (props.scroll ? 'scroll' : 'visible')};
 `;

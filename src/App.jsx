@@ -19,6 +19,5 @@ const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;
     font-family: 'Open Sans', sans-serif;
-    overflow: hidden;
   }
 `;

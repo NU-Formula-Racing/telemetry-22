@@ -1,19 +1,17 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo, useCallback } from 'react'
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
-import { extent, max } from 'd3-array';
+import { extent, max, bisector } from 'd3-array';
 import BasicContainer from "../../shared/BasicContainer";
 import generateDateValue, { DateValue } from '@visx/mock-data/lib/generators/genDateValue';
 import { MarkerArrow, MarkerCross, MarkerX, MarkerCircle, MarkerLine } from '@visx/marker';
+import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
+import { showTooltip } from '@visx/tooltip/lib/enhancers/withTooltip';
+import { useTooltip } from '@visx/tooltip';
+import { localPoint } from '@visx/event';
 import { Group } from '@visx/group';
-import { LinePath } from '@visx/shape';
+import { LinePath, Bar, Line } from '@visx/shape';
 import * as allCurves from '@visx/curve';
 import { scaleTime, scaleLinear } from '@visx/scale';
-
-// const series = new Array(1).fill(null).map((_, i) =>
-//     generateDateValue(25, i/72).sort(
-//         (a, b) => a.date.getTime() - b.date.getTime()
-//     )
-// )
 
 const series = [generateDateValue(25, 1/72).sort(
     (a, b) => a.date.getTime() - b.date.getTime()
@@ -21,10 +19,11 @@ const series = [generateDateValue(25, 1/72).sort(
 
 const allData = series.reduce((rec, d) => rec.concat(d), []);
 
+const bisectDate = bisector((d) => new Date(d.date)).left;
+
 // data accessors
 const getX = (d) => d.date;
 const getY = (d) => d.value;
-console.log(series)
 
 // scales
 const xScale = scaleTime({
@@ -41,6 +40,33 @@ export default function Graph() {
     // update scale output ranges
     xScale.range([0, width - 50]);
     yScale.range([height * 0.9, height * 0.1]);
+
+    const { showTooltip,
+        tooltipData,
+        tooltipTop = 0,
+        tooltipLeft = 0 } = useTooltip();
+
+    // tooltip handler
+    const handleTooltip = useCallback(
+        (event) => {
+          const { x } = localPoint(event) || { x: 0 }; // x of mouse
+          const x0 = xScale.invert(x); // maps x -> time 
+          const index = bisectDate(allData, x0, 1); // finds index of the middle time
+          const d0 = allData[index - 1]; 
+          const d1 = allData[index];
+          let d = d0;
+          console.log("wot")
+          if (d1 && getX(d1)) {
+            d = x0.valueOf() - getX(d0).valueOf() > getX(d1).valueOf() - x0.valueOf() ? d1 : d0;
+          }
+          showTooltip({
+            tooltipData: d,
+            tooltipLeft: x,
+            tooltipTop: yScale(getY(d)),
+          });
+        },
+        [showTooltip, yScale, xScale],
+      );
   return (
         <svg width={width} height={height}>
             <MarkerX
@@ -93,6 +119,49 @@ export default function Graph() {
                     markerStart={markerStart}
                     markerEnd={markerEnd}
                     />
+                    <Bar
+                        x={0}
+                        y={0}
+                        width={width}
+                        height={height}
+                        fill="transparent"
+                        rx={14}
+                        onTouchStart={handleTooltip}
+                        onTouchMove={handleTooltip}
+                        onMouseMove={handleTooltip}
+                    />
+                    {tooltipData && (
+                    <g>
+                        <Line
+                        from={{ x: tooltipLeft, y: 0 }}
+                        to={{ x: tooltipLeft, y: height }}
+                        stroke="red"
+                        strokeWidth={2}
+                        pointerEvents="none"
+                        strokeDasharray="5,2"
+                        />
+                        <circle
+                        cx={tooltipLeft}
+                        cy={tooltipTop + 1}
+                        r={4}
+                        fill="black"
+                        fillOpacity={0.1}
+                        stroke="black"
+                        strokeOpacity={0.1}
+                        strokeWidth={2}
+                        pointerEvents="none"
+                        />
+                        <circle
+                        cx={tooltipLeft}
+                        cy={tooltipTop}
+                        r={4}
+                        fill="red"
+                        stroke="white"
+                        strokeWidth={2}
+                        pointerEvents="none"
+                        />
+                    </g>
+                    )}
                 </Group>
                 );
             })}

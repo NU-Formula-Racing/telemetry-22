@@ -8,6 +8,7 @@ import GroupDropDown from './GroupDropDown';
 
 export default function SensorSelector() {
   let [selectedGroup, setSelectedGroup] = useState("")
+  let [selectedSensors, setSelectedSensors] = useState([])
 
   return(
     <SelectorContainer>
@@ -19,7 +20,11 @@ export default function SensorSelector() {
       </BasicContainer>
       <VertSpacer />
       <BasicContainer expand>
-        <SensorDropdown selectedGroup={selectedGroup}/>
+        <SensorDropdown 
+        selectedGroup={selectedGroup}
+        selectedSensors={selectedSensors}
+        setSelectedSensors={(newState) => setSelectedSensors(newState)}
+        />
       </BasicContainer>
     </SelectorContainer>
   );

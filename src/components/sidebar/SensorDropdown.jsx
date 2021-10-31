@@ -5,7 +5,7 @@ export default class SensorDropdown extends Component{
     constructor(props){
         super(props)
         // the current selected drop down group
-        this.state = {selectedGroup: this.props.selectedGroup}
+        this.state = {selectedGroup: this.props.selectedGroup, selectedSensors: this.props.selectedSensors}
         // all available sensor options
         this.options = []
         // only sensors selected by user from available options
@@ -14,7 +14,7 @@ export default class SensorDropdown extends Component{
 
     componentDidUpdate(prevProps) {                                           
         if (prevProps.selectedGroup !== this.props.selectedGroup) {
-            this.selected = []
+            this.updateSelected([])
             this.updateSelectedGroup(this.props.selectedGroup)
             this.updateOptions(this.props.selectedGroup)
 
@@ -28,20 +28,27 @@ export default class SensorDropdown extends Component{
 
     }
     updateSelected(values){
-        this.selected = values
-        this.forceUpdate()
+        this.setState({selectedSensors: values})
     }
 
     render() {
         return (
-
             <>
                 <Select
-                placeholder={"Select " + this.props.selectedGroup + "..."}
+                closeMenuOnSelect={false}
+                placeholder={"Select from " + this.props.selectedGroup + "..."}
                 isMulti={true}
                 options={this.options}
-                value={this.selected}
+                value={this.state.selectedSensors}
                 onChange={(x) => this.updateSelected(x)}
+                styles={{
+                    multiValueLabel: (base) => ({
+                      ...base,
+                      width:'100px',
+                      //height:'50px',
+                      'font-size':'16px'
+                    }),
+                  }}
                 />
 
             </>

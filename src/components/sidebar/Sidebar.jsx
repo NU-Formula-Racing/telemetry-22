@@ -29,7 +29,7 @@ const SidebarContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 240px;
   height: calc(100vh - 60px);
   padding: 30px;
   display: flex;

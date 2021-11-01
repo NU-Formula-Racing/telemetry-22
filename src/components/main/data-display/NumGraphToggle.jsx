@@ -64,7 +64,7 @@ const Overlay = styled.div`
   left: ${props => (props.isLeft ? 0 : 68)}px;
   width: 68px;
   height: 100%;
-  background-color: ${props => (props.isLeft ? '#dcfae3' : '#e0e6ff')};
+  background-color: #e5e4fB;
   display: inline;
   border-top-left-radius: ${props => (props.isLeft ? 8 : 0)}px;
   border-bottom-left-radius: ${props => (props.isLeft ? 8 : 0)}px;

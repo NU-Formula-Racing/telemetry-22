@@ -9,7 +9,7 @@ export default function BasicContainer(props) {
 }
 
 const Container = styled.div`
-  width: 100%;
+  width: calc(100% - 18px);
   border: 1px solid #818181;
   border-radius: 9px;
   padding: 8px;

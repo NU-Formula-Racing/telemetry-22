@@ -26,7 +26,7 @@ const MainContainer = styled.div`
   top: 0;
   left: 360px;
   height: calc(100vh - 80px);
-  width: calc(100vw - 480px);
+  width: calc(100vw - 450px);
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -37,13 +37,6 @@ export default class DataDisplay extends Component {
     this.updateWidth();
   }
 
-  componentDidUpdate() {
-    // Renger lags by 1 hence why numbers => graphs and graphs => numbers
-    this.content = (this.state.dispType==='numbers')
-      ? <Graphs viewState={this.props.viewState} width={this.containerRef.clientWidth - 16} />
-      : <Numbers viewState={this.props.viewState} />;
-  }
-
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWidth);
   }
@@ -55,7 +48,12 @@ export default class DataDisplay extends Component {
           dispType={this.state.dispType}
           setDispType={(x) => this.setState({ dispType: x })}
         />
-        {this.content}
+        {this.state.dispType==='graphs'
+          ? <Graphs
+              viewState={this.props.viewState}
+              width={this.containerRef ? this.containerRef.clientWidth - 16 : 0}
+            />
+          : <Numbers viewState={this.props.viewState} />}
       </Container>
     );
   }

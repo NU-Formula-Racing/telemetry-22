@@ -1,17 +1,24 @@
+import { useState, useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
 import Main from './components/main/Main';
 
-import { ContextProvider } from './components/shared/Context';
+//import { ContextProvider } from './components/shared/Context';
 
 export default function App() {
+  var [isLive, setIsLive] = useState(false);
+
+  useEffect(() => {
+    console.log(isLive);
+  })
+
   return (
-    <ContextProvider>
+    <>
       <GlobalStyle/>
-      <Sidebar />
-      <Main />
-    </ContextProvider>
+      <Sidebar isLive={isLive} setIsLive={(next) => setIsLive(next)} />
+      <Main isLive={isLive} />
+    </>
   );
 }
 

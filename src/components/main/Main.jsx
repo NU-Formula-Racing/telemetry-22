@@ -25,8 +25,8 @@ const MainContainer = styled.div`
   position: absolute;
   top: 0;
   left: 360px;
-  height: 100vh;
-  width: calc(100vw - 420px);
+  height: calc(100vh - 80px);
+  width: calc(100vw - 500px);
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
@@ -8,10 +8,6 @@ import Main from './components/main/Main';
 
 export default function App() {
   var [isLive, setIsLive] = useState(false);
-
-  useEffect(() => {
-    console.log(isLive);
-  })
 
   return (
     <>

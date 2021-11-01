@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import NumGraphToggle from './NumGraphToggle';
-import Graph from './Graph';
 import Graphs from './Graphs';
 import Numbers from './Numbers';
 

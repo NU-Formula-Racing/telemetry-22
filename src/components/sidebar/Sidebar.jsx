@@ -14,7 +14,7 @@ export default function Sidebar(props) {
       <img src={logo} alt='NU Formula Logo' />
       <VertSpacer />
       <BasicContainer>
-        <Toggle isLive={props.isLive} setIsLive={(next) => props.setIsLive(next)} />
+        <Toggle isLive={props.isLive} setIsLive={(newState) => props.setIsLive(newState)} />
       </BasicContainer>
       <VertSpacer />
       {props.isLive &&
@@ -23,7 +23,10 @@ export default function Sidebar(props) {
           <VertSpacer />
         </>
       }
-      <SensorSelector />
+      <SensorSelector
+        currentSensors={props.currentSensors}
+        setCurrentSensors={(newState) => props.setCurrentSensors(newState)}
+      />
     </SidebarContainer>
   );
 }

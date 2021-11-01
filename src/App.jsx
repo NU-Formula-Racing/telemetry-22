@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, /* useEffect */ } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
@@ -8,12 +8,20 @@ import Main from './components/main/Main';
 
 export default function App() {
   var [isLive, setIsLive] = useState(false);
+  var [currentSensors, setCurrentSensors] = useState([]);
+
+  // useEffect(() => {
+  //   console.log(currentSensors);
+  // })
 
   return (
     <>
       <GlobalStyle/>
-      <Sidebar isLive={isLive} setIsLive={(next) => setIsLive(next)} />
-      <Main isLive={isLive} />
+      <Sidebar
+        isLive={isLive} setIsLive={(next) => setIsLive(next)}
+        currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
+      />
+      <Main isLive={isLive} currentSensors={currentSensors} />
     </>
   );
 }

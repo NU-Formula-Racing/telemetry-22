@@ -4,13 +4,14 @@ import VertSpacer from '../../shared/VertSpacer';
 export default function Graphs(props) {
   return(
     <>
-      <Graph width={props.width} />
-      <VertSpacer />
-      <Graph width={props.width} />
-      <VertSpacer />
-      <Graph width={props.width} />
-      <VertSpacer />
-      <Graph width={props.width} />
+      {props.sensors.map((_, i) => {
+        return(
+          <div key={i}>
+            {i !== 0 && <VertSpacer />}
+            <Graph width={props.width} />
+          </div>
+        )
+      })}
     </>
   );
 }

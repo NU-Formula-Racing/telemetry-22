@@ -2,8 +2,6 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
-import VertSpacer from '../shared/VertSpacer';
-import Dropdown from './Dropdown';
 
 export default function NameInput() {
   let [focus, setFocus] = useState(false);

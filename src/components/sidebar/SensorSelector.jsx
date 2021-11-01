@@ -3,19 +3,28 @@ import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
 import VertSpacer from '../shared/VertSpacer';
-import Dropdown from './Dropdown';
+import SensorDropdown from './SensorDropdown';
+import GroupDropDown from './GroupDropDown';
 
 export default function SensorSelector() {
-  let [sensorGroup, setSensorGroup] = useState({});
+  let [selectedGroup, setSelectedGroup] = useState("")
+  let [selectedSensors, setSelectedSensors] = useState([])
 
   return(
     <SelectorContainer>
       <BasicContainer>
-        <Dropdown setSensorGroup={(next) => setSensorGroup(next)} />
+        <GroupDropDown 
+        selectedGroup={selectedGroup}
+        setSelectedGroup={(newState) => setSelectedGroup(newState)}
+        />
       </BasicContainer>
       <VertSpacer />
       <BasicContainer expand>
-        <div>** SENSORS PLACEHOLDER **</div>{/* pass sensors sensorGroup */}
+        <SensorDropdown 
+        selectedGroup={selectedGroup}
+        selectedSensors={selectedSensors}
+        setSelectedSensors={(newState) => setSelectedSensors(newState)}
+        />
       </BasicContainer>
     </SelectorContainer>
   );
@@ -28,3 +37,5 @@ const SelectorContainer = styled.div`
   flex-direction: column;
   align-items: center;
 `;
+
+

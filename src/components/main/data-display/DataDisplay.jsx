@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 
 import styled from 'styled-components';
-import Graph from './Graph';
 
+import NumGraphToggle from './NumGraphToggle';
+import Graph from './Graph';
 import Graphs from './Graphs';
 import Numbers from './Numbers';
 
@@ -40,7 +41,11 @@ export default class DataDisplay extends Component {
 
   render() {
     return(
-      <Container ref={this.setContainerRef} onClick={() => console.log(this.containerRef)}>
+      <Container ref={this.setContainerRef}>
+        <NumGraphToggle
+          dispType={this.state.dispType}
+          setDispType={(x) => this.setState({ dispType: x })}
+        />
         {this.content}
       </Container>
     );
@@ -53,8 +58,8 @@ const Container = styled.div`
   border-radius: 9px;
   padding: 8px;
   height: 100%;
+  padding-top: 50px;
   overflow-y: scroll;
-  overflow-x: hidden;
   ::-webkit-scrollbar-thumb {
     background-color: #dadce0;
     border: 4px solid transparent;

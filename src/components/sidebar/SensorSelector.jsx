@@ -7,7 +7,7 @@ import SensorDropdown from './SensorDropdown';
 import GroupDropDown from './GroupDropDown';
 
 export default function SensorSelector(props) {
-  let [selectedGroup, setSelectedGroup] = useState("")
+  let [selectedGroup, setSelectedGroup] = useState('Safety Sensors');
 
   return(
     <SelectorContainer>

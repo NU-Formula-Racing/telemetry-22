@@ -6,21 +6,22 @@ export default class SensorDropdown extends Component{
         super(props)
 
         // all available sensor options
-        this.options = []
+        this.options = ExampleSensorsByGroups.map((e1) => (e1.group === this.props.selectedGroup ? e1.sensors.map((e2) => ({value: e2, label: e2})) : [])).flat();
         // only sensors selected by user from available options
         this.selected = []
     }
 
-    componentDidUpdate(prevProps) {                                           
+    componentDidUpdate(prevProps) {
         if (prevProps.selectedGroup !== this.props.selectedGroup) {
             this.updateSelected([])
             this.updateOptions(this.props.selectedGroup)
-
         }
     }
+
     updateOptions(newSelectedGroup) {
         this.options = ExampleSensorsByGroups.map((e1) => (e1.group === newSelectedGroup? e1.sensors.map((e2) => ({value: e2, label: e2})) : [])).flat()
     }
+
     updateSelected(values){
         this.props.setCurrentSensors(values);
     }
@@ -51,7 +52,7 @@ export default class SensorDropdown extends Component{
 
 //{this.selected.map((x) => (<p>{x.label}</p>))}
 let ExampleSensorsByGroups = [
-    {group:"Saftey Sensors", sensors: ["Sensor A", "Sensor B", "Sensor C", "Sensor Q", "Sensor R", "Sensor S", "Sensor T", "Sensor U", "Sensor V"]},
+    {group:"Safety Sensors", sensors: ["Sensor A", "Sensor B", "Sensor C", "Sensor Q", "Sensor R", "Sensor S", "Sensor T", "Sensor U", "Sensor V"]},
     {group:"Chasis Sensors", sensors: ["Sensor D", "Sensor E", "Sensor F"]},
     {group:"Aero Sensors", sensors: ["Sensor G", "Sensor H", "Sensor I"]},
     {group:"Suspension Sensors", sensors: ["Sensor J", "Sensor K", "Sensor L"]},

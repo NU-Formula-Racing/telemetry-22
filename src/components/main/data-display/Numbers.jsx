@@ -5,14 +5,14 @@ import Number from "./Number";
 export default function Numbers(props) {
   return(
     <NumberTray>
-      {props.sensors.map((_,i) =>{
+      {props.sensors.map((e,i) =>{
         let val = Math.random();
         return(
           <Number
             value={val*30}
             percentage={val}
             unit={'m/s'}
-            label={'Wheel Speed'}
+            label={e.label}
             key={i}
           />  
         )

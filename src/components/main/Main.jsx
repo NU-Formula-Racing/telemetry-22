@@ -24,9 +24,9 @@ export default function Main() {
 const MainContainer = styled.div`
   position: absolute;
   top: 0;
-  left: 360px;
+  left: 330px;
   height: calc(100vh - 80px);
-  width: calc(100vw - 450px);
+  width: calc(100vw - 420px);
   display: flex;
   flex-direction: column;
   align-items: center;

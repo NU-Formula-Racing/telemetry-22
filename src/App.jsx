@@ -1,18 +1,12 @@
-import { useState, /* useEffect */ } from 'react';
+import { useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
 import Main from './components/main/Main';
 
-//import { ContextProvider } from './components/shared/Context';
-
 export default function App() {
   var [isLive, setIsLive] = useState(false);
   var [currentSensors, setCurrentSensors] = useState([]);
-
-  // useEffect(() => {
-  //   console.log(currentSensors);
-  // })
 
   return (
     <>

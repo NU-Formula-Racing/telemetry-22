@@ -9,37 +9,35 @@ var xbeeAPI = new xbee_api.XBeeAPI({
   });
 
 
- let getPortsList = () => {
+ let findAndListenToXBee = () => {
    SerialPort.list().then(ports => {
      ports.forEach(function(port) {
-       //console.log(port);
        if (port.serialNumber == 'D306E0R6') {
-         //let serialport = new SerialPort(port.path, {baudRate: 57600});
-         console.log(port)
-       }
-     });
+         listenToPortPath(port.path)
+       }  
+     })
+     ;
    });
  };
 
-//var portPath;
-//let getPort = () => {SerialPort.list().then(
- //   ports => {
+let listenToPortPath = (portPath) =>
+{
+   
+    var serialport = new SerialPort(portPath, {
+        baudRate: 9600,
+        parser: xbeeAPI.rawParser()
+    });
+
     
-   // portPath = ports.find(port => port.serialNumber == 'D306E0R6').path);
+    serialport.pipe(xbeeAPI.parser);
+    xbeeAPI.builder.pipe(serialport);
 
-//    });
-//};
+    
+    serialport.on('data', function (data) {
+        console.log(data);
+    });
+}
 
-//console.log(getPortsList());
+console.log("im gonna try to find and start listening to the xbee!\nif the script exits right away, the xbee wasnt found :(")
+findAndListenToXBee();
 
-console.log("ur on ur own for port path lmao")
-var serialport = new SerialPort("/dev/tty.usbserial-D306E0R6", {
-  baudRate: 9600,
-  parser: xbeeAPI.rawParser()
-});
-serialport.pipe(xbeeAPI.parser);
-xbeeAPI.builder.pipe(serialport);
-
-serialport.on('data', function (data) {
-    console.log(data);
-});

@@ -1,11 +1,7 @@
-import React, { useContext, useMemo, useCallback } from 'react'
-import ParentSize from '@visx/responsive/lib/components/ParentSize';
+import React, { useCallback } from 'react'
 import { extent, max, bisector } from 'd3-array';
-import BasicContainer from "../../shared/BasicContainer";
-import generateDateValue, { DateValue } from '@visx/mock-data/lib/generators/genDateValue';
+import generateDateValue from '@visx/mock-data/lib/generators/genDateValue';
 import { MarkerArrow, MarkerCross, MarkerX, MarkerCircle, MarkerLine } from '@visx/marker';
-import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
-import { showTooltip } from '@visx/tooltip/lib/enhancers/withTooltip';
 import { useTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { Group } from '@visx/group';
@@ -55,7 +51,6 @@ export default function Graph(props) {
           const d0 = allData[index - 1]; 
           const d1 = allData[index];
           let d = d0;
-          console.log("wot")
           if (d1 && getX(d1)) {
             d = x0.valueOf() - getX(d0).valueOf() > getX(d1).valueOf() - x0.valueOf() ? d1 : d0;
           }
@@ -65,7 +60,7 @@ export default function Graph(props) {
             tooltipTop: yScale(getY(d)),
           });
         },
-        [showTooltip, yScale, xScale],
+        [showTooltip],
       );
   return (
         <svg width={width} height={height}>

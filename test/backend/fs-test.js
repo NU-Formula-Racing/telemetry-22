@@ -1,4 +1,4 @@
-let fs = require('fs')
+let fs = require('fs');
 
 fs.writeFile('test-file.txt', 'Hello there.\n', function (err) {
     if (err) throw err;

@@ -19,7 +19,7 @@ export default function Sidebar(props) {
       <VertSpacer />
       {props.isLive &&
         <>
-          <NameInput />
+          <NameInput setSessionName={(newState) => props.setSessionName(newState)}/>
           <VertSpacer />
         </>
       }

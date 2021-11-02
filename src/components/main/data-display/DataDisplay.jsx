@@ -6,6 +6,8 @@ import NumGraphToggle from './NumGraphToggle';
 import Graphs from './Graphs';
 import Numbers from './Numbers';
 
+import StyledStatus from '../../shared/StyledStatus';
+
 export default class DataDisplay extends Component {
   constructor(props) {
     super(props);
@@ -58,7 +60,7 @@ export default class DataDisplay extends Component {
                 sensors={this.props.sensors}
                 viewState={this.props.viewState}
               />
-          : <>No Selected Sensors</>
+          : <StyledStatus>No Selected Sensors</StyledStatus>
         }
       </Container>
     );

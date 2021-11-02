@@ -1,12 +1,14 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select'
 
-export default class SensorDropdown extends Component{
+export default class SensorDropdown extends Component {
     constructor(props){
         super(props)
 
         // all available sensor options
-        this.options = ExampleSensorsByGroups.map((e1) => (e1.group === this.props.selectedGroup ? e1.sensors.map((e2) => ({value: e2, label: e2})) : [])).flat();
+        this.options = ExampleSensorsByGroups.map((e1) => (
+            e1.group === this.props.selectedGroup ? e1.sensors.map((e2) => ({value: e2, label: e2})) : []
+        )).flat();
         // only sensors selected by user from available options
         this.selected = []
     }
@@ -19,7 +21,9 @@ export default class SensorDropdown extends Component{
     }
 
     updateOptions(newSelectedGroup) {
-        this.options = ExampleSensorsByGroups.map((e1) => (e1.group === newSelectedGroup? e1.sensors.map((e2) => ({value: e2, label: e2})) : [])).flat()
+        this.options = ExampleSensorsByGroups.map((e1) => (
+            e1.group === newSelectedGroup? e1.sensors.map((e2) => ({value: e2, label: e2})) : []
+        )).flat()
     }
 
     updateSelected(values){

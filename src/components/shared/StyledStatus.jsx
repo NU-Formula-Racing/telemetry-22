@@ -8,6 +8,6 @@ export default function StyledStatus(props) {
   );
 }
 
-const Status = styled.p`
+const Status = styled.div`
   color: ${props => (props.valid ? '#42D060' : '#BE0707')}
 `;

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
 
-import SearchBar from './SearchBar';
+import SearchBar from './SearchPage';
 import Upload from './Upload';
 import ButtonTray from './ButtonTray';
 import RowHolder from '../../shared/RowHolder';

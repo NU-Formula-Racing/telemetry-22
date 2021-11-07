@@ -10,6 +10,11 @@ var xbeeAPI = new xbee_api.XBeeAPI({
     api_mode: 1
 });
 
+fs.writeFile('xbee-raw-test.txt', '', function (err) {
+    if (err) throw err;
+    console.log('XBee raw data file created.');
+});
+
 let findAndListenToXBee = () => {
     SerialPort.list().then(ports => {
         ports.forEach(function(port) {
@@ -31,7 +36,10 @@ let listenToPortPath = (portPath) => {
     xbeeAPI.builder.pipe(serialport);
 
     serialport.on('data', function(data) {
-        console.log(data);
+        fs.appendFile('xbee-raw-test.txt', /*[make sure its a string]*/, function (err) {
+            if (err) throw err;
+            console.log('Line added.');
+        });
     });
 }
 

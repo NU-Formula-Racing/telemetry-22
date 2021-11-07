@@ -12,15 +12,16 @@ import { Group } from '@visx/group';
 import { LinePath, Bar, Line } from '@visx/shape';
 import * as allCurves from '@visx/curve';
 import { scaleTime, scaleLinear } from '@visx/scale';
+import { timeFormat } from 'd3-time-format';
 
-const series = [generateDateValue(25, 1/72).sort(
+const series = [generateDateValue(150, 1/72).sort(
     (a, b) => a.date.getTime() - b.date.getTime()
 )]
 
 const allData = series.reduce((rec, d) => rec.concat(d), []);
 
 const bisectDate = bisector((d) => new Date(d.date)).left;
-
+const formatDate = timeFormat("%b %d, '%y");
 // data accessors
 const getX = (d) => d.date;
 const getY = (d) => d.value;
@@ -33,6 +34,8 @@ const yScale = scaleLinear({
 domain: [0, max(allData, getY)],
 });
 
+const graph_offset = 13
+
 export default function Graph() {
     const curveType = 'curveLinear'
     const height = 300
@@ -43,19 +46,20 @@ export default function Graph() {
 
     const { showTooltip,
         tooltipData,
+        hideTooltip,
         tooltipTop = 0,
-        tooltipLeft = 0 } = useTooltip();
+        tooltipLeft = 0, } = useTooltip();
 
     // tooltip handler
     const handleTooltip = useCallback(
         (event) => {
-          const { x } = localPoint(event) || { x: 0 }; // x of mouse
+          let { x } = localPoint(event) || { x: graph_offset }; // x of mouse
+          x -= graph_offset
           const x0 = xScale.invert(x); // maps x -> time 
           const index = bisectDate(allData, x0, 1); // finds index of the middle time
           const d0 = allData[index - 1]; 
           const d1 = allData[index];
           let d = d0;
-          console.log("wot")
           if (d1 && getX(d1)) {
             d = x0.valueOf() - getX(d0).valueOf() > getX(d1).valueOf() - x0.valueOf() ? d1 : d0;
           }
@@ -68,6 +72,7 @@ export default function Graph() {
         [showTooltip, yScale, xScale],
       );
   return (
+    <div>
         <svg width={width} height={height}>
             <MarkerX
             id="marker-x"
@@ -91,11 +96,11 @@ export default function Graph() {
             <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />
             {width > 8 &&
             series.map((lineData, i) => {
-                let markerStart = 'url(#marker-x)';
+                let markerStart = 'url(#marker-circle)';
                 if (i === 1) markerStart = 'url(#marker-line)';
-                const markerEnd = 'url(#marker-arrow)';
+                const markerEnd = 'url(#marker-circle)';
                 return (
-                <Group key={`lines-${i}`} top={i * height} left={13}>
+                <Group key={`lines-${i}`} top={i * height} left={graph_offset}>
                     {lineData.map((d, j) => (
                         <circle
                         key={i + j}
@@ -103,7 +108,7 @@ export default function Graph() {
                         cx={xScale(getX(d))}
                         cy={yScale(getY(d))}
                         stroke="rgba(33,33,33,0.5)"
-                        fill="transparent"
+                        // fill="transparent"
                         />
                     ))}
                     <LinePath
@@ -129,13 +134,14 @@ export default function Graph() {
                         onTouchStart={handleTooltip}
                         onTouchMove={handleTooltip}
                         onMouseMove={handleTooltip}
+                        onMouseLeave={() => hideTooltip()}
                     />
                     {tooltipData && (
                     <g>
                         <Line
                         from={{ x: tooltipLeft, y: 0 }}
                         to={{ x: tooltipLeft, y: height }}
-                        stroke="red"
+                        stroke="#5048E5"
                         strokeWidth={2}
                         pointerEvents="none"
                         strokeDasharray="5,2"
@@ -155,7 +161,7 @@ export default function Graph() {
                         cx={tooltipLeft}
                         cy={tooltipTop}
                         r={4}
-                        fill="red"
+                        fill="#5048E5"
                         stroke="white"
                         strokeWidth={2}
                         pointerEvents="none"
@@ -166,5 +172,28 @@ export default function Graph() {
                 );
             })}
       </svg>
+      {tooltipData && (
+        <div>
+          <TooltipWithBounds
+            key={Math.random()}
+            top={tooltipTop + 150}
+            left={tooltipLeft + 40}
+          >
+            {`${getY(tooltipData)}`}
+          </TooltipWithBounds>
+          {/* <Tooltip
+            top={tooltipTop}
+            left={tooltipLeft}
+            style={{
+              minWidth: 72,
+              textAlign: 'center',
+              transform: 'translateX(-50%)',
+            }}
+          >
+            {formatDate(getX(tooltipData))}
+          </Tooltip> */}
+        </div>
+      )}
+    </div>
   );
 }

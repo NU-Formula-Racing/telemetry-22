@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-import Topbar from './Topbar/Topbar';
+import Topbar from './topbar/Topbar';
 import DataDisplay from './data-display/DataDisplay';
 import VertSpacer from '../shared/VertSpacer';
 

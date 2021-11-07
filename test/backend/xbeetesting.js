@@ -4,6 +4,12 @@ const {
 let SerialPort = require('serialport'); //.SerialPort
 let xbee_api = require('xbee-api');
 const fs = require('fs');
+const yargs = require('yargs');
+
+const argv = yargs.option('raw', {type: 'boolean'}).argv
+
+
+
 var C = xbee_api.constants;
 
 
@@ -13,9 +19,21 @@ var xbeeAPI = new xbee_api.XBeeAPI({
 
 var curFileName = 'binout/xbee-raw-' + Date.now().toString() + '.bin'
 
+
+// USE LOG IF VERBOSE
+// INSTEAD OF CONSOLE . LOG
+// TO AVOID HEADACHES
+function logIfVerbose(obj)
+{
+    if (!argv.raw)
+    {
+        console.log(obj)
+    }
+}
+
 fs.writeFile(curFileName, '', function (err) {
     if (err) throw err;
-    console.log('XBee raw data file created.');
+    logIfVerbose('XBee raw data file created.');
 });
 
 let findAndListenToXBee = () => {
@@ -39,14 +57,19 @@ let listenToPortPath = (portPath) => {
     xbeeAPI.builder.pipe(serialport);
 
     serialport.on('data', function(data) {
+
+        if (argv.raw)
+        {
+            process.stdout.write(data.toString())
+        }
     
-        console.log(data)
+        logIfVerbose(data)
         fs.appendFile(curFileName, data, function (err) {
             if (err) throw err;
-            console.log('Line added.');
+            logIfVerbose('Line added.');
         });
     });
 }
 
-console.log("im gonna try to find and start listening to the xbee!\nif the script exits right away, the xbee wasnt found :(")
+logIfVerbose("im gonna try to find and start listening to the xbee!\nif the script exits right away, the xbee wasnt found :(")
 findAndListenToXBee();

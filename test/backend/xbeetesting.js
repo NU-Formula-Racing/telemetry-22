@@ -3,6 +3,7 @@ const {
 } = require('console');
 let SerialPort = require('serialport'); //.SerialPort
 let xbee_api = require('xbee-api');
+const fs = require('fs');
 var C = xbee_api.constants;
 
 
@@ -10,7 +11,9 @@ var xbeeAPI = new xbee_api.XBeeAPI({
     api_mode: 1
 });
 
-fs.writeFile('xbee-raw-test.txt', '', function (err) {
+var curFileName = 'binout/xbee-raw-' + Date.now().toString() + '.bin'
+
+fs.writeFile(curFileName, '', function (err) {
     if (err) throw err;
     console.log('XBee raw data file created.');
 });
@@ -36,7 +39,9 @@ let listenToPortPath = (portPath) => {
     xbeeAPI.builder.pipe(serialport);
 
     serialport.on('data', function(data) {
-        fs.appendFile('xbee-raw-test.txt', /*[make sure its a string]*/, function (err) {
+    
+        console.log(data)
+        fs.appendFile(curFileName, data, function (err) {
             if (err) throw err;
             console.log('Line added.');
         });

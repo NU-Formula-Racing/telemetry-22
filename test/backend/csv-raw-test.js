@@ -1,4 +1,5 @@
-let fs = require('fs');
+const fs = require('fs');
+const sensor_names = require('sensor_names.json');
 
 let colHeads, currentRow;
 

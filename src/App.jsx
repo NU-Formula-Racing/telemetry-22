@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
@@ -9,10 +9,6 @@ export default function App() {
   var [currentSensors, setCurrentSensors] = useState([]);
   var [sessionName, setSessionName] = useState('');
 
-  useEffect(() => {
-    console.log(sessionName);
-  })
-
   return (
     <>
       <GlobalStyle/>
@@ -21,7 +17,10 @@ export default function App() {
         currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
         setSessionName={(newState) => setSessionName(newState)}
       />
-      <Main isLive={isLive} currentSensors={currentSensors} />
+      <Main
+        isLive={isLive}
+        currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
+      />
     </>
   );
 }

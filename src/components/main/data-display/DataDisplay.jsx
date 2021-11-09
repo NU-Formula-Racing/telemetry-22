@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import styled from 'styled-components';
 
 import NumGraphToggle from './NumGraphToggle';
@@ -52,8 +51,9 @@ export default class DataDisplay extends Component {
         {(this.props.sensors && this.props.sensors.length > 0)
           ? this.state.dispType==='graphs'
             ? <Graphs
-                sensors={this.props.sensors}
                 viewState={this.props.viewState}
+                sensors={this.props.sensors}
+                setCurrentSensors={(newState) => this.props.setCurrentSensors(newState)}
                 width={this.containerRef ? this.containerRef.clientWidth - 16 : 0}
               />
             : <Numbers

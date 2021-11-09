@@ -1,7 +1,7 @@
 # Telemetry Frontend/Backend Comms Protocol
 
 - The server listens on port 42069.
-- A connection is established when the client sends `HELO`.
+- A connection is established when the client sends `HEWWO!`.
 
 The server must accept the following commands:
 - `LIST_SENSORS_BY_SUBTEAM` 

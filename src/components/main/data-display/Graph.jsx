@@ -8,15 +8,16 @@ import { Group } from '@visx/group';
 import { LinePath, Bar, Line } from '@visx/shape';
 import * as allCurves from '@visx/curve';
 import { scaleTime, scaleLinear } from '@visx/scale';
+import { timeFormat } from 'd3-time-format';
 
-const series = [generateDateValue(25, 1/72).sort(
+const series = [generateDateValue(150, 1/72).sort(
     (a, b) => a.date.getTime() - b.date.getTime()
 )]
 
 const allData = series.reduce((rec, d) => rec.concat(d), []);
 
 const bisectDate = bisector((d) => new Date(d.date)).left;
-
+const formatDate = timeFormat("%b %d, '%y");
 // data accessors
 const getX = (d) => d.date;
 const getY = (d) => d.value;
@@ -29,7 +30,13 @@ const yScale = scaleLinear({
 domain: [0, max(allData, getY)],
 });
 
+<<<<<<< HEAD
 export default function Graph(props) {
+=======
+const graph_offset = 13
+
+export default function Graph() {
+>>>>>>> 5266d4d3f21c080912a4874a11b1ec9fdd6513dc
     const curveType = 'curveLinear'
     const height = 300
     const width = props.width;
@@ -39,13 +46,15 @@ export default function Graph(props) {
 
     const { showTooltip,
         tooltipData,
+        hideTooltip,
         tooltipTop = 0,
-        tooltipLeft = 0 } = useTooltip();
+        tooltipLeft = 0, } = useTooltip();
 
     // tooltip handler
     const handleTooltip = useCallback(
         (event) => {
-          const { x } = localPoint(event) || { x: 0 }; // x of mouse
+          let { x } = localPoint(event) || { x: graph_offset }; // x of mouse
+          x -= graph_offset
           const x0 = xScale.invert(x); // maps x -> time 
           const index = bisectDate(allData, x0, 1); // finds index of the middle time
           const d0 = allData[index - 1]; 
@@ -63,6 +72,7 @@ export default function Graph(props) {
         [showTooltip],
       );
   return (
+    <div>
         <svg width={width} height={height}>
             <MarkerX
                 id="marker-x"
@@ -86,33 +96,19 @@ export default function Graph(props) {
             <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />
             {width > 8 &&
             series.map((lineData, i) => {
-                let markerStart = 'url(#marker-x)';
+                let markerStart = 'url(#marker-circle)';
                 if (i === 1) markerStart = 'url(#marker-line)';
-                const markerEnd = 'url(#marker-arrow)';
+                const markerEnd = 'url(#marker-circle)';
                 return (
-                    <Group key={`lines-${i}`} top={i * height} left={13}>
-                        {lineData.map((d, j) => (
-                            <circle
-                            key={i + j}
-                            r={3}
-                            cx={xScale(getX(d))}
-                            cy={yScale(getY(d))}
-                            stroke="rgba(33,33,33,0.5)"
-                            fill="transparent"
-                            />
-                        ))}
-                        <LinePath
-                        curve={allCurves[curveType]}
-                        data={lineData}
-                        x={(d) => xScale(getX(d)) ?? 0}
-                        y={(d) => yScale(getY(d)) ?? 0}
-                        stroke="#333"
-                        strokeWidth={1}
-                        strokeOpacity={1}
-                        shapeRendering="geometricPrecision"
-                        markerMid="url(#marker-circle)"
-                        markerStart={markerStart}
-                        markerEnd={markerEnd}
+                <Group key={`lines-${i}`} top={i * height} left={graph_offset}>
+                    {lineData.map((d, j) => (
+                        <circle
+                        key={i + j}
+                        r={3}
+                        cx={xScale(getX(d))}
+                        cy={yScale(getY(d))}
+                        stroke="rgba(33,33,33,0.5)"
+                        // fill="transparent"
                         />
                     ))}
                     <LinePath
@@ -138,13 +134,14 @@ export default function Graph(props) {
                         onTouchStart={handleTooltip}
                         onTouchMove={handleTooltip}
                         onMouseMove={handleTooltip}
+                        onMouseLeave={() => hideTooltip()}
                     />
                     {tooltipData && (
                     <g>
                         <Line
                         from={{ x: tooltipLeft, y: 0 }}
                         to={{ x: tooltipLeft, y: height }}
-                        stroke="red"
+                        stroke="#5048E5"
                         strokeWidth={2}
                         pointerEvents="none"
                         strokeDasharray="5,2"
@@ -164,7 +161,7 @@ export default function Graph(props) {
                         cx={tooltipLeft}
                         cy={tooltipTop}
                         r={4}
-                        fill="red"
+                        fill="#5048E5"
                         stroke="white"
                         strokeWidth={2}
                         pointerEvents="none"
@@ -174,6 +171,29 @@ export default function Graph(props) {
                 </Group>
                 );
             })}
-        </svg>
-    );
+      </svg>
+      {tooltipData && (
+        <div>
+          <TooltipWithBounds
+            key={Math.random()}
+            top={tooltipTop + 150}
+            left={tooltipLeft + 40}
+          >
+            {`${getY(tooltipData)}`}
+          </TooltipWithBounds>
+          {/* <Tooltip
+            top={tooltipTop}
+            left={tooltipLeft}
+            style={{
+              minWidth: 72,
+              textAlign: 'center',
+              transform: 'translateX(-50%)',
+            }}
+          >
+            {formatDate(getX(tooltipData))}
+          </Tooltip> */}
+        </div>
+      )}
+    </div>
+  );
 }

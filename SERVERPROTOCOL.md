@@ -2,6 +2,10 @@
 
 - The server listens on port 42069.
 - A connection is established when the client sends `HEWWO!` and the server responds with `"OWO WHATS THIS?"`.
+- All server responses shall be valid JSON and end with a newline. 
+- If a request is malformed, the server shall respond with `":("`. If a state-changing request or the handshake is malformed, the server shall close the connection.
+- If a request does not ask for data, the server shall respond with `":)"` to indicate success.
+
 
 The server must accept the following commands:
 - `LIST_SENSORS_BY_SUBTEAM` 

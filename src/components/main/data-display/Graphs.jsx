@@ -23,9 +23,9 @@ export default function Graphs(props) {
               return (
                 <Draggable key={e.id} draggableId={e.id} index={index}>
                   {(provided) => (
-                    <div ref={provided.innerRef} {...provided.draggableProps}>
+                    <div {...provided.draggableProps} {...provided.dragHandleProps}>
                       {index !== 0 && <VertSpacer />}
-                      <div {...provided.dragHandleProps}>{e.label}</div>
+                      <div ref={provided.innerRef}>{e.label}</div>
                       <Graph width={props.width} />
                     </div>
                   )}

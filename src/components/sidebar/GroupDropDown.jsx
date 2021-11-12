@@ -35,7 +35,7 @@ export const SmallVerticalSpacer = styled.div`
 `;
 
 let ExampleGroups = [
-    {id: 1, group:"Safety Sensors"},
+    {id: 1, group:"Saftey Sensors"},
     {id: 2, group:"Chasis Sensors"},
     {id: 3, group:"Aero Sensors"},
     {id: 4, group:"Suspension Sensors"},

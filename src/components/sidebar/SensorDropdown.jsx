@@ -6,8 +6,8 @@ export default class SensorDropdown extends Component {
         super(props)
 
         // all available sensor options
-        this.options = ExampleSensorsByGroups.map(e1 => (
-            e1.group === this.props.selectedGroup ? e1.sensors.map(e2 => ({value: e2, label: e2, id: e2})) : []
+        this.options = ExampleSensorsByGroups.map((e1) => (
+            e1.group === this.props.selectedGroup ? e1.sensors.map((e2) => ({value: e2, label: e2})) : []
         )).flat();
         // only sensors selected by user from available options
         this.selected = []
@@ -21,8 +21,8 @@ export default class SensorDropdown extends Component {
     }
 
     updateOptions(newSelectedGroup) {
-        this.options = ExampleSensorsByGroups.map(e1 => (
-            e1.group === newSelectedGroup? e1.sensors.map(e2 => ({value: e2, label: e2, id: e2})) : []
+        this.options = ExampleSensorsByGroups.map((e1) => (
+            e1.group === newSelectedGroup? e1.sensors.map((e2) => ({value: e2, label: e2})) : []
         )).flat()
     }
 

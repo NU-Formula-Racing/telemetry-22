@@ -8,7 +8,11 @@ const yargs = require('yargs');
 
 const argv = yargs.option('raw', {type: 'boolean'}).argv
 
-
+const snail = true;
+if (!snail)
+{
+    throw "\033[91m !!!!!!! THE SNAIL GOD IS DISPLEASED !!!!!! \033[39m"
+}
 
 var C = xbee_api.constants;
 

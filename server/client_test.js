@@ -13,6 +13,9 @@ const net = require('net');
 const readline = require('readline');
 
 const client = new net.Socket();
+// client.connect({port: 42069, host: '10.123.456.7'}, () => { // REPLACE WITH YOUR IP
+//   console.log('Connected to server');
+// });
 client.connect(59898, process.argv[2], () => {
   console.log('Connected to server');
 });

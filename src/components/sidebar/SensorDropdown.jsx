@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import Select from 'react-select'
+import Select from 'react-select';
+import styled from "styled-components";
 
 export default class SensorDropdown extends Component{
     constructor(props){
@@ -14,7 +15,6 @@ export default class SensorDropdown extends Component{
 
     componentDidUpdate(prevProps) {                                           
         if (prevProps.selectedGroup !== this.props.selectedGroup) {
-            this.updateSelected([])
             this.updateSelectedGroup(this.props.selectedGroup)
             this.updateOptions(this.props.selectedGroup)
 
@@ -27,8 +27,18 @@ export default class SensorDropdown extends Component{
         this.options = ExampleSensorsByGroups.map((e1) => (e1.group === newSelectedGroup? e1.sensors.map((e2) => ({value: e2, label: e2})) : [])).flat()
 
     }
-    updateSelected(values){
-        this.setState({selectedSensors: values})
+    addSelected(value){
+        console.log(value)
+        console.log(this.state.selectedSensors)
+        console.log(this.state.selectedSensors.indexOf(value[0]))
+        if (value != null && -1 == this.state.selectedSensors.indexOf(value[0])){
+          this.setState({selectedSensors: this.state.selectedSensors.concat(value)})
+        }
+    }
+
+    
+    removeSelected(value){
+        return
     }
 
     render() {
@@ -39,8 +49,8 @@ export default class SensorDropdown extends Component{
                 placeholder={"Select from " + this.props.selectedGroup + "..."}
                 isMulti={true}
                 options={this.options}
-                value={this.state.selectedSensors}
-                onChange={(x) => this.updateSelected(x)}
+                value={this.state.selectedGroup}
+                onChange={(x) => this.addSelected(x)}
                 styles={{
                     multiValueLabel: (base) => ({
                       ...base,
@@ -50,7 +60,8 @@ export default class SensorDropdown extends Component{
                     }),
                   }}
                 />
-
+                <SmallVertSpace/>
+                {this.state.selectedSensors.map((e) => (<StyledButton>{e.label}</StyledButton>))}
             </>
 
 
@@ -67,3 +78,13 @@ let ExampleSensorsByGroups = [
     {group:"Suspension Sensors", sensors: ["Sensor J", "Sensor K", "Sensor L"]},
     {group:"Powertrain Sensors", sensors: ["Sensor M", "Sensor N", "Sensor O"]}
   ];
+
+
+
+let StyledButton = styled.button`
+  width: 200px;
+  height: 30px;
+`
+let SmallVertSpace = styled.div`
+  height: 20px;
+`

@@ -49,33 +49,6 @@ class ThreadedServer(object):
 # MOVE THIS SOMEWHERE ELSE
 # (BECAUSE IT DOES NOT FIT HERE)
 # IF YOU USE THIS CODE
-
-# Compatible with older versions of Python
-# Currently incomplete; missing arguments noted in code
-def responseToMessage(message):
-    ms = message.split()
-    if ms == ["LIST_SENSORS_BY_SUBTEAM"]:
-        return {"formula": ["here", "are", "the", "sensors"]}
-    elif ms[0] == "VALS": # sensorIDs
-        return None # {sensorID : 420 for sensorID in sensorIDs}
-    elif ms == ["STATUS"]:
-        return ":)"
-    elif ms == ["LIST_HISTORIC_DATAFILES"]:
-        return [["name1", 420], ["name2", 69]]
-    elif ms[0] == "REQUEST_HISTORIC_DATAFILE_BY_TIME": # sensorIDs
-        return "no lol"
-    elif ms[0] == "REQUEST_HISTORIC_DATAFILE_BY_NAME": # name
-        return "no lol"
-    elif ms[0] == "END_SESSION": # name
-        return ":)"
-    elif ms == ["BEGIN_SESSION"]:
-        return ":)"
-    else:
-        return None
-
-# Uses Python 3.10-exclusive syntax
-# Test for compatibility; appears to stop responding after 1 input
-"""
 def responseToMessage(message):
     match message.split():
         case ["LIST_SENSORS_BY_SUBTEAM"]:
@@ -96,7 +69,6 @@ def responseToMessage(message):
             return ":)"
         case _:
             return None
-"""
             
 def getMessage(client):
     raw = client.recv(1024)

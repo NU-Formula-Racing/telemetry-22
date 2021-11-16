@@ -9,12 +9,13 @@ import { showTooltip } from '@visx/tooltip/lib/enhancers/withTooltip';
 import { useTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { Group } from '@visx/group';
-import { LinePath, Bar, Line } from '@visx/shape';
+import { LinePath, Bar, Line, stackOffset } from '@visx/shape';
 import * as allCurves from '@visx/curve';
 import { scaleTime, scaleLinear } from '@visx/scale';
+import { AxisLeft, AxisBottom } from '@visx/axis';
 import { timeFormat } from 'd3-time-format';
 
-const series = [generateDateValue(150, 1/72).sort(
+const series = [generateDateValue(50, 1/72).sort(
     (a, b) => a.date.getTime() - b.date.getTime()
 )]
 
@@ -34,14 +35,14 @@ const yScale = scaleLinear({
 domain: [0, max(allData, getY)],
 });
 
-const graph_offset = 13
+const graph_offset = 25
 
 export default function Graph() {
     const curveType = 'curveLinear'
     const height = 300
     const width = 800
     // update scale output ranges
-    xScale.range([0, width - 50]);
+    xScale.range([0, width - 3*graph_offset]);
     yScale.range([height * 0.9, height * 0.1]);
 
     const { showTooltip,
@@ -53,8 +54,8 @@ export default function Graph() {
     // tooltip handler
     const handleTooltip = useCallback(
         (event) => {
-          let { x } = localPoint(event) || { x: graph_offset }; // x of mouse
-          x -= graph_offset
+          let { x } = localPoint(event) || { x: (graph_offset*2) }; // x of mouse
+          x -= (graph_offset*2)
           const x0 = xScale.invert(x); // maps x -> time 
           const index = bisectDate(allData, x0, 1); // finds index of the middle time
           const d0 = allData[index - 1]; 
@@ -65,7 +66,7 @@ export default function Graph() {
           }
           showTooltip({
             tooltipData: d,
-            tooltipLeft: x,
+            tooltipLeft: xScale(getX(d)),
             tooltipTop: yScale(getY(d)),
           });
         },
@@ -100,7 +101,7 @@ export default function Graph() {
                 if (i === 1) markerStart = 'url(#marker-line)';
                 const markerEnd = 'url(#marker-circle)';
                 return (
-                <Group key={`lines-${i}`} top={i * height} left={graph_offset}>
+                <Group key={`lines-${i}`} top={i * height} left={graph_offset*2}>
                     {lineData.map((d, j) => (
                         <circle
                         key={i + j}
@@ -111,6 +112,9 @@ export default function Graph() {
                         // fill="transparent"
                         />
                     ))}
+                    {/* <rect width={width} height={height} fill="#efefef" rx={14} ry={14} /> */}
+                    <AxisBottom left={0} top={height-30} scale={xScale} />
+                    <AxisLeft left={0} scale={yScale} />
                     <LinePath
                     curve={allCurves[curveType]}
                     data={lineData}
@@ -139,8 +143,8 @@ export default function Graph() {
                     {tooltipData && (
                     <g>
                         <Line
-                        from={{ x: tooltipLeft, y: 0 }}
-                        to={{ x: tooltipLeft, y: height }}
+                        from={{ x: tooltipLeft, y: height * 0.1 }}
+                        to={{ x: tooltipLeft, y: height * 0.9}}
                         stroke="#5048E5"
                         strokeWidth={2}
                         pointerEvents="none"
@@ -166,6 +170,15 @@ export default function Graph() {
                         strokeWidth={2}
                         pointerEvents="none"
                         />
+                        <div>
+                          <TooltipWithBounds
+                            key={Math.random()}
+                            top={tooltipTop + 150}
+                            left={tooltipLeft + 40}
+                          >
+                            {`${getY(tooltipData)}`}
+                          </TooltipWithBounds>
+                        </div>
                     </g>
                     )}
                 </Group>

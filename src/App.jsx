@@ -1,17 +1,22 @@
+import { useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
 import Main from './components/main/Main';
 
-import { ContextProvider } from './components/shared/Context';
-
 export default function App() {
+  var [isLive, setIsLive] = useState(false);
+  var [currentSensors, setCurrentSensors] = useState([]);
+
   return (
-    <ContextProvider>
+    <>
       <GlobalStyle/>
-      <Sidebar />
-      <Main />
-    </ContextProvider>
+      <Sidebar
+        isLive={isLive} setIsLive={(next) => setIsLive(next)}
+        currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
+      />
+      <Main isLive={isLive} currentSensors={currentSensors} />
+    </>
   );
 }
 

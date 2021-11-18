@@ -7,23 +7,29 @@ import play from '../../../assets/play.svg';
 import pause from '../../../assets/pause.svg';
 
 export default function Topbar(props) {
-  let buttons = [];
-  let srcList = [[stop, 'stop'], [play, 'play'], [pause, 'pause']];
-  for (let i = 0; i < srcList.length; i++) {
-    buttons.push(<SVGButton
-      src={srcList[i][0]}
-      label={srcList[i][1]}
-      setViewState={props.setViewState}
-      selected={props.viewState === srcList[i][1]}
-    />);
-    if (i < (srcList.length - 1)) {
-      buttons.push(<HorizSpacer />);
-    }
-  }
-
   return (
     <RowHolder>
-      {buttons}
+      <SVGButton
+        src={stop}
+        label={'stop'}
+        setViewState={props.setViewState}
+        selected={props.viewState === 'stop'}
+      />
+      <HorizSpacer />
+      {props.viewState !== 'play'
+        ? <SVGButton
+            src={play}
+            label={'play'}
+            setViewState={props.setViewState}
+            selected={props.viewState === 'pause'}
+          />
+        : <SVGButton
+            src={pause}
+            label={'pause'}
+            setViewState={props.setViewState}
+            selected={props.viewState === 'play'}
+          />
+      }
     </RowHolder>
   );
 }

@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import NumGraphToggle from './NumGraphToggle';
-import Graph from './Graph';
 import Graphs from './Graphs';
 import Numbers from './Numbers';
 
@@ -25,8 +24,8 @@ export default class DataDisplay extends Component {
     this.updateWidth = () => {
       if (this.containerRef) {
         this.content = (this.state.dispType==='graphs')
-          ? <Graphs viewState={this.props.viewState} width={this.containerRef.clientWidth - 16} />
-          : <Numbers viewState={this.props.viewState} />;
+          ? <Graphs sensors={props.sensors} viewState={this.props.viewState} width={this.containerRef.clientWidth - 16} />
+          : <Numbers sensors={props.sensors} viewState={this.props.viewState} />;
         this.setState({ whatthefuck: true });
       }
     }
@@ -35,13 +34,6 @@ export default class DataDisplay extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.updateWidth);
     this.updateWidth();
-  }
-
-  componentDidUpdate() {
-    // Renger lags by 1 hence why numbers => graphs and graphs => numbers
-    this.content = (this.state.dispType==='numbers')
-      ? <Graphs viewState={this.props.viewState} width={this.containerRef.clientWidth - 16} />
-      : <Numbers viewState={this.props.viewState} />;
   }
 
   componentWillUnmount() {
@@ -55,7 +47,19 @@ export default class DataDisplay extends Component {
           dispType={this.state.dispType}
           setDispType={(x) => this.setState({ dispType: x })}
         />
-        {this.content}
+        {(this.props.sensors && this.props.sensors.length > 0)
+          ? this.state.dispType==='graphs'
+            ? <Graphs
+                sensors={this.props.sensors}
+                viewState={this.props.viewState}
+                width={this.containerRef ? this.containerRef.clientWidth - 16 : 0}
+              />
+            : <Numbers
+                sensors={this.props.sensors}
+                viewState={this.props.viewState}
+              />
+          : <>No Selected Sensors</>
+        }
       </Container>
     );
   }

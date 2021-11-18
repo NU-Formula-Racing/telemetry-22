@@ -6,21 +6,27 @@ import NameInput from './NameInput';
 import BasicContainer from '../shared/BasicContainer';
 import VertSpacer from '../shared/VertSpacer';
 
-
 import logo from '../../assets/logo.png';
 
-export default function Sidebar() {
+export default function Sidebar(props) {
   return (
     <SidebarContainer>
       <img src={logo} alt='NU Formula Logo' />
       <VertSpacer />
       <BasicContainer>
-        <Toggle />
+        <Toggle isLive={props.isLive} setIsLive={(newState) => props.setIsLive(newState)} />
       </BasicContainer>
       <VertSpacer />
-      <NameInput />
-      <VertSpacer />
-      <SensorSelector />
+      {props.isLive &&
+        <>
+          <NameInput />
+          <VertSpacer />
+        </>
+      }
+      <SensorSelector
+        currentSensors={props.currentSensors}
+        setCurrentSensors={(newState) => props.setCurrentSensors(newState)}
+      />
     </SidebarContainer>
   );
 }

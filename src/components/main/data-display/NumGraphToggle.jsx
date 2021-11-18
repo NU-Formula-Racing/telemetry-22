@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 
 export default function NumGraphToggle(props) {
@@ -56,6 +55,7 @@ const Label = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.1s ease;
 `;
 
 const Overlay = styled.div`

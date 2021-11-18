@@ -15,7 +15,7 @@ export default function GroupDropDown(props){
             <SmallVerticalSpacer></SmallVerticalSpacer>
             <StyledSelect onChange={handleOption}>
               {ExampleGroups.map((e, i) => 
-                (<StyledOption>{e.group}</StyledOption>))}
+                (<StyledOption key={i}>{e.group}</StyledOption>))}
             </StyledSelect>
         </>
     )
@@ -40,12 +40,4 @@ let ExampleGroups = [
     {id: 3, group:"Aero Sensors"},
     {id: 4, group:"Suspension Sensors"},
     {id: 5, group:"Powertrain Sensors"}
-  ];
-
-  const DropDownButton = styled.button`
-  background: #ffffff;
-  font-family: Open Sans;
-  font-size: 16px;
-  width: 200px;
-  border: 0px;
-  `;
+];

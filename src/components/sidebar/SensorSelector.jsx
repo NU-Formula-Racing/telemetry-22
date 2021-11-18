@@ -6,9 +6,8 @@ import VertSpacer from '../shared/VertSpacer';
 import SensorDropdown from './SensorDropdown';
 import GroupDropDown from './GroupDropDown';
 
-export default function SensorSelector() {
-  let [selectedGroup, setSelectedGroup] = useState("")
-  let [selectedSensors, setSelectedSensors] = useState([])
+export default function SensorSelector(props) {
+  let [selectedGroup, setSelectedGroup] = useState('Safety Sensors');
 
   return(
     <SelectorContainer>
@@ -22,8 +21,8 @@ export default function SensorSelector() {
       <BasicContainer expand>
         <SensorDropdown 
         selectedGroup={selectedGroup}
-        selectedSensors={selectedSensors}
-        setSelectedSensors={(newState) => setSelectedSensors(newState)}
+        selectedSensors={props.currentSensors}
+        setCurrentSensors={(newState) => props.setCurrentSensors(newState)}
         />
       </BasicContainer>
     </SelectorContainer>

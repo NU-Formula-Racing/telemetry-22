@@ -5,18 +5,19 @@ import Topbar from './topbar/Topbar';
 import DataDisplay from './data-display/DataDisplay';
 import VertSpacer from '../shared/VertSpacer';
 
-export default function Main() {
+export default function Main(props) {
   let [viewState, setViewState] = useState('stop');
 
   return(
     <MainContainer>
       <Topbar
+        isLive={props.isLive}
         receiving={false}
         viewState={viewState}
         setViewState={(newState) => setViewState(newState)}
       />
       <VertSpacer />
-      <DataDisplay viewState={viewState}/>
+      <DataDisplay viewState={viewState} sensors={props.currentSensors} />
     </MainContainer>
   );
 }

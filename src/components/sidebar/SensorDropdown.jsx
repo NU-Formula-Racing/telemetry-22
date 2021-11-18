@@ -9,8 +9,7 @@ export default class SensorDropdown extends Component{
         this.state = {selectedGroup: this.props.selectedGroup, selectedSensors: this.props.selectedSensors}
         // all available sensor options
         this.options = []
-        // only sensors selected by user from available options
-        this.selected = []
+
     }
 
     componentDidUpdate(prevProps) {                                           
@@ -28,17 +27,16 @@ export default class SensorDropdown extends Component{
 
     }
     addSelected(value){
-        console.log(value)
-        console.log(this.state.selectedSensors)
-        console.log(this.state.selectedSensors.indexOf(value[0]))
-        if (value != null && -1 == this.state.selectedSensors.indexOf(value[0])){
+        if (value != null && -1 === this.state.selectedSensors.indexOf(value[0])){
           this.setState({selectedSensors: this.state.selectedSensors.concat(value)})
         }
     }
 
     
-    removeSelected(value){
-        return
+    removeSelected(e){
+        console.log(e.target.value)
+        this.setState(prev => {prev.selectedSensors = prev.selectedSensors.filter((element) => element.label != e.target.value)})
+        this.forceUpdate()
     }
 
     render() {
@@ -50,7 +48,7 @@ export default class SensorDropdown extends Component{
                 isMulti={true}
                 options={this.options}
                 value={this.state.selectedGroup}
-                onChange={(x) => this.addSelected(x)}
+                onChange={(e) => this.addSelected(e)}
                 styles={{
                     multiValueLabel: (base) => ({
                       ...base,
@@ -61,7 +59,10 @@ export default class SensorDropdown extends Component{
                   }}
                 />
                 <SmallVertSpace/>
-                {this.state.selectedSensors.map((e) => (<StyledButton>{e.label}</StyledButton>))}
+                {this.state.selectedSensors.map((e) => (<StyledButton onClick={e => this.removeSelected(e)}
+                                                                      value={e.label}>
+                                                          {e.label}
+                                                        </StyledButton>))}
             </>
 
 
@@ -83,7 +84,8 @@ let ExampleSensorsByGroups = [
 
 let StyledButton = styled.button`
   width: 200px;
-  height: 30px;
+  height: 40px;
+  font-size: 16px;
 `
 let SmallVertSpace = styled.div`
   height: 20px;

@@ -37,10 +37,10 @@ domain: [0, max(allData, getY)],
 
 const graph_offset = 25
 
-export default function Graph() {
+export default function Graph(props) {
     const curveType = 'curveLinear'
     const height = 300
-    const width = 800
+    const width = props.width
     // update scale output ranges
     xScale.range([0, width - 3*graph_offset]);
     yScale.range([height * 0.9, height * 0.1]);

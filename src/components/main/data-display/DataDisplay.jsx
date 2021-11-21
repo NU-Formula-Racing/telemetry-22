@@ -25,8 +25,17 @@ export default class DataDisplay extends Component {
     this.updateWidth = () => {
       if (this.containerRef) {
         this.content = (this.state.dispType==='graphs')
-          ? <Graphs sensors={props.sensors} viewState={this.props.viewState} width={this.containerRef.clientWidth - 16} />
-          : <Numbers sensors={props.sensors} viewState={this.props.viewState} />;
+          ? <Graphs
+              viewState={this.props.viewState}
+              sensors={this.props.sensors}
+              setCurrentSensors={(newState) => this.props.setCurrentSensors(newState)}
+              width={this.containerRef ? this.containerRef.clientWidth - 16 : 0}
+            />
+          : <Numbers
+              viewState={this.props.viewState}
+              sensors={this.props.sensors}
+              setCurrentSensors={(newState) => this.props.setCurrentSensors(newState)}
+            />;
         this.setState({ whatthefuck: true });
       }
     }
@@ -57,8 +66,9 @@ export default class DataDisplay extends Component {
                 width={this.containerRef ? this.containerRef.clientWidth - 16 : 0}
               />
             : <Numbers
-                sensors={this.props.sensors}
                 viewState={this.props.viewState}
+                sensors={this.props.sensors}
+                setCurrentSensors={(newState) => this.props.setCurrentSensors(newState)}
               />
           : <StyledStatus>No Selected Sensors</StyledStatus>
         }

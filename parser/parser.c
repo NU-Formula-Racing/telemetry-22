@@ -8,7 +8,7 @@ typedef uint16_t twoBytes;
 enum PARSE_STATE { IN_FRAME, LOOKING_FOR_FRAME };
 
 const char *SENSOR_NAMES[] = {
-    "FL_VSS",     "FR_VSS",     "BR_VSS",     "FL_SUS_POT", "FR_SUS_POT",
+    "FL_VSS",     "FR_VSS", "BL_VSS",     "BR_VSS",     "FL_SUS_POT", "FR_SUS_POT",
     "BL_SUS_POT", "BR_SUS_POT", "FL_BRK_TMP", "FR_BRK_TMP", "BL_BRK_TMP",
     "BR_BRK_TMP", "F_BRK_PRES", "B_BRK_PRES", "COOL_TEMP",  "STEER_ANG",
     "TPS",        "OIL_TEMP",   "OIL_PRES",   "MAP",        "MAT",
@@ -86,9 +86,9 @@ int readAndShift(byte *bytes, FILE *f) {
 }
 
 void printBuffer(twoBytes *buff) {
-  //printf("\n");
+  printf("{");
   for (int idx = 0; idx < NUM_SENSORS; idx++) {
-    printf("%d ", buff[idx] / 10);
+    printf("'%s': %d.%d, ", SENSOR_NAMES[idx], buff[idx]/10, buff[idx]%10);
   }
-  printf("\n");
+  printf("}\n");
 }

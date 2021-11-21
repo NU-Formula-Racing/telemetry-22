@@ -143,7 +143,7 @@ export default function Graph() {
                     {tooltipData && (
                     <g>
                         <Line
-                        from={{ x: tooltipLeft, y: height * 0.1 }}
+                        from={{ x: tooltipLeft, y: height * 0.08 }}
                         to={{ x: tooltipLeft, y: height * 0.9}}
                         stroke="#5048E5"
                         strokeWidth={2}

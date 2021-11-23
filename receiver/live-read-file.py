@@ -1,3 +1,5 @@
+'''Writes randomly generated strings of bytes, with common terminator \x13\x37, asynchronously into a file. Meant to resemble live reception of data.'''
+
 # from threading import Thread
 import os
 import time
@@ -13,7 +15,7 @@ if 'receiver' not in path:
 path = os.path.join(path, 'live-read-dir/lr-test.bin')
 
 # Create new file
-with open(path, 'w') as lr_file:
+with open(path, 'wb') as lr_file:
     print('File created: lr-test.bin')
 
 # Seeding RNG to make results consistent
@@ -25,23 +27,23 @@ c_range = 16 # [0, c_range]; range of number of characters generated per cycle
 c_lim = 64 # Number of characters per "line," including terminator, used for reading and terminator placement
 
 # Append to file live with bits
-with open(path, 'ab') as lr_file:
-    while True:
-        if count >= c_lim - len(term): 
-            # count has currently exceeded c_lim as shown below, needs to be reset
-            count %= c_lim - len(term) # Rectify count; terminator already accounted for
-            bit_stream = rand.randbytes(count) # Use excess in count to generate value
+while True:
+    if count >= c_lim - len(term): 
+        # count has currently exceeded c_lim as shown below, needs to be reset
+        count %= c_lim - len(term) # Rectify count; terminator already accounted for
+        bit_stream = rand.randbytes(count) # Use excess in count to generate value
+    else:
+        # Generate random number of new bits
+        c_add = rand.randint(0, 16)
+        if count + c_add < c_lim - len(term):
+            # Count currrently exceeds terminator amount
+            # Uses previous count value in generation
+            # Generates bytes up to c_lim - length of terminator, then adds terminator
+            bit_stream = rand.randbytes(c_lim - len(term) - count) + term
         else:
-            # Generate random number of new bits
-            c_add = rand.randint(0, 16)
-            if count + c_add < c_lim - len(term):
-                # Count currrently exceeds terminator amount
-                # Uses previous count value in generation
-                # Generates bytes up to c_lim - length of terminator, then adds terminator
-                bit_stream = rand.randbytes(c_lim - len(term) - count) + term
-            else:
-                bit_stream = rand.randbytes(c_add)
-            count += c_add # Actually add to count
-        print(bit_stream)
-        time.sleep(0.2)
+            bit_stream = rand.randbytes(c_add)
+        count += c_add # Actually add to count
+    print(list(bit_stream))
+    time.sleep(0.2)
+    with open(path, 'ab') as lr_file:
         lr_file.write(bit_stream)

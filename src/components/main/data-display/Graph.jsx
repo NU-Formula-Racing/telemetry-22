@@ -14,6 +14,7 @@ import * as allCurves from '@visx/curve';
 import { scaleTime, scaleLinear } from '@visx/scale';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { timeFormat } from 'd3-time-format';
+import { Zoom } from '@visx/zoom';
 
 const series = [generateDateValue(50, 1/72).sort(
     (a, b) => a.date.getTime() - b.date.getTime()
@@ -73,140 +74,167 @@ export default function Graph() {
         [showTooltip, yScale, xScale],
       );
   return (
-    <div>
-        <svg width={width} height={height}>
-            <MarkerX
-            id="marker-x"
-            stroke="#333"
-            size={12}
-            strokeWidth={4}
-            markerUnits="userSpaceOnUse"
-            />
-            <MarkerCross
-            id="marker-cross"
-            stroke="#333"
-            size={22}
-            strokeWidth={4}
-            strokeOpacity={0.6}
-            markerUnits="userSpaceOnUse"
-            />
-            <MarkerCircle id="marker-circle" fill="#333" size={2} refX={2} />
-            <MarkerArrow id="marker-arrow-odd" stroke="#333" size={12} strokeWidth={1} />
-            <MarkerLine id="marker-line" fill="#333" size={16} strokeWidth={1} />
-            <MarkerArrow id="marker-arrow" fill="#333" refX={2} size={12} />
-            <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />
-            {width > 8 &&
-            series.map((lineData, i) => {
-                let markerStart = 'url(#marker-circle)';
-                if (i === 1) markerStart = 'url(#marker-line)';
-                const markerEnd = 'url(#marker-circle)';
-                return (
-                <Group key={`lines-${i}`} top={i * height} left={graph_offset*2}>
-                    {lineData.map((d, j) => (
-                        <circle
-                        key={i + j}
-                        r={3}
-                        cx={xScale(getX(d))}
-                        cy={yScale(getY(d))}
-                        stroke="rgba(33,33,33,0.5)"
-                        // fill="transparent"
-                        />
-                    ))}
-                    {/* <rect width={width} height={height} fill="#efefef" rx={14} ry={14} /> */}
-                    <AxisBottom left={0} top={height-30} scale={xScale} />
-                    <AxisLeft left={0} scale={yScale} />
-                    <LinePath
-                    curve={allCurves[curveType]}
-                    data={lineData}
-                    x={(d) => xScale(getX(d)) ?? 0}
-                    y={(d) => yScale(getY(d)) ?? 0}
-                    stroke="#333"
-                    strokeWidth={1}
-                    strokeOpacity={1}
-                    shapeRendering="geometricPrecision"
-                    markerMid="url(#marker-circle)"
-                    markerStart={markerStart}
-                    markerEnd={markerEnd}
-                    />
-                    <Bar
-                        x={0}
-                        y={0}
-                        width={width}
-                        height={height}
-                        fill="transparent"
-                        rx={14}
-                        onTouchStart={handleTooltip}
-                        onTouchMove={handleTooltip}
-                        onMouseMove={handleTooltip}
-                        onMouseLeave={() => hideTooltip()}
-                    />
-                    {tooltipData && (
-                    <g>
-                        <Line
-                        from={{ x: tooltipLeft, y: height * 0.08 }}
-                        to={{ x: tooltipLeft, y: height * 0.9}}
-                        stroke="#5048E5"
-                        strokeWidth={2}
-                        pointerEvents="none"
-                        strokeDasharray="5,2"
-                        />
-                        <circle
-                        cx={tooltipLeft}
-                        cy={tooltipTop + 1}
-                        r={4}
-                        fill="black"
-                        fillOpacity={0.1}
-                        stroke="black"
-                        strokeOpacity={0.1}
-                        strokeWidth={2}
-                        pointerEvents="none"
-                        />
-                        <circle
-                        cx={tooltipLeft}
-                        cy={tooltipTop}
-                        r={4}
-                        fill="#5048E5"
-                        stroke="white"
-                        strokeWidth={2}
-                        pointerEvents="none"
-                        />
-                        <div>
-                          <TooltipWithBounds
-                            key={Math.random()}
-                            top={tooltipTop + 150}
-                            left={tooltipLeft + 40}
-                          >
-                            {`${getY(tooltipData)}`}
-                          </TooltipWithBounds>
-                        </div>
-                    </g>
-                    )}
-                </Group>
-                );
-            })}
-      </svg>
-      {tooltipData && (
+    <Zoom>
+      {(zoom) => (
         <div>
-          <TooltipWithBounds
-            key={Math.random()}
-            top={tooltipTop + 150}
-            left={tooltipLeft + 40}
-          >
-            {`${getY(tooltipData)}`}
-          </TooltipWithBounds>
-          {/* <Tooltip
-            top={tooltipTop}
-            left={tooltipLeft}
-            style={{
-              minWidth: 72,
-              textAlign: 'center',
-              transform: 'translateX(-50%)',
-            }}
-          >
-            {formatDate(getX(tooltipData))}
-          </Tooltip> */}
+            <svg width={width} height={height} 
+                style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
+                ref={zoom.containerRef}>
+                <MarkerX
+                id="marker-x"
+                stroke="#333"
+                size={12}
+                strokeWidth={4}
+                markerUnits="userSpaceOnUse"
+                />
+                <MarkerCross
+                id="marker-cross"
+                stroke="#333"
+                size={22}
+                strokeWidth={4}
+                strokeOpacity={0.6}
+                markerUnits="userSpaceOnUse"
+                />
+                <MarkerCircle id="marker-circle" fill="#333" size={2} refX={2} />
+                <MarkerArrow id="marker-arrow-odd" stroke="#333" size={12} strokeWidth={1} />
+                <MarkerLine id="marker-line" fill="#333" size={16} strokeWidth={1} />
+                <MarkerArrow id="marker-arrow" fill="#333" refX={2} size={12} />
+                <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />
+                <g transform={zoom.toString()}>
+                  {width > 8 &&
+                  series.map((lineData, i) => {
+                      let markerStart = 'url(#marker-circle)';
+                      if (i === 1) markerStart = 'url(#marker-line)';
+                      const markerEnd = 'url(#marker-circle)';
+                      return (
+                      <Group key={`lines-${i}`} top={i * height} left={graph_offset*2}>
+                          {lineData.map((d, j) => (
+                              <circle
+                              key={i + j}
+                              r={3}
+                              cx={xScale(getX(d))}
+                              cy={yScale(getY(d))}
+                              stroke="rgba(33,33,33,0.5)"
+                              />
+                          ))}
+                          {/* <rect width={width} height={height} fill="#efefef" rx={14} ry={14} /> */}
+                          <AxisBottom left={0} top={height-30} scale={xScale} />
+                          <AxisLeft left={0} scale={yScale} />
+                          <LinePath
+                          curve={allCurves[curveType]}
+                          data={lineData}
+                          x={(d) => xScale(getX(d)) ?? 0}
+                          y={(d) => yScale(getY(d)) ?? 0}
+                          stroke="#333"
+                          strokeWidth={1}
+                          strokeOpacity={1}
+                          shapeRendering="geometricPrecision"
+                          markerMid="url(#marker-circle)"
+                          markerStart={markerStart}
+                          markerEnd={markerEnd}
+                          />
+                          <Bar
+                              x={0}
+                              y={0}
+                              width={width}
+                              height={height}
+                              fill="transparent"
+                              rx={14}
+                              onTouchStart={handleTooltip}
+                              onTouchMove={handleTooltip}
+                              onMouseMove={handleTooltip}
+                              onMouseLeave={() => hideTooltip()}
+                          />
+                          {tooltipData && (
+                          <g>
+                              <Line
+                              from={{ x: tooltipLeft, y: height * 0.08 }}
+                              to={{ x: tooltipLeft, y: height * 0.9}}
+                              stroke="#5048E5"
+                              strokeWidth={2}
+                              pointerEvents="none"
+                              strokeDasharray="5,2"
+                              />
+                              <circle
+                              cx={tooltipLeft}
+                              cy={tooltipTop + 1}
+                              r={4}
+                              fill="black"
+                              fillOpacity={0.1}
+                              stroke="black"
+                              strokeOpacity={0.1}
+                              strokeWidth={2}
+                              pointerEvents="none"
+                              />
+                              <circle
+                              cx={tooltipLeft}
+                              cy={tooltipTop}
+                              r={4}
+                              fill="#5048E5"
+                              stroke="white"
+                              strokeWidth={2}
+                              pointerEvents="none"
+                              />
+                              <div>
+                                <TooltipWithBounds
+                                  key={Math.random()}
+                                  top={tooltipTop + 150}
+                                  left={tooltipLeft + 40}
+                                >
+                                  {`${getY(tooltipData)}`}
+                                </TooltipWithBounds>
+                              </div>
+                          </g>
+                          )}
+                    <rect
+                      width={width}
+                      height={height}
+                      rx={14}
+                      fill="transparent"
+                      // onTouchStart={zoom.dragStart}
+                      // onTouchMove={zoom.dragMove}
+                      onTouchEnd={zoom.dragEnd}
+                      onMouseDown={zoom.dragStart}
+                      // onMouseMove={zoom.dragMove}
+                      onMouseUp={zoom.dragEnd}
+                      // onMouseLeave={() => {
+                      //   if (zoom.isDragging) zoom.dragEnd();
+                      // }}
+                      onDoubleClick={(event) => {
+                        const point = localPoint(event) || { x: 0, y: 0 };
+                        zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
+                      }}
+                    />
+                    </Group>
+                    );
+                })}
+            </g>
+          </svg>
+          {tooltipData && (
+            <div>
+              <TooltipWithBounds
+                key={Math.random()}
+                top={tooltipTop + 150}
+                left={tooltipLeft + 40}
+              >
+                {`${getY(tooltipData)}`}
+              </TooltipWithBounds>
+              {/* <Tooltip
+                top={tooltipTop}
+                left={tooltipLeft}
+                style={{
+                  minWidth: 72,
+                  textAlign: 'center',
+                  transform: 'translateX(-50%)',
+                }}
+              >
+                {formatDate(getX(tooltipData))}
+              </Tooltip> */}
+            </div>
+          )}
         </div>
-      )}
-    </div>
+    )}
+  </Zoom>
   );
+  
 }

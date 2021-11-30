@@ -44,6 +44,6 @@ while True:
             bit_stream = rand.randbytes(c_add)
         count += c_add # Actually add to count
     print(list(bit_stream))
-    time.sleep(0.2)
+    time.sleep(0.1)
     with open(path, 'ab') as lr_file:
         lr_file.write(bit_stream)

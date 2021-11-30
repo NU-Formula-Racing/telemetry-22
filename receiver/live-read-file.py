@@ -35,7 +35,7 @@ while True:
     else:
         # Generate random number of new bits
         c_add = rand.randint(0, 16)
-        if count + c_add < c_lim - len(term):
+        if count + c_add > c_lim - len(term):
             # Count currrently exceeds terminator amount
             # Uses previous count value in generation
             # Generates bytes up to c_lim - length of terminator, then adds terminator

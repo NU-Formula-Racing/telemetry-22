@@ -22,29 +22,16 @@ with open(path, 'w') as lr_file:
 # Seeding RNG to make results consistent
 rand.seed(1337)
 
+term = '\n' # Line terminator
+sensor_names = ["FL_VSS", "FR_VSS", "BL_VSS", "BR_VSS", "FL_SUS_POT", "FR_SUS_POT", "BL_SUS_POT", "BR_SUS_POT", "FL_BRK_TMP", "FR_BRK_TMP","BL_BRK_TMP","BR_BRK_TMP","F_BRK_PRES","B_BRK_PRES","COOL_TEMP","STEER_ANG","TPS","OIL_TEMP","OIL_PRES","MAP","MAT","NEUT","LAMBDA1","LAMBDA2","ACCELX","ACCELY","ACCELZ","GYROX","GYROY","GYROZ","MAGNETX","MAGNETY","MAGNETZ","VOLT","RPM","GEAR","IG_CUT"]
 
-
-# Append to file live with bits
+# Append to file live with jsons
 while True:
-    if count >= c_lim - len(term): 
-        # count has currently exceeded c_lim as shown below, needs to be reset
-        count %= c_lim - len(term) # Rectify count; terminator already accounted for
-        bit_stream = rand.randbytes(count) # Use excess in count to generate value
-    else:
-        # Generate random number of new bits
-        c_add = rand.randint(0, 16)
-        if count + c_add > c_lim - len(term):
-            # Count currrently exceeds terminator amount
-            # Uses previous count value in generation
-            # Generates bytes up to c_lim - length of terminator, then adds terminator
-            bit_stream = rand.randbytes(c_lim - len(term) - count) + term
-        else:
-            bit_stream = rand.randbytes(c_add)
-        count += c_add # Actually add to count
-    print(list(bit_stream))
+    curr_json = dict(zip(sensor_names,rand.randbytes(sensor_names.__len__()))).__str__() + term
+    print(curr_json)
     time.sleep(0.1)
-    with open(path, 'ab') as lr_file:
-        lr_file.write(bit_stream)
+    with open(path, 'a') as lr_file:
+        lr_file.write(curr_json)
 
 '''Bit Version'''
 '''

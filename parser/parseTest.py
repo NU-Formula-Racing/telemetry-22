@@ -7,7 +7,7 @@ sensorOrder = [
     "MAGNETY", "MAGNETZ", "VOLT", "RPM", "GEAR", "IG_CUT"
 ]
 
-with open('binout/xbee-raw-PARSETEST.bin', 'rb') as f:
+with open('../receiver/binout/xbee-raw-PARSETEST.bin', 'rb') as f:
     curByte = f.read(1)
 
     found80 = False
@@ -34,7 +34,7 @@ with open('binout/xbee-raw-PARSETEST.bin', 'rb') as f:
         curByte = f.read(2)
         curShort = int.from_bytes(curByte, 'big')
         if curShort == 32769:
-            print('\nnew frame!\n')
+            #print('\nnew frame!\n')
             print(curFrame)
             curFrame = {}
             curSensor = 0

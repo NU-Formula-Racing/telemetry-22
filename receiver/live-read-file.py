@@ -4,33 +4,34 @@
 import os
 import time
 import random as rand
+import json
 
 # os.chdir('./live-read-dir/')
 # os.path.dirname(os.path.abspath(__name__)) # __name__ on Mac, change to __file__ for Windows and Linux
 
 '''JSON Version'''
 # Generate file path
-path = os.path.dirname(os.path.abspath(__name__))
-if 'receiver' not in path:
-    path = os.path.join(path, 'receiver')
-path = os.path.join(path, 'live-read-dir/lr-test.txt')
+cd = os.path.dirname(os.path.abspath(__name__))
+if 'receiver' not in cd:
+    cd = os.path.join(cd, 'receiver')
+test = os.path.join(cd, 'live-read-dir/lr-test.txt')
 
 # Create new file
-with open(path, 'w') as lr_file:
+with open(test, 'w') as lr_file:
     print('File created: lr-test.txt')
 
 # Seeding RNG to make results consistent
 rand.seed(1337)
 
 term = '\n' # Line terminator
-sensor_names = ["FL_VSS", "FR_VSS", "BL_VSS", "BR_VSS", "FL_SUS_POT", "FR_SUS_POT", "BL_SUS_POT", "BR_SUS_POT", "FL_BRK_TMP", "FR_BRK_TMP","BL_BRK_TMP","BR_BRK_TMP","F_BRK_PRES","B_BRK_PRES","COOL_TEMP","STEER_ANG","TPS","OIL_TEMP","OIL_PRES","MAP","MAT","NEUT","LAMBDA1","LAMBDA2","ACCELX","ACCELY","ACCELZ","GYROX","GYROY","GYROZ","MAGNETX","MAGNETY","MAGNETZ","VOLT","RPM","GEAR","IG_CUT"]
+sensor_names = json.loads(open(os.path.join(cd, 'sensor_names.json'), 'r').read())['sensor_names']
 
 # Append to file live with jsons
 while True:
-    curr_json = dict(zip(sensor_names,rand.randbytes(sensor_names.__len__()))).__str__() + term
+    curr_json = json.dumps(dict(zip(sensor_names,rand.randbytes(len(sensor_names))))) + term
     print(curr_json)
-    time.sleep(0.1)
-    with open(path, 'a') as lr_file:
+    time.sleep(0.33)
+    with open(test, 'a') as lr_file:
         lr_file.write(curr_json)
 
 '''Bit Version'''

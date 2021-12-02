@@ -22,10 +22,14 @@ with open(path, 'r') as lr_file:
     
     # Loop for reading
     while True:
-        new_entry = json.loads(lr_file.readline()) # Reads next line and converts to Python dict
-        print(new_entry, type(new_entry)) # Prints convents of JSON object + type in Python (should be dict)
-        json_list.append(new_entry) # Adds dict to list
-        time.sleep(0.5)
+        try:
+            new_entry = json.loads(lr_file.readline()) # Reads next line and converts to Python dict
+            print(new_entry, type(new_entry)) # Prints convents of JSON object + type in Python (should be dict)
+            json_list.append(new_entry) # Adds dict to list
+        except:
+            print('End of file reached. Waiting for more data...')
+        time.sleep(0.25)
+        
         
         
 '''Bit version'''

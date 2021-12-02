@@ -1,7 +1,7 @@
 '''Reads lines with JSON asynchronously from a live-written file.'''
 
 import os
-import time
+import time as snail
 import json
 
 '''JSON version'''
@@ -14,7 +14,7 @@ path = os.path.join(path, 'live-read-dir/lr-test.txt')
 json_list = [] # List of Python dicts, from JSON objects
 
 print('Starting program, waiting for sufficient data...')
-time.sleep(1)
+snail.sleep(1)
 
 # Read from file
 with open(path, 'r') as lr_file:
@@ -28,7 +28,7 @@ with open(path, 'r') as lr_file:
             json_list.append(new_entry) # Adds dict to list
         except:
             print('End of file reached. Waiting for more data...')
-        time.sleep(0.25)
+        snail.sleep(0.25)
         
         
         

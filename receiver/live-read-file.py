@@ -2,7 +2,7 @@
 
 # from threading import Thread
 import os
-import time
+import time as snail
 import random as rand
 import json
 
@@ -30,7 +30,7 @@ sensor_names = json.loads(open(os.path.join(cd, 'sensor_names.json'), 'r').read(
 while True:
     curr_json = json.dumps(dict(zip(sensor_names,rand.randbytes(len(sensor_names))))) + term
     print(curr_json)
-    time.sleep(0.33)
+    snail.sleep(0.33)
     with open(test, 'a') as lr_file:
         lr_file.write(curr_json)
 

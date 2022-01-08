@@ -4,6 +4,7 @@ import SearchBar from './SearchBar';
 import Upload from './Upload';
 import ButtonTray from './ButtonTray';
 import RowHolder from '../../shared/RowHolder';
+import StyledStatus from '../../shared/StyledStatus';
 
 export default function Topbar(props) {
   var display;
@@ -13,7 +14,7 @@ export default function Topbar(props) {
         <RowHolder>
           Status:
           {props.receiving
-            ? <StyledStatus receiving> Reading Live Data</StyledStatus> // Keep whitespace before text
+            ? <StyledStatus valid> Reading Live Data</StyledStatus> // Keep whitespace before text
             : <StyledStatus> No Data Received</StyledStatus>            // Keep whitespace before text
           }
         </RowHolder>
@@ -40,8 +41,4 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-`;
-
-const StyledStatus = styled.p`
-  color: ${props => (props.receiving ? '#42D060' : '#BE0707')}
 `;

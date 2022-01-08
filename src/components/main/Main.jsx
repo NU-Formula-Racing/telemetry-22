@@ -17,7 +17,11 @@ export default function Main(props) {
         setViewState={(newState) => setViewState(newState)}
       />
       <VertSpacer />
-      <DataDisplay viewState={viewState} sensors={props.currentSensors} />
+      <DataDisplay
+        viewState={viewState}
+        sensors={props.currentSensors}
+        setCurrentSensors={(newState) => props.setCurrentSensors(newState)}
+      />
     </MainContainer>
   );
 }

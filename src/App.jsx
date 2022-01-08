@@ -7,6 +7,7 @@ import Main from './components/main/Main';
 export default function App() {
   var [isLive, setIsLive] = useState(false);
   var [currentSensors, setCurrentSensors] = useState([]);
+  var [sessionName, setSessionName] = useState('');
 
   return (
     <>
@@ -14,8 +15,12 @@ export default function App() {
       <Sidebar
         isLive={isLive} setIsLive={(next) => setIsLive(next)}
         currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
+        setSessionName={(newState) => setSessionName(newState)}
       />
-      <Main isLive={isLive} currentSensors={currentSensors} />
+      <Main
+        isLive={isLive}
+        currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
+      />
     </>
   );
 }

@@ -3,8 +3,9 @@ import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
 
-export default function NameInput() {
+export default function NameInput(props) {
   let [focus, setFocus] = useState(false);
+  let [input, setInput] = useState('');
 
   const handleKeyPress = (e) => {
       if (e.keyCode === 13) {
@@ -12,17 +13,20 @@ export default function NameInput() {
       }
   }
 
+  const handleBlur = () => {
+      setFocus(false);
+      props.setSessionName(input);
+  }
+
   return(
     <BasicContainer flex>
         <StyledInput 
             type="text" 
             placeholder = "Enter Session Name."
-            onFocus={(e) => {
-                setFocus(true);
-            }}
-            onBlur={(e) => {
-                setFocus(false);
-            }}
+            value={input}
+            onInput={(e) => setInput(e.target.value)}
+            onFocus={(e) => setFocus(true)}
+            onBlur={(e) => handleBlur()}
             onKeyDown={(e) => {handleKeyPress(e)}}
             focus={focus}
         />

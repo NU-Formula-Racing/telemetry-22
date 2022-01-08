@@ -7,6 +7,7 @@ import RowHolder from '../../shared/RowHolder';
 import StyledStatus from '../../shared/StyledStatus';
 
 export default function Topbar(props) {
+
   var display;
   if (props.isLive) {
     display =

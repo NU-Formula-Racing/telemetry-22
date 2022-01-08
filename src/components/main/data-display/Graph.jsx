@@ -74,12 +74,9 @@ export default function Graph() {
         [showTooltip, yScale, xScale],
       );
   return (
-    <Zoom>
-      {(zoom) => (
         <div>
             <svg width={width} height={height} 
-                style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
-                ref={zoom.containerRef}>
+                >
                 <MarkerX
                 id="marker-x"
                 stroke="#333"
@@ -100,7 +97,6 @@ export default function Graph() {
                 <MarkerLine id="marker-line" fill="#333" size={16} strokeWidth={1} />
                 <MarkerArrow id="marker-arrow" fill="#333" refX={2} size={12} />
                 <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />
-                <g transform={zoom.toString()}>
                   {width > 8 &&
                   series.map((lineData, i) => {
                       let markerStart = 'url(#marker-circle)';
@@ -146,7 +142,10 @@ export default function Graph() {
                               onMouseLeave={() => hideTooltip()}
                           />
                           {tooltipData && (
-                          <g>
+                          <Zoom>
+                          {(zoom) => ( 
+                          <g style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
+                          ref={zoom.containerRef}>
                               <Line
                               from={{ x: tooltipLeft, y: height * 0.08 }}
                               to={{ x: tooltipLeft, y: height * 0.9}}
@@ -184,31 +183,33 @@ export default function Graph() {
                                   {`${getY(tooltipData)}`}
                                 </TooltipWithBounds>
                               </div>
+                              {/* <rect
+                                width={width}
+                                height={height}
+                                rx={14}
+                                fill="transparent"
+                                // onTouchStart={zoom.dragStart}
+                                // onTouchMove={zoom.dragMove}
+                                onTouchEnd={zoom.dragEnd}
+                                onMouseDown={zoom.dragStart}
+                                onMouseUp={zoom.dragEnd}
+                                // onMouseMove={zoom.dragMove}
+                                
+                                // onMouseLeave={() => {
+                                //   if (zoom.isDragging) zoom.dragEnd();
+                                // }}
+                                onDoubleClick={(event) => {
+                                  const point = localPoint(event) || { x: 0, y: 0 };
+                                  zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
+                                }}
+                              /> */}
                           </g>
                           )}
-                    <rect
-                      width={width}
-                      height={height}
-                      rx={14}
-                      fill="transparent"
-                      // onTouchStart={zoom.dragStart}
-                      // onTouchMove={zoom.dragMove}
-                      onTouchEnd={zoom.dragEnd}
-                      onMouseDown={zoom.dragStart}
-                      // onMouseMove={zoom.dragMove}
-                      onMouseUp={zoom.dragEnd}
-                      // onMouseLeave={() => {
-                      //   if (zoom.isDragging) zoom.dragEnd();
-                      // }}
-                      onDoubleClick={(event) => {
-                        const point = localPoint(event) || { x: 0, y: 0 };
-                        zoom.scale({ scaleX: 1.1, scaleY: 1.1, point });
-                      }}
-                    />
+                          </Zoom>
+                          )}
                     </Group>
                     );
                 })}
-            </g>
           </svg>
           {tooltipData && (
             <div>
@@ -219,22 +220,7 @@ export default function Graph() {
               >
                 {`${getY(tooltipData)}`}
               </TooltipWithBounds>
-              {/* <Tooltip
-                top={tooltipTop}
-                left={tooltipLeft}
-                style={{
-                  minWidth: 72,
-                  textAlign: 'center',
-                  transform: 'translateX(-50%)',
-                }}
-              >
-                {formatDate(getX(tooltipData))}
-              </Tooltip> */}
             </div>
           )}
         </div>
     )}
-  </Zoom>
-  );
-  
-}

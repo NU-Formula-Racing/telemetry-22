@@ -49,7 +49,7 @@ export default class SensorDropdown extends Component {
                 closeMenuOnSelect={false}
                 placeholder={"Select from " + this.props.selectedGroup + "..."}
                 isMulti={true}
-                options={this.options}
+                options={this.options.filter((element) => (this.props.selectedSensors.every((e) => e.label !== element.label)))}
                 value={this.props.selectedGroup}
                 onChange={(e) => this.addSelected(e)}
                 styles={{

@@ -25,8 +25,8 @@ def list_sensors_by_subteam() -> str:
     >>> LIST_SENSORS_BY_SUBTEAM
     displaying the contents of the JSON with lists of sensors for each subteam.
     """
-    by_subteam = open(os.path.dirname(os.path.realpath(__file__)) + "/sensors_by_subteam.json", 'r').read()
-    return _nice_json(json.loads(by_subteam))
+    return open(os.path.dirname(os.path.realpath(__file__)) + "/sensors_by_subteam.json", 'r').read()
+    # return _nice_json(json.loads(by_subteam))
     
 # Test script
 if __name__ == "__main__":

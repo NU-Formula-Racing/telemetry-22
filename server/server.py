@@ -2,8 +2,9 @@ import socket
 import threading
 import json
 
-client = []
+from response_files.list_sensors_by_subteam import list_sensors_by_subteam
 
+client = []
 
 class ThreadedServer(object):
     def __init__(self, host, port):
@@ -52,16 +53,21 @@ class ThreadedServer(object):
 def responseToMessage(message):
     match message.split():
         case ["LIST_SENSORS_BY_SUBTEAM"]:
-            return {"formula": ["here", "are", "the", "sensors"]}
+            return list_sensors_by_subteam()
         case ["VALS", *sensorIDs]:
+            ## TODO: Cerberus - receiver
             return {sensorID : 420 for sensorID in sensorIDs}
         case ["STATUS"]:
+            ## TODO
             return ":)"
         case ["LIST_HISTORIC_DATAFILES"]:
+            ## Awaiting Cloud API
             return [["name1", 420], ["name2", 69]]
         case ["REQUEST_HISTORIC_DATAFILE_BY_TIME", timestamp]:
+            ## Awaiting Cloud API
             return "no lol"
         case ["REQUEST_HISTORIC_DATAFILE_BY_NAME", name]:
+            ## Awaiting Cloud API
             return "no lol"
         case ["END_SESSION", name]:
             return ":)"

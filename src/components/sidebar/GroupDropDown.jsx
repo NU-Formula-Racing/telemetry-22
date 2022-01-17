@@ -14,7 +14,7 @@ export default function GroupDropDown(props){
             <>Select Sensor Group:</>
             <SmallVerticalSpacer></SmallVerticalSpacer>
             <StyledSelect onChange={handleOption}>
-              {ExampleGroups.map((e, i) => 
+             {ExampleGroups.map((e, i) => 
                 (<StyledOption key={i}>{e.group}</StyledOption>))}
             </StyledSelect>
         </>
@@ -23,11 +23,15 @@ export default function GroupDropDown(props){
 
 // update so that the selector fills the container
 export const StyledSelect = styled.select`
-    width: 200px;
+    width: 220px;
     height: 30px;
+    font-size: 14px;
+    font-family: 'Open Sans';
+    cursor: pointer;
 `;
 export const StyledOption = styled.option`
     font-size: 14px;
+    cursor: pointer;
 `;
 
 export const SmallVerticalSpacer = styled.div`

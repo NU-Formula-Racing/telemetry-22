@@ -5,12 +5,17 @@ let SerialPort = require('serialport'); //.SerialPort
 let xbee_api = require('xbee-api');
 const fs = require('fs');
 const yargs = require('yargs');
+const bufReplace = require('buffer-replace');
 
-const argv = yargs.option('raw', {type: 'boolean'}).argv
+
+const argv = yargs.option('raw', {
+    type: 'boolean'
+}).argv
+
+const sigil = Buffer.from([0x80, 0x01])
 
 const snail = true;
-if (!snail)
-{
+if (!snail) {
     throw "\033[91m !!!!!!! THE SNAIL GOD IS DISPLEASED !!!!!! \033[39m"
 }
 
@@ -27,15 +32,13 @@ var curFileName = 'binout/xbee-raw-' + Date.now().toString() + '.bin'
 // USE LOG IF VERBOSE
 // INSTEAD OF CONSOLE . LOG
 // TO AVOID HEADACHES
-function logIfVerbose(obj)
-{
-    if (!argv.raw)
-    {
+function logIfVerbose(obj) {
+    if (!argv.raw) {
         console.log(obj)
     }
 }
 
-fs.writeFile(curFileName, '', function (err) {
+fs.writeFile(curFileName, '', function(err) {
     if (err) throw err;
     logIfVerbose('XBee raw data file created.');
 });
@@ -50,6 +53,21 @@ let findAndListenToXBee = () => {
     });
 };
 
+function shortToByts(s) {
+    return [(s >> 8) & 0xFF, s & 0xFF]
+}
+
+let timedFramebound = () => {
+
+    var timenow = Date.now() % 0xFFFFFFFF
+
+    var timep1 = timenow >> 16;
+    var timep2 = timenow & 0xFFFF;
+
+    var timeBuf = Buffer.from(shortToBytes(timep1).concat(shortToBytes(timep2)))
+    return Buffer.concat([sigil, timeBuf])
+}
+
 let listenToPortPath = (portPath) => {
 
     var serialport = new SerialPort(portPath, {
@@ -61,16 +79,16 @@ let listenToPortPath = (portPath) => {
     xbeeAPI.builder.pipe(serialport);
 
     serialport.on('data', function(data) {
+        bufReplace(data, sigil, timedFramebound())
 
-        if (argv.raw)
-        {
+        if (argv.raw) {
             process.stdout.write(data.toString())
         }
-    
+
         logIfVerbose(data)
-        fs.appendFile(curFileName, data, function (err) {
+        fs.appendFile(curFileName, data, function(err) {
             if (err) throw err;
-            logIfVerbose('Line added.');
+            //logIfVerbose('Line added.');
         });
     });
 }

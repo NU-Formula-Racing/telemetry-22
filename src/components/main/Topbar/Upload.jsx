@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import styled from "styled-components";
 
 import HorizSpacer from "../../shared/HorizSpacer";
@@ -6,13 +6,20 @@ import HorizSpacer from "../../shared/HorizSpacer";
 import upload from '../../../assets/upload.svg';
 
 export default function ButtonTray() {
+  const [file, setFile] = useState(null)
+
   const uploadRef = useRef(null);
 
+  const handleFiles = (e) => {
+    let f = e.target.files[0];
+    setFile(f);
+  }
+
   return(
-    <UploadHolder onClick={() => {uploadRef.current.click()}}>
-      <input type='file' hidden ref={uploadRef} />
+    <UploadHolder>
+      <input type='file' hidden ref={uploadRef} onChange={(e) => {handleFiles(e)}} />
       <HorizSpacer />
-      <Clickable src={upload} alt='upload' width='25px' height='25px' />
+      <Clickable src={upload} alt='upload' width='25px' height='25px' onClick={() => {uploadRef.current.click()}} />
       <HorizSpacer />
     </UploadHolder>
   );

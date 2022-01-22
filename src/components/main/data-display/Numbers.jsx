@@ -1,11 +1,54 @@
+import { useRef, useEffect, useState, useStateWithCallbackLazy } from 'react';
 import styled from 'styled-components';
 
 import Number from './Number';
 
-
 export default function Numbers(props) {
-  return(
-    <NumberTray className="numbers">
+  const [dndRect, setRect] = useState(0);
+  const [xList, setXList] = useState(null);
+  const dndRef = useRef(null);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (dndRect) {
+      setXList(getXList());
+    }
+    console.log(dndRect);
+    console.log(xList);
+  }, [dndRect, props]);
+
+  const handleResize = () => {
+    if (dndRef.current) {
+      setRect(dndRef.current.getBoundingClientRect());
+    }
+  }
+
+  const getXList = () => {
+    let itemsPerRow = Math.floor(dndRect.width / 240);
+    let spaceSize = (dndRect.width - (itemsPerRow * 240)) / (2 * itemsPerRow);
+    let fullRows = Math.floor(props.sensors.length / itemsPerRow);
+    console.log(fullRows);
+    let extraItems = props.sensors.length % itemsPerRow;
+
+    let tempX = Array(itemsPerRow * fullRows);
+    for (let i = 0; i < itemsPerRow; i++) {
+      let x = (spaceSize + 120) + (i * (240 + (2 * spaceSize)));
+      for (let j = 0; j < fullRows; j++) {
+        tempX[i + (j * itemsPerRow)] = x;
+      }
+    }
+
+    return tempX;
+  }
+
+  return (
+    <NumberTray className="numbers" ref={dndRef}>
       {props.sensors.map((e, index) => {
         let val = Math.random();
         return (

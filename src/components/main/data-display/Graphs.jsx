@@ -9,7 +9,7 @@ export default function Graphs(props) {
           <div key={index}>
             {index !== 0 && <VertSpacer />}
             <div>{e.label}</div>
-            <Graph width={props.width} rerender={() => {props.rerender()}}/>
+            <Graph width={props.width} k={index} rerender={() => {props.rerender()}}/>
           </div>
         );
       })}

@@ -53,22 +53,39 @@ let yScaleInit = scaleLinear({
 
 export default function Graph(props) {
     const curveType = 'curveLinear'
-    const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit});
+    const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:n-1});
     
     function updateData(gd) {
         t++;
+        gd.start++;
+        gd.end++;
         var obj = {
             time: t,
             value: Math.floor(Math.random() * 100)
         };
         gd.lineData.push(obj); // push new data into data set
-        gd.xScale.domain([max(gd.lineData, getX) - n + 1, max(gd.lineData, getX)]); // update scales
-        gd.yScale.domain([0, max(gd.lineData, getY)]);
+        gd.xScale.domain([getX(gd.lineData[gd.start]), getX(gd.lineData[gd.end])]); // update scales
+        gd.yScale.domain([0, max(gd.lineData.slice(gd.start, gd.end), getY)]);
         // console.log(gd)
-        setGD(gd)
         props.rerender();
-        console.log(graphData)
+        console.log(gd.lineData)
+        console.log(props.k)
     }
+
+    function zoom(gd, dir){
+        if (dir == "in"){
+            if (gd.start < max(gd.lineData, getX)) {gd.start++};
+            gd.end--;
+        } else if (dir == "out"){
+            if (gd.start >= 0) {gd.start--}
+            if (gd.end < max(gd.lineData, getX)){ gd.end++} 
+        }
+    }
+
+    function scroll(gd, dir){
+
+    }
+
 
     useEffect(()=> {
         console.log(graphData)
@@ -106,12 +123,12 @@ export default function Graph(props) {
     //   );
   return (
         <div>
-            <button onClick={() => updateData(graphData)}>this is so janky im so sorry</button>
+            <button onClick={() => updateData(graphData)}>update</button>
             <svg width={width} height={height}>
                 <MarkerCircle id="marker-circle" fill="#333" size={2} refX={2} />
                 <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />
                 <Group left={graph_offset*2}>
-                    {graphData.lineData.map((d, j) => (
+                    {graphData.lineData.slice(graphData.start, graphData.end).map((d, j) => (
                         <circle
                         key={j}
                         r={3}
@@ -125,7 +142,7 @@ export default function Graph(props) {
                     <AxisLeft left={0} scale={graphData.yScale} />
                     <LinePath
                     curve={allCurves[curveType]}
-                    data={graphData.lineData}
+                    data={graphData.lineData.slice(graphData.start, graphData.end)}
                     x={(d) => graphData.xScale(getX(d)) ?? 0}
                     y={(d) => graphData.yScale(getY(d)) ?? 0}
                     stroke="#333"

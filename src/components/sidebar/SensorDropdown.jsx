@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
 import styled from "styled-components";
+import SensorButton from './SensorButton';
 
 export default class SensorDropdown extends Component {
     constructor(props){
@@ -35,7 +36,10 @@ export default class SensorDropdown extends Component {
         }
     }
 
-    
+    clearSelected(e){
+      this.props.setCurrentSensors([])
+    }
+
     removeSelected(e){
         let previous = this.props.selectedSensors
         this.props.setCurrentSensors(previous.filter((element) => element.label !== e.target.value))
@@ -56,17 +60,18 @@ export default class SensorDropdown extends Component {
                     multiValueLabel: (base) => ({
                       ...base,
                       width:'100px',
-                      //height:'50px',
                       'font-size':'16px'
                     }),
                   }}
                 />
                 <SmallVertSpace/>
-                {this.props.selectedSensors.map((e) => (<StyledButton onClick={e => this.removeSelected(e)}
-                                                                      value={e.label}
-                                                                      key={e.label}>
-                                                          {e.label}
-                                                        </StyledButton>))}
+                {this.props.selectedSensors.length !== 0 &&  <StyledButton onClick={e => this.clearSelected()}>Clear All</StyledButton>}
+                {this.props.selectedSensors.map((e) => 
+                (<SensorButton 
+                  onClick={this.removeSelected} 
+                  label={e.label} 
+                  selectedSensors={this.props.selectedSensors} 
+                  setCurrentSensors={this.props.setCurrentSensors}/>))}
             </>
 
 
@@ -74,6 +79,7 @@ export default class SensorDropdown extends Component {
         )
     }
 }
+
 
 //{this.selected.map((x) => (<p>{x.label}</p>))}
 let ExampleSensorsByGroups = [
@@ -85,12 +91,16 @@ let ExampleSensorsByGroups = [
   ];
 
 
-
 let StyledButton = styled.button`
-  width: 200px;
-  height: 40px;
-  font-size: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  cursor: pointer;
+  border: 0px;
+  background-color: white;
 `
 let SmallVertSpace = styled.div`
-  height: 20px;
+  height: 10px;
 `

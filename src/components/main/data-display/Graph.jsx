@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useCallback, useState } from 'react'
+import React, { useContext, useMemo, useCallback, useState, useEffect } from 'react'
 import { extent, max, bisector } from 'd3-array';
 import generateDateValue, { DateValue } from '@visx/mock-data/lib/generators/genDateValue';
 import { MarkerArrow, MarkerCross, MarkerX, MarkerCircle, MarkerLine } from '@visx/marker';
@@ -64,8 +64,14 @@ export default function Graph() {
         gd.lineData.push(obj); // push new data into data set
         gd.xScale.domain([max(gd.lineData, getX) - n + 1, max(gd.lineData, getX)]); // update scales
         gd.yScale.domain([0, max(gd.lineData, getY)]);
-        return gd
+        // console.log(gd)
+        setGD(gd)
+        console.log(graphData)
     }
+
+    useEffect(()=> {
+        console.log(graphData)
+    }, [graphData])
     // // update scale output ranges
     // xScale.range([0, width - 3*graph_offset]);
     // yScale.range([height * 0.9, height * 0.1]);
@@ -99,7 +105,7 @@ export default function Graph() {
     //   );
   return (
         <div>
-            <button onClick={() => setGD(updateData(graphData))}>this is so janky im so sorry</button>
+            <button onClick={() => updateData(graphData)}>this is so janky im so sorry</button>
             <svg width={width} height={height}>
                 <MarkerCircle id="marker-circle" fill="#333" size={2} refX={2} />
                 <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />

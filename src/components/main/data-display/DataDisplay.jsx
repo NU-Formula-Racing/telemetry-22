@@ -30,6 +30,7 @@ export default class DataDisplay extends Component {
               sensors={this.props.sensors}
               setCurrentSensors={(newState) => this.props.setCurrentSensors(newState)}
               width={this.containerRef ? this.containerRef.clientWidth - 16 : 0}
+              rerender={() => {this.setState({ whatthefuck: true })}}
             />
           : <Numbers
               viewState={this.props.viewState}
@@ -64,6 +65,7 @@ export default class DataDisplay extends Component {
                 sensors={this.props.sensors}
                 setCurrentSensors={(newState) => this.props.setCurrentSensors(newState)}
                 width={this.containerRef ? this.containerRef.clientWidth - 16 : 0}
+                rerender={() => {this.setState({ whatthefuck: true })}}
               />
             : <Numbers
                 viewState={this.props.viewState}

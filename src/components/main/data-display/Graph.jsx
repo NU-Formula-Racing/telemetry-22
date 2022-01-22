@@ -66,6 +66,7 @@ export default function Graph(props) {
         gd.yScale.domain([0, max(gd.lineData, getY)]);
         // console.log(gd)
         setGD(gd)
+        props.rerender();
         console.log(graphData)
     }
 

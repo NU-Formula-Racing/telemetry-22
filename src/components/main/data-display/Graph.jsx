@@ -51,7 +51,7 @@ let yScaleInit = scaleLinear({
     range: [height * 0.9, height * 0.1]
 });
 
-export default function Graph() {
+export default function Graph(props) {
     const curveType = 'curveLinear'
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit});
     
@@ -66,6 +66,7 @@ export default function Graph() {
         gd.yScale.domain([0, max(gd.lineData, getY)]);
         // console.log(gd)
         setGD(gd)
+        props.rerender();
         console.log(graphData)
     }
 

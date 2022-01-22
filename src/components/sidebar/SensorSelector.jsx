@@ -1,17 +1,29 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
 import VertSpacer from '../shared/VertSpacer';
+import SensorDropdown from './SensorDropdown';
+import GroupDropDown from './GroupDropDown';
 
-export default function SensorSelector() {
+export default function SensorSelector(props) {
+  let [selectedGroup, setSelectedGroup] = useState('Safety Sensors');
+
   return(
     <SelectorContainer>
       <BasicContainer>
-        <div>** DROPDOWN PLACEHOLDER **</div>
+        <GroupDropDown 
+        selectedGroup={selectedGroup}
+        setSelectedGroup={(newState) => setSelectedGroup(newState)}
+        />
       </BasicContainer>
       <VertSpacer />
       <BasicContainer expand>
-        <div>** SENSORS PLACEHOLDER **</div>
+        <SensorDropdown 
+        selectedGroup={selectedGroup}
+        selectedSensors={props.currentSensors}
+        setCurrentSensors={(newState) => props.setCurrentSensors(newState)}
+        />
       </BasicContainer>
     </SelectorContainer>
   );
@@ -24,3 +36,5 @@ const SelectorContainer = styled.div`
   flex-direction: column;
   align-items: center;
 `;
+
+

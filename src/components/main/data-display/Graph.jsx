@@ -64,26 +64,50 @@ export default function Graph(props) {
             value: Math.floor(Math.random() * 100)
         };
         gd.lineData.push(obj); // push new data into data set
-        gd.xScale.domain([getX(gd.lineData[gd.start]), getX(gd.lineData[gd.end])]); // update scales
-        gd.yScale.domain([0, max(gd.lineData.slice(gd.start, gd.end), getY)]);
+        gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
+        gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);
         // console.log(gd)
         props.rerender();
-        console.log(gd.lineData)
-        console.log(props.k)
+        // console.log(gd.lineData)
+        // console.log(props.k)
     }
 
-    function zoom(gd, dir){
+    function zoom(e){
+        let gd = graphData;
+        let dir;
+        console.log(e);
+        (e.deltaY < 0) ? dir = "up" : dir = "down"
         if (dir == "in"){
             if (gd.start < max(gd.lineData, getX)) {gd.start++};
-            gd.end--;
+            if (gd.end > 0) {gd.end--};
         } else if (dir == "out"){
-            if (gd.start >= 0) {gd.start--}
+            if (gd.start > 0) {gd.start--}
             if (gd.end < max(gd.lineData, getX)){ gd.end++} 
         }
+        gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
+        gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);
+        props.rerender();
     }
 
-    function scroll(gd, dir){
-
+    function scroll(e){
+        let gd = graphData
+        let dir;
+        let scroll_amt = 0.2;
+        (e.deltaX < 0) ? dir = "right" : dir = "left"
+        if (dir == "right"){
+            if (gd.end < max(gd.lineData, getX) - scroll_amt) {
+                gd.start+= scroll_amt
+                gd.end+= scroll_amt
+            };
+        } else if (dir == "left"){
+            if (gd.start > scroll_amt) {
+                gd.start-= scroll_amt
+                gd.end-= scroll_amt
+            }
+        }
+        gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
+        gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);
+        props.rerender();
     }
 
 
@@ -124,11 +148,15 @@ export default function Graph(props) {
   return (
         <div>
             <button onClick={() => updateData(graphData)}>update</button>
-            <svg width={width} height={height}>
+            <button onClick={() => zoom(graphData, "in")}>zoom in </button>
+            <button onClick={() => zoom(graphData, "out")}>zoom out </button>
+            <button onClick={() => scroll(graphData, "left")}>scroll left </button>
+            <button onClick={() => scroll(graphData, "right")}>scroll right </button>
+            <svg width={width} height={height} onWheel={(e) => {scroll(e); zoom(e)}}>
                 <MarkerCircle id="marker-circle" fill="#333" size={2} refX={2} />
                 <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />
                 <Group left={graph_offset*2}>
-                    {graphData.lineData.slice(graphData.start, graphData.end).map((d, j) => (
+                    {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (
                         <circle
                         key={j}
                         r={3}
@@ -142,7 +170,7 @@ export default function Graph(props) {
                     <AxisLeft left={0} scale={graphData.yScale} />
                     <LinePath
                     curve={allCurves[curveType]}
-                    data={graphData.lineData.slice(graphData.start, graphData.end)}
+                    data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end))}
                     x={(d) => graphData.xScale(getX(d)) ?? 0}
                     y={(d) => graphData.yScale(getY(d)) ?? 0}
                     stroke="#333"

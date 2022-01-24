@@ -20,8 +20,11 @@ export default function Numbers(props) {
       setXList(getXList());
     }
     console.log(dndRect);
-    console.log(xList);
   }, [dndRect, props]);
+
+  useEffect(() => {
+    console.log(xList);
+  }, [xList]);
 
   const handleResize = () => {
     if (dndRef.current) {
@@ -34,25 +37,37 @@ export default function Numbers(props) {
     let spaceSize = (dndRect.width - (itemsPerRow * 240)) / (2 * itemsPerRow);
     let fullRows = Math.floor(props.sensors.length / itemsPerRow);
     console.log(fullRows);
-    let extraItems = props.sensors.length % itemsPerRow;
 
-    let tempX = Array(itemsPerRow * fullRows);
+    let extraItems = props.sensors.length % itemsPerRow;
+    let extraSize = (dndRect.width - (extraItems * 240)) / (2 * extraItems);
+
+    let tempX = Array((itemsPerRow * fullRows) + extraItems);
     for (let i = 0; i < itemsPerRow; i++) {
-      let x = (spaceSize + 120) + (i * (240 + (2 * spaceSize)));
+      let x = dndRect.x +  (spaceSize + 120) + (i * (240 + (2 * spaceSize)));
       for (let j = 0; j < fullRows; j++) {
         tempX[i + (j * itemsPerRow)] = x;
       }
+    }
+
+    for (let i = 0; i < extraItems; i++) {
+      let x = dndRect.x + (extraSize + 120) + (i * (240 + (2 * extraSize)));
+      tempX[(itemsPerRow * fullRows) + i] = x;
     }
 
     return tempX;
   }
 
   return (
-    <NumberTray className="numbers" ref={dndRef}>
+    <NumberTray
+      className="numbers"
+      ref={dndRef}
+    >
       {props.sensors.map((e, index) => {
         let val = Math.random();
         return (
           <Number
+            trayX={0}
+            trayY={dndRect.y}
             value={val*30}
             percentage={val}
             unit={'m/s'}
@@ -76,4 +91,5 @@ const NumberTray = styled.div`
   > * {
     margin-top: 12px;
   }
+  background: red;
 `;

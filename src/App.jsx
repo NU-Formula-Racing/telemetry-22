@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
@@ -8,6 +8,26 @@ export default function App() {
   var [isLive, setIsLive] = useState(false);
   var [currentSensors, setCurrentSensors] = useState([]);
   var [sessionName, setSessionName] = useState('');
+  var [mouseIsDown, setMouseIsDown] = useState(false);
+
+  useEffect(() => {
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+  });
+
+  const handleMouseDown = (e) => {
+    if (!mouseIsDown) {
+      console.log(e.clientX);
+      setMouseIsDown(true);
+    }
+  }
+
+  const handleMouseUp = (e) => {
+    if (mouseIsDown) {
+      console.log(e.clientX);
+      setMouseIsDown(false);
+    }
+  }
 
   return (
     <>

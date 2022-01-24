@@ -32,7 +32,7 @@ def read_file(self):
                 return "SESSION ENDED"
             try:
                 new_entry = json.loads(lr_file.readline()) # Reads next line and converts to Python dict
-                #print(new_entry, type(new_entry)) # Prints convents of JSON object + type in Python (should be dict)
+                print(new_entry, type(new_entry)) # Prints convents of JSON object + type in Python (should be dict)
                 #json_list.append(new_entry) # Adds dict to list
                 self.data.append(new_entry)
             except:

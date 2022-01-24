@@ -11,7 +11,7 @@ class ThreadedServer(object):
     def __init__(self, host, port):
         self.host = host
         self.port = port
-        self.data = {}
+        self.data = []
         self.session = False
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -68,7 +68,7 @@ class ThreadedServer(object):
                 print(self.data)
                 ## TODO: Cerberus - receiver ---- Cerberus - parser?
                 if self.session:
-                    return  #{str(sensorID) : self.data[str(sensorID)] for sensorID in list(sensorIDs)}
+                    return  {sensorID : self.data[-1][sensorID] for sensorID in sensorIDs}
                 else:
                     return "SESSION NOT STARTED"
                 
@@ -92,6 +92,7 @@ class ThreadedServer(object):
                 ## TODO: Enables connection to receiver/parser, starts test_start
                 if not self.session:
                     self.session = True
+                    self.live_index = 0
                     test_start.start_session(self)
                     return "SESSION STARTED"
                 else:

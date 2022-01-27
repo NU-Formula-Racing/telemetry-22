@@ -131,4 +131,4 @@ node_modules
 binout/
 .DS_Store
 package-lock.json
-../.DS_Store
+a.out

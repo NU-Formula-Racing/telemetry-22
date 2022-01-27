@@ -17,13 +17,13 @@ while (true)
 var timenow = Date.now() % 0xFFFFFFFF // Date.now()
 
 var timep1 = timenow >> 16;
-var timep2 = timenow & 0xFFFF
+var timep2 = timenow & 0xFFFF;
 //console.log(timep2)
-var timeBuf = Buffer.from([timep1, timep2])
+//var timeBuf = Buffer.from([timep1, timep2])
 var timeBuf = Buffer.from(shortToBytes(timep1).concat(shortToBytes(timep2)))
 
-console.log(timeBuf)
-console.log(timenow)
+//console.log(timeBuf)
+//console.log(timenow)
 
 newFramebound = Buffer.concat([sigil, timeBuf])
 

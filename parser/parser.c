@@ -24,7 +24,8 @@ int readAndShift(byte *bytes, FILE *f);
 void printBuffer(twoBytes *buff);
 
 int main() {
-  FILE *f = fopen("../receiver/binout/xbee-raw-PARSETEST-TIMESTAMPS.bin", "rb");
+  FILE *f =
+      fopen("../receiver/binout/xbee-timespliced-1643250638289.bin", "rb");
 
   twoBytes *curBytes = (twoBytes *)malloc(sizeof(twoBytes));
   byte *hByte = (byte *)curBytes;
@@ -82,7 +83,7 @@ int readAndShift(byte *bytes, FILE *f) {
 // for 420.0 69.0
 void printBuffer(twoBytes *buff) {
   printf("{");
-  printf("'TIME': %d, ", (buff[0] << 16) | (buff[1] & 0xffff));
+  printf("'TIME': %u, ", (buff[0] << 16) | (buff[1] & 0xffff));
   // then continue
   for (int idx = 2; idx < NUM_SENSORS; idx++) {
     printf("'%s': %d.%d, ", SENSOR_NAMES[idx], buff[idx] / 10, buff[idx] % 10);

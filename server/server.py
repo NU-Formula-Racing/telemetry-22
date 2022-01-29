@@ -1,8 +1,6 @@
-from hashlib import new
 import socket
 import threading
 import json
-from time import time
 
 from response_files.list_sensors_by_subteam import list_sensors_by_subteam
 import test_start

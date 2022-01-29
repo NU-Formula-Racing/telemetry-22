@@ -23,9 +23,14 @@ int NUM_SENSORS = (sizeof(SENSOR_NAMES) / sizeof(char *));
 int readAndShift(byte *bytes, FILE *f);
 void printBuffer(twoBytes *buff);
 
-int main() {
-  FILE *f =
-      fopen("../receiver/binout/xbee-timespliced-1643250638289.bin", "rb");
+int main(int argc, char **argv) {
+
+  FILE *f;
+  if (argc > 1) {
+    f = fopen(argv[1], "rb");
+  } else {
+    f = stdin;
+  }
 
   twoBytes *curBytes = (twoBytes *)malloc(sizeof(twoBytes));
   byte *hByte = (byte *)curBytes;

@@ -8,6 +8,10 @@
 
 
 The server must accept the following commands:
+
+- `SWITCH_SOURCE source`
+where `source` is either `cloud` or `local`.
+
 - `LIST_SENSORS_BY_SUBTEAM` 
 The server shall return the following (exhaustive) JSON:
 ```

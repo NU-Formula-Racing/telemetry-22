@@ -1,9 +1,12 @@
+from hashlib import new
 import socket
 import threading
 import json
+from time import time
 
 from response_files.list_sensors_by_subteam import list_sensors_by_subteam
 import test_start
+import historic
 
 client = []
 
@@ -13,6 +16,7 @@ class ThreadedServer(object):
         self.port = port
         self.data = []
         self.session = False
+        self.cloud = None
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
@@ -75,17 +79,45 @@ class ThreadedServer(object):
             case ["STATUS"]:
                 ## TODO
                 return ":)"
+            case ["SWITCH_SOURCE", newstate]:
+                if historic.set_state(self, newstate):
+                    return ":)"
+                else:
+                    return ":("
+
             case ["LIST_HISTORIC_DATAFILES"]:
-                ## Awaiting Cloud API
+                if self.cloud:
+                    ## Awaiting Cloud API
+                    return ":("
+                else:
+                    path = "" # GET THE PATH SOMEHOW
+                    files = historic.list_data_files(path)
+                    if files:
+                        return files
+                    else:
+                        return ":("
                 return [["name1", 420], ["name2", 69]]
+
             case ["REQUEST_HISTORIC_DATAFILE_BY_TIME", timestamp]:
-                ## Awaiting Cloud API
-                return "no lol"
+                if self.cloud:
+                    ## Awaiting Cloud API
+                    return ":("
+                else:
+                    path = "" # GET THE PATH SOMEHOW
+                    files = historic.find_files_by_dt(path, timestamp)
+                    if files:
+                        if len(files) > 0:
+                            return files
+                        else:
+                            return "FILE NOT FOUND"
+                    else:
+                        return ":("
+
             case ["REQUEST_HISTORIC_DATAFILE_BY_NAME", name]:
                 ## Awaiting Cloud API
                 return "no lol"
             case ["END_SESSION", name]:
-                ## TODO
+                ## TODO NAME DATA FILE
                 self.session = False
                 return ":)"
             case ["BEGIN_SESSION"]:

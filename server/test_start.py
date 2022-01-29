@@ -6,8 +6,8 @@ import live_read_test as lrt
 
 
 def start_session(self):
-    #parent,child = mp.pipe()
-    p = t.Thread(target=read_file, args=(self,)).start()
+    p = t.Thread(target=read_file, args=(self,)).start() #READING TEST DATA FILE IN JSON FORMAT
+    # TODO: start live parsing
 
 
 def read_file(self):

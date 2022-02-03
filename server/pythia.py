@@ -1,21 +1,28 @@
 import socket
 import threading
 import json
-
-from response_files.list_sensors_by_subteam import list_sensors_by_subteam
+import cerberus
+import metatron
 
 client = []
 
+
 class ThreadedServer(object):
+
     def __init__(self, host, port):
         self.host = host
         self.port = port
+        self.data = []
+        self.session = False
+        self.cloud = None
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
+        self.watcher = cerberus.ThreadedWatcher()
+        self.watcher.startWatching()
 
     def listen(self):
-        self.sock.listen(5)
+        self.sock.listen(420)
         while True:
             client, address = self.sock.accept()
             client.settimeout(600)
@@ -37,45 +44,14 @@ class ThreadedServer(object):
             if not message:
                 client.close()
                 return
-            
-            pyObjResp = responseToMessage(message)
+
+            pyObjResp = metatron.responseToMessage(message, self.watcher)
             if pyObjResp:
                 sendJson(client, pyObjResp)
             else:
                 sendJson(client, ":(")
 
 
-# === END ThreadedServer ===
-
-# MOVE THIS SOMEWHERE ELSE
-# (BECAUSE IT DOES NOT FIT HERE)
-# IF YOU USE THIS CODE
-def responseToMessage(message):
-    match message.split():
-        case ["LIST_SENSORS_BY_SUBTEAM"]:
-            return list_sensors_by_subteam()
-        case ["VALS", *sensorIDs]:
-            ## TODO: Cerberus - receiver
-            return {sensorID : 420 for sensorID in sensorIDs}
-        case ["STATUS"]:
-            ## TODO
-            return ":)"
-        case ["LIST_HISTORIC_DATAFILES"]:
-            ## Awaiting Cloud API
-            return [["name1", 420], ["name2", 69]]
-        case ["REQUEST_HISTORIC_DATAFILE_BY_TIME", timestamp]:
-            ## Awaiting Cloud API
-            return "no lol"
-        case ["REQUEST_HISTORIC_DATAFILE_BY_NAME", name]:
-            ## Awaiting Cloud API
-            return "no lol"
-        case ["END_SESSION", name]:
-            return ":)"
-        case ["BEGIN_SESSION"]:
-            return ":)"
-        case _:
-            return None
-            
 def getMessage(client):
     raw = client.recv(1024)
     if raw == b'':
@@ -83,11 +59,14 @@ def getMessage(client):
     else:
         return raw.decode("utf-8").rstrip()
 
+
 def sendASCII(client, message):
     client.send(bytes(message + "\n", 'ascii'))
 
+
 def sendJson(client, message):
     sendASCII(client, json.dumps(message))
+
 
 def runServer():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

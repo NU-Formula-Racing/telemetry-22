@@ -8,7 +8,6 @@ typedef uint16_t twoBytes;
 enum PARSE_STATE { IN_FRAME, LOOKING_FOR_FRAME };
 
 const char *SENSOR_NAMES[] = {
-    // TODO parser rebuilds short
     "TIME_FIRST", "TIME_SECOND", "FL_VSS",     "FR_VSS",     "BL_VSS",
     "BR_VSS",     "FL_SUS_POT",  "FR_SUS_POT", "BL_SUS_POT", "BR_SUS_POT",
     "FL_BRK_TMP", "FR_BRK_TMP",  "BL_BRK_TMP", "BR_BRK_TMP", "F_BRK_PRES",
@@ -83,10 +82,11 @@ int readAndShift(byte *bytes, FILE *f) {
 // for 420.0 69.0
 void printBuffer(twoBytes *buff) {
   printf("{");
-  printf("'TIME': %u, ", (buff[0] << 16) | (buff[1] & 0xffff));
+  printf("\"TIME\": %u", (buff[0] << 16) | (buff[1] & 0xffff));
   // then continue
   for (int idx = 2; idx < NUM_SENSORS; idx++) {
-    printf("'%s': %d.%d, ", SENSOR_NAMES[idx], buff[idx] / 10, buff[idx] % 10);
+    printf(", \"%s\": %d.%d", SENSOR_NAMES[idx], buff[idx] / 10,
+           buff[idx] % 10);
   }
   printf("}\n");
 }

@@ -1,16 +1,19 @@
-import React, { useContext, useMemo, useCallback, useState, useEffect } from 'react'
+import React, { useContext, useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { extent, max, bisector } from 'd3-array';
-import generateDateValue, { DateValue } from '@visx/mock-data/lib/generators/genDateValue';
 import { MarkerArrow, MarkerCross, MarkerX, MarkerCircle, MarkerLine } from '@visx/marker';
 import { useTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { Group } from '@visx/group';
-import { LinePath, Bar, Line, stackOffset } from '@visx/shape';
+import { LinePath, Bar, Line, stackOffset, AreaClosed } from '@visx/shape';
 import * as allCurves from '@visx/curve';
 import { scaleTime, scaleLinear } from '@visx/scale';
 import { AxisLeft, AxisBottom } from '@visx/axis';
-import { timeFormat } from 'd3-time-format';
-import { Zoom } from '@visx/zoom';
+import styled from "styled-components";
+import scrollleft from '../../../assets/scrollleft.svg';
+import scrollright from '../../../assets/scrollright.svg';
+import zoomin from '../../../assets/zoomin.svg';
+import zoomout from '../../../assets/zoomout.svg';
+import { GridRows, GridColumns } from '@visx/grid';
 
 let t = -1; // init time
 const n = 30; // amount of seconds to show
@@ -38,7 +41,7 @@ const getX = (d) => d.time;
 const getY = (d) => d.value;
 
 
-const graph_offset = 25
+const graph_offset = 30
 
 // scales
 let xScaleInit = scaleLinear({
@@ -48,13 +51,24 @@ let xScaleInit = scaleLinear({
 
 let yScaleInit = scaleLinear({
     domain: [0, max(initData, getY)],
-    range: [height * 0.9, height * 0.1]
+    range: [height * 0.85, height * 0.1]
 });
 
 export default function Graph(props) {
     const curveType = 'curveLinear'
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:n-1});
-    
+    const wheelTimeout = useRef()
+
+    function updateScales(gd){
+        gd.xScale = scaleLinear({
+            domain: [getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])],
+            range: [0, width - 3*graph_offset]
+        });
+        gd.yScale = scaleLinear({
+            domain: [0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)],
+            range: [height * 0.85, height * 0.1]
+        })
+    }
     function updateData(gd) {
         t++;
         gd.start++;
@@ -64,56 +78,78 @@ export default function Graph(props) {
             value: Math.floor(Math.random() * 100)
         };
         gd.lineData.push(obj); // push new data into data set
-        gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
-        gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);
-        // console.log(gd)
+        // gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
+        // gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);
+        updateScales(gd);
         props.rerender();
-        // console.log(gd.lineData)
-        // console.log(props.k)
     }
 
-    function zoom(e){
+    function handleMouseScroll(e){
         let gd = graphData;
         let dir;
-        console.log(e);
-        (e.deltaY < 0) ? dir = "up" : dir = "down"
-        if (dir == "in"){
-            if (gd.start < max(gd.lineData, getX)) {gd.start++};
-            if (gd.end > 0) {gd.end--};
-        } else if (dir == "out"){
-            if (gd.start > 0) {gd.start--}
-            if (gd.end < max(gd.lineData, getX)){ gd.end++} 
+        let scroll_amt = 0.2;
+        let zoom_amt = 0.2;
+        
+        // while wheel is moving, do not release the lock
+        clearTimeout(wheelTimeout.current)
+
+        // flag indicating to lock page scrolling (setTimeout returns a number)
+        wheelTimeout.current = setTimeout(() => {
+        wheelTimeout.current = false
+        }, 300)
+
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 1){
+            (e.deltaX < 0) ? dir = "right" : dir = "left"
+            scroll(gd, dir, scroll_amt)
+        } else {
+            (e.deltaY < 0) ? dir = "in" : dir = "out"
+            zoom(gd, dir, zoom_amt)
         }
-        gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
-        gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);
+    }
+
+    function zoom(gd, dir, amt){
+        if (dir == "in"){
+            if (gd.start < max(gd.lineData, getX)) {
+                gd.start+= amt
+            };
+        } else if (dir == "out"){
+            if (gd.start > amt) {
+                gd.start-= amt
+            } 
+        }
+        updateScales(gd);
         props.rerender();
     }
 
-    function scroll(e){
-        let gd = graphData
-        let dir;
-        let scroll_amt = 0.2;
-        (e.deltaX < 0) ? dir = "right" : dir = "left"
+    function scroll(gd, dir, amt){
         if (dir == "right"){
-            if (gd.end < max(gd.lineData, getX) - scroll_amt) {
-                gd.start+= scroll_amt
-                gd.end+= scroll_amt
+            if (gd.end < max(gd.lineData, getX) - amt) {
+                gd.start+= amt
+                gd.end+= amt
             };
         } else if (dir == "left"){
-            if (gd.start > scroll_amt) {
-                gd.start-= scroll_amt
-                gd.end-= scroll_amt
+            if (gd.start > amt) {
+                gd.start-= amt
+                gd.end-= amt
             }
         }
-        gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
-        gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);
+        updateScales(gd);
         props.rerender();
     }
 
+    function checkKey(e) {
+        if (e.keyCode == '38') { zoom(graphData, "in", 1) // up arrow 
+        } else if (e.keyCode == '40') { zoom(graphData, "out", 1) // down arrow
+        } else if (e.keyCode == '37') { scroll(graphData, "left", 1) // left arrow 
+        } else if (e.keyCode == '39') { scroll(graphData, "right", 1) // right arrow
+        }
+    }
 
-    useEffect(()=> {
-        console.log(graphData)
-    }, [graphData])
+    useEffect(() => {
+        const cancelWheel = e => wheelTimeout.current && e.preventDefault()
+        document.body.addEventListener('wheel', cancelWheel, {passive:false})
+        return () => document.body.removeEventListener('wheel', cancelWheel)
+    }, [])
     // // update scale output ranges
     // xScale.range([0, width - 3*graph_offset]);
     // yScale.range([height * 0.9, height * 0.1]);
@@ -146,40 +182,55 @@ export default function Graph(props) {
     //     [showTooltip, yScale, xScale],
     //   );
   return (
-        <div>
-            <button onClick={() => updateData(graphData)}>update</button>
-            <button onClick={() => zoom(graphData, "in")}>zoom in </button>
-            <button onClick={() => zoom(graphData, "out")}>zoom out </button>
-            <button onClick={() => scroll(graphData, "left")}>scroll left </button>
-            <button onClick={() => scroll(graphData, "right")}>scroll right </button>
-            <svg width={width} height={height} onWheel={(e) => {scroll(e); zoom(e)}}>
-                <MarkerCircle id="marker-circle" fill="#333" size={2} refX={2} />
-                <rect width={width} height={height} fill="#efefef" rx={14} ry={14} />
+        <GraphContainer onKeyDown={(e) => checkKey(e)}>
+            <button onClick={() => updateData(graphData)}>update</button> <br/>
+            <ButtonTray width={width}>
+                <div>
+                <Clickable src={scrollleft} alt='scroll left' width='25px' height='25px' onClick={() => {scroll(graphData, "left", 1)}} />
+                <Clickable src={scrollright} alt='scroll right' width='25px' height='25px' onClick={() => {scroll(graphData, "right", 1)}} />
+                </div>
+                <Clickable src={zoomin} alt='zoom in' width='25px' height='25px' onClick={() => {zoom(graphData, "in", 1)}} />
+                <Clickable src={zoomout} alt='zoom out' width='25px' height='25px' onClick={() => {zoom(graphData, "out", 1)}} />
+            </ButtonTray>
+            <SVGContainer width={width}>
+            <svg width={width} height={height} onWheel={(e) => handleMouseScroll(e)}>
+                <MarkerCircle id="marker-circle" fill="#5048E5" size={1} refX={2} />
+                <rect width={width} height={height } fill="#fff" rx={14} ry={14} />
                 <Group left={graph_offset*2}>
+                <GridRows scale={graphData.yScale} width={width - graph_offset*3} stroke="#e0e0e0"/>
+                    <GridColumns scale={graphData.xScale} height={height-60} stroke="#e0e0e0" top={30}/>
+                    <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"bottom axis label"}/>
+                    <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={"left axis label"}/>
                     {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (
                         <circle
                         key={j}
-                        r={3}
+                        r={2}
                         cx={graphData.xScale(getX(d))}
                         cy={graphData.yScale(getY(d))}
-                        stroke="rgba(33,33,33,0.5)"
+                        stroke="#5048E5"
                         />
                     ))}
                     {/* <rect width={width} height={height} fill="#efefef" rx={14} ry={14} /> */}
-                    <AxisBottom left={0} top={height-30} scale={graphData.xScale} />
-                    <AxisLeft left={0} scale={graphData.yScale} />
                     <LinePath
                     curve={allCurves[curveType]}
                     data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end))}
                     x={(d) => graphData.xScale(getX(d)) ?? 0}
                     y={(d) => graphData.yScale(getY(d)) ?? 0}
-                    stroke="#333"
-                    strokeWidth={1}
+                    stroke="#5048E5"
+                    strokeWidth={2}
                     strokeOpacity={1}
                     shapeRendering="geometricPrecision"
                     markerMid="url(#marker-circle)"
                     markerStart="url(#marker-circle)"
                     markerEnd="url(#marker-circle)"
+                    />
+                    <AreaClosed
+                        fill="#5048E515"
+                        curve={allCurves[curveType]}
+                        data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end))}
+                        x={(d) => graphData.xScale(getX(d)) ?? 0}
+                        y={(d) => graphData.yScale(getY(d)) ?? 0}
+                        yScale={graphData.yScale}
                     />
                     <Bar
                         x={0}
@@ -242,6 +293,7 @@ export default function Graph(props) {
                 </Group>
                     );
           </svg>
+          </SVGContainer>
           {/* {tooltipData && (
             <div>
               <TooltipWithBounds
@@ -253,5 +305,28 @@ export default function Graph(props) {
               </TooltipWithBounds>
             </div>
           )} */}
-        </div>
+        </GraphContainer>
     )}
+
+const Clickable = styled.img`
+  cursor: pointer;
+`;
+
+const ButtonTray = styled.div`
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  position: absolute;
+  top: 30px;
+  left: ${props=> props.width - 60}px ;
+`
+
+const GraphContainer = styled.div`
+  position: relative;
+`;
+
+const SVGContainer = styled.div`
+  border-radius: 14px;
+  border: 1px solid #838181;
+  width: ${props=> props.width}px;
+`

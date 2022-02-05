@@ -150,9 +150,6 @@ export default function Graph(props) {
         document.body.addEventListener('wheel', cancelWheel, {passive:false})
         return () => document.body.removeEventListener('wheel', cancelWheel)
     }, [])
-    // // update scale output ranges
-    // xScale.range([0, width - 3*graph_offset]);
-    // yScale.range([height * 0.9, height * 0.1]);
 
     // const { showTooltip,
     //     tooltipData,
@@ -193,6 +190,7 @@ export default function Graph(props) {
                 <Clickable src={zoomout} alt='zoom out' width='25px' height='25px' onClick={() => {zoom(graphData, "out", 1)}} />
             </ButtonTray>
             <SVGContainer width={width}>
+            <div>{props.sensorName}</div>
             <svg width={width} height={height} onWheel={(e) => handleMouseScroll(e)}>
                 <MarkerCircle id="marker-circle" fill="#5048E5" size={1} refX={2} />
                 <rect width={width} height={height } fill="#fff" rx={14} ry={14} />
@@ -210,7 +208,6 @@ export default function Graph(props) {
                         stroke="#5048E5"
                         />
                     ))}
-                    {/* <rect width={width} height={height} fill="#efefef" rx={14} ry={14} /> */}
                     <LinePath
                     curve={allCurves[curveType]}
                     data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end))}
@@ -318,7 +315,7 @@ const ButtonTray = styled.div`
   flex-direction: column;
   position: absolute;
   top: 30px;
-  left: ${props=> props.width - 60}px ;
+  left: ${props=> props.width - 40}px ;
 `
 
 const GraphContainer = styled.div`
@@ -328,5 +325,6 @@ const GraphContainer = styled.div`
 const SVGContainer = styled.div`
   border-radius: 14px;
   border: 1px solid #838181;
+  padding: 10px;
   width: ${props=> props.width}px;
 `

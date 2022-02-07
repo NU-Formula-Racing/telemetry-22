@@ -1,8 +1,9 @@
+from response_files import list_sensors_by_subteam
 
 def responseToMessage(message, watchdog):
     match message.split():
         case ["BARKBARK"]:
-            return watchdog.bark();
+            return watchdog.bark()
         case ["LIST_SENSORS_BY_SUBTEAM"]:
             return list_sensors_by_subteam()
         case ["VALS", *sensorIDs]: 

@@ -12,9 +12,9 @@ class ThreadedWatcher(object):
         threading.Thread(target=self.observe).start()
 
     def observe(self):
-        timeToDie.clear()
+        self.timeToDie.clear()
         while True:
-            if timeToDie.isSet():
+            if self.timeToDie.isSet():
                 return
             curFrame = json.loads(input())
             self.data.append(curFrame)

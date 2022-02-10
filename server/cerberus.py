@@ -27,8 +27,3 @@ class ThreadedWatcher(object):
 
     def bark(self):
         return "woof"
-
-
-if __name__ == "__main__":
-    Egregore = ThreadedWatcher()
-    #Egregore.observe()

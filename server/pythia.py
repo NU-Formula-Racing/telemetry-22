@@ -19,7 +19,6 @@ class ThreadedServer(object):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.host, self.port))
         self.watcher = cerberus.ThreadedWatcher()
-        self.watcher.startWatching()
 
     def listen(self):
         self.sock.listen(420)

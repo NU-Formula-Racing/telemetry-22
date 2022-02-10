@@ -55,10 +55,10 @@ def responseToMessage(message, watchdog):
             watchdog.kill()
             return ":)"
         case ["BEGIN_SESSION"]:
-            if watchdog.timeToDie.set():
+            if watchdog.timeToDie.isSet():
                 return "SESSION ALREADY ACTIVE"
             else:
-                watchdog.observe()
+                watchdog.startWatching()
                 return "SESSION STARTED"
         case _:
             return None

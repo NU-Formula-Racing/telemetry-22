@@ -8,8 +8,7 @@ export default function Graphs(props) {
         return (
           <div key={index}>
             {index !== 0 && <VertSpacer />}
-            <div>{e.label}</div>
-            <Graph width={props.width} k={index} rerender={() => {props.rerender()}}/>
+            <Graph width={props.width} sensorName={e.label} k={index} rerender={() => {props.rerender()}}/>
           </div>
         );
       })}

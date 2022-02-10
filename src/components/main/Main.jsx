@@ -29,12 +29,14 @@ export default function Main(props) {
 const MainContainer = styled.div`
   position: absolute;
   top: 0;
-  left: 330px;
+  left: 300px;
   height: calc(100vh - 80px);
   width: calc(100vw - 420px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px;
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-bottom: 30px;
   padding-top: 50px;
 `;

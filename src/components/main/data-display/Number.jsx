@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export default function Number(props) {
   return(
-    <NumberContainer>
+    <NumberContainer onMouseDown={() => {props.sendIndex()}}>
       <Value percentage={props.percentage}>{Math.round(props.value * 100) / 100}</Value>
       <Label unit>{props.unit}</Label>
       <Label>{props.label}</Label>
@@ -19,6 +19,7 @@ const NumberContainer = styled.div`
   justify-content: center;
   align-items: center;
   border: 1px solid #818181;
+  user-select: none;
 `;
 
 const Value = styled.div`

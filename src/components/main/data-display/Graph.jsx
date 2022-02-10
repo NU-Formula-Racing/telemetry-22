@@ -68,8 +68,8 @@ export default function Graph(props) {
         gd.yScale.domain([0, max(gd.lineData.slice(gd.start, gd.end), getY)]);
         // console.log(gd)
         props.rerender();
-        console.log(gd.lineData)
-        console.log(props.k)
+        // console.log(gd.lineData)
+        // console.log(props.k)
     }
 
     function zoom(gd, dir){
@@ -88,7 +88,7 @@ export default function Graph(props) {
 
 
     useEffect(()=> {
-        console.log(graphData)
+        // console.log(graphData)
     }, [graphData])
     // // update scale output ranges
     // xScale.range([0, width - 3*graph_offset]);

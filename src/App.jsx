@@ -1,36 +1,36 @@
-import { useState, useEffect } from 'react';
+import styled from 'styled-components';
+
+import { useState, useContext, useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
 import Main from './components/main/Main';
 
+import { Context } from './components/shared/Context';
+
 export default function App() {
+  let context = useContext(Context);
+
   var [isLive, setIsLive] = useState(false);
   var [currentSensors, setCurrentSensors] = useState([]);
   var [sessionName, setSessionName] = useState('');
-  var [mouseIsDown, setMouseIsDown] = useState(false);
-
-  useEffect(() => {
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-  });
 
   const handleMouseDown = (e) => {
-    if (!mouseIsDown) {
-      console.log(e.clientX);
-      setMouseIsDown(true);
-    }
+    context.setMouseCoords(e.clientX, e.clientY);
+    context.setDragging(true);
   }
 
   const handleMouseUp = (e) => {
-    if (mouseIsDown) {
-      console.log(e.clientX);
-      setMouseIsDown(false);
-    }
+    context.setMouseCoords(e.clientX, e.clientY);
+    context.setDragging(false);
   }
 
+  useEffect(() => {
+    //console.log(`${context.mouseX} ${context.mouseY}`);
+  }, [context.mouseX, context.mouseY, context.dragging])
+
   return (
-    <>
+    <div onMouseDown={(e) => {handleMouseDown(e)}} onMouseUp={(e) => {handleMouseUp(e)}}>
       <GlobalStyle/>
       <Sidebar
         isLive={isLive} setIsLive={(next) => setIsLive(next)}
@@ -41,7 +41,7 @@ export default function App() {
         isLive={isLive}
         currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
       />
-    </>
+    </div>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import styled from 'styled-components';
 
 import NumGraphToggle from './NumGraphToggle';
@@ -13,6 +13,7 @@ export default class DataDisplay extends Component {
 
     this.state = {
       dispType: 'graphs',
+      scrollAmt: 0,
       whatthefuck: true,
     }
 
@@ -40,6 +41,11 @@ export default class DataDisplay extends Component {
         this.setState({ whatthefuck: true });
       }
     }
+
+    this.handleScroll = () => {
+      const scrollAmt = this.containerRef.scrollTop;
+      this.setState({ scrollAmt });
+    }
   }
 
   componentDidMount() {
@@ -53,7 +59,7 @@ export default class DataDisplay extends Component {
 
   render() {
     return(
-      <Container ref={this.setContainerRef}>
+      <Container ref={this.setContainerRef} onScroll={this.handleScroll}>
         <NumGraphToggle
           dispType={this.state.dispType}
           setDispType={(x) => this.setState({ dispType: x })}
@@ -69,6 +75,7 @@ export default class DataDisplay extends Component {
               />
             : <Numbers
                 viewState={this.props.viewState}
+                scrollHeight={this.state.scrollAmt}
                 sensors={this.props.sensors}
                 setCurrentSensors={(newState) => this.props.setCurrentSensors(newState)}
               />

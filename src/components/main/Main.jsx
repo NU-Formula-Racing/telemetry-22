@@ -1,26 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
-import Topbar from './Topbar/Topbar';
+import Topbar from './topbar/Topbar';
 import DataDisplay from './data-display/DataDisplay';
 import VertSpacer from '../shared/VertSpacer';
 
-export default function Main() {
+export default function Main(props) {
   let [viewState, setViewState] = useState('stop');
-
-  /*useEffect(() => {
-    console.log(viewState);
-  })*/
 
   return(
     <MainContainer>
       <Topbar
+        isLive={props.isLive}
         receiving={false}
         viewState={viewState}
         setViewState={(newState) => setViewState(newState)}
       />
       <VertSpacer />
-      <DataDisplay viewState={viewState}/>
+      <DataDisplay viewState={viewState} sensors={props.currentSensors} />
     </MainContainer>
   );
 }
@@ -28,7 +25,7 @@ export default function Main() {
 const MainContainer = styled.div`
   position: absolute;
   top: 0;
-  left: 360px;
+  left: 330px;
   height: calc(100vh - 80px);
   width: calc(100vw - 420px);
   display: flex;

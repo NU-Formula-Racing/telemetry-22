@@ -1,9 +1,33 @@
-//import styled from 'styled-components';
+import styled from 'styled-components';
 
-export default function Numbers() {
+import Number from "./Number";
+
+export default function Numbers(props) {
   return(
-    <div>
-      **NUMBERS PLACEHOLDER**
-    </div>
+    <NumberTray>
+      {props.sensors.map((e,i) =>{
+        let val = Math.random();
+        return(
+          <Number
+            value={val*30}
+            percentage={val}
+            unit={'m/s'}
+            label={e.label}
+            key={i}
+          />  
+        )
+      })}
+    </NumberTray>
   );
 }
+
+const NumberTray = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: -12px;
+  > * {
+    margin-top: 12px;
+  }
+`;

@@ -16,5 +16,5 @@ export default function SVGButton(props) {
 const StyledSVG = styled.img`
   cursor: pointer;
   filter: brightness(${props => (props.selected ? 0.5 : 1)});
-  transition: 0.1s ease;
+  transition: 0.07s ease;
 `;

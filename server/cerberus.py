@@ -7,6 +7,7 @@ class ThreadedWatcher(object):
     def __init__(self):
         self.data = []
         self.timeToDie = threading.Event()
+        self.cloudActive = threading.Event()
 
     def startWatching(self):
         threading.Thread(target=self.observe).start()
@@ -14,7 +15,7 @@ class ThreadedWatcher(object):
     def observe(self):
         self.timeToDie.clear()
         while True:
-            if self.timeToDie.isSet():
+            if self.timeToDie.is_set():
                 return
             curFrame = json.loads(input())
             self.data.append(curFrame)
@@ -27,3 +28,17 @@ class ThreadedWatcher(object):
 
     def bark(self):
         return "woof"
+
+    def cloud_status(self):
+        return self.cloudActive.is_set()
+    
+    def cloud_start(self):
+        self.cloudActive.set()
+    
+    def cloud_stop(self):
+        self.cloudActive.clear()
+
+
+if __name__ == "__main__":
+    Egregore = ThreadedWatcher()
+    #Egregore.observe()

@@ -13,32 +13,32 @@ def responseToMessage(message, watchdog):
         case ["STATUS"]:
                 ## TODO
             return ":)"
-        #case ["SWITCH_SOURCE", newstate]:
-        #    if historic.set_state(self, newstate):
-        #        return ":)"
-        #    else:
-        #        return ":("
+        case ["SWITCH_SOURCE", newstate]:
+            if historic.set_state(newstate):
+                return ":)"
+            else:
+                return ":("
 
         case ["LIST_HISTORIC_DATAFILES"]:
-            #if self.cloud:
-            #       ## Awaiting Cloud API
-            #   return ":("
-            #else:
-            #    path = "" # GET THE PATH SOMEHOW
-            #    files = historic.list_data_files(path)
-            #    if files:
-            #        return files
-            #    else:
-            #        return ":("
+            if watchdog.cloud_status():
+                  ## Awaiting Cloud API
+                return ":("
+            else:
+                path = "" # GET THE PATH SOMEHOW
+                files = historic.list_local_data_files(path)
+                if files:
+                    return files
+                else:
+                    return ":("
             return [["name1", 420], ["name2", 69]]
 
         case ["REQUEST_HISTORIC_DATAFILE_BY_TIME", timestamp]:
-            if self.cloud:
+            if watchdog.cloud_status():
                 ## Awaiting Cloud API
                 return ":("
             else:
                 path = "" # GET THE PATH SOMEHOW
-                files = historic.find_files_by_dt(path, timestamp)
+                files = historic.find_local_files_by_dt(path, timestamp)
                 if files:
                     if len(files) > 0:
                         return files
@@ -48,7 +48,19 @@ def responseToMessage(message, watchdog):
                     return ":("
 
         case ["REQUEST_HISTORIC_DATAFILE_BY_NAME", name]:
-            ## Awaiting Cloud API
+            if watchdog.cloud_status():
+                ## Awaiting Cloud API
+                return ":("
+            else:
+                path = "" # GET THE PATH SOMEHOW
+                files = historic.find_local_files_by_dt(path, timestamp)
+                if files:
+                    if len(files) > 0:
+                        return files
+                    else:
+                        return "FILE NOT FOUND"
+                else:
+                    return ":("
             return "no lol"
         case ["END_SESSION", name]:
             ## TODO NAME DATA FILE

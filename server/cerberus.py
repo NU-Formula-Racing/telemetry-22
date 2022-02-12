@@ -37,8 +37,3 @@ class ThreadedWatcher(object):
     
     def cloud_stop(self):
         self.cloudActive.clear()
-
-
-if __name__ == "__main__":
-    Egregore = ThreadedWatcher()
-    #Egregore.observe()

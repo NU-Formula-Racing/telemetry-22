@@ -1,11 +1,11 @@
-from response_files import list_sensors_by_subteam
+from response_files import list_sensors_by_subteam as sub, local_historic as lh
 
 def responseToMessage(message, watchdog):
     match message.split():
         case ["BARKBARK"]:
             return watchdog.bark()
         case ["LIST_SENSORS_BY_SUBTEAM"]:
-            return list_sensors_by_subteam()
+            return sub.list_sensors_by_subteam()
         case ["VALS", *sensorIDs]: 
             rFrame = watchdog.mostRecentFrame()
             return {sensorID : rFrame[sensorID] for sensorID in sensorIDs}
@@ -14,7 +14,7 @@ def responseToMessage(message, watchdog):
                 ## TODO
             return ":)"
         case ["SWITCH_SOURCE", newstate]:
-            if historic.set_state(newstate):
+            if lh.set_state(newstate):
                 return ":)"
             else:
                 return ":("
@@ -25,7 +25,7 @@ def responseToMessage(message, watchdog):
                 return ":("
             else:
                 path = "" # GET THE PATH SOMEHOW
-                files = historic.list_local_data_files(path)
+                files = lh.list_local_data_files(path)
                 if files:
                     return files
                 else:
@@ -38,7 +38,7 @@ def responseToMessage(message, watchdog):
                 return ":("
             else:
                 path = "" # GET THE PATH SOMEHOW
-                files = historic.find_local_files_by_dt(path, timestamp)
+                files = lh.find_local_files_by_dt(path, timestamp)
                 if files:
                     if len(files) > 0:
                         return files
@@ -53,7 +53,7 @@ def responseToMessage(message, watchdog):
                 return ":("
             else:
                 path = "" # GET THE PATH SOMEHOW
-                files = historic.find_local_files_by_dt(path, timestamp)
+                files = lh.find_local_files_by_dt(path, timestamp)
                 if files:
                     if len(files) > 0:
                         return files

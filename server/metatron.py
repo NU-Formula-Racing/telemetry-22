@@ -1,11 +1,14 @@
-from response_files import list_sensors_by_subteam as sub, local_historic as lh
+from response_files import list_sensors_by_subteam as sub, local_historic as lh, cloud_relay as cl
 
 def responseToMessage(message, watchdog):
     match message.split():
         case ["BARKBARK"]:
+            # Test function?
             return watchdog.bark()
+        
         case ["LIST_SENSORS_BY_SUBTEAM"]:
             return sub.list_sensors_by_subteam()
+        
         case ["VALS", *sensorIDs]: 
             rFrame = watchdog.mostRecentFrame()
             return {sensorID : rFrame[sensorID] for sensorID in sensorIDs}
@@ -13,6 +16,7 @@ def responseToMessage(message, watchdog):
         case ["STATUS"]:
                 ## TODO
             return ":)"
+        
         case ["SWITCH_SOURCE", newstate]:
             if lh.set_state(newstate):
                 return ":)"
@@ -21,8 +25,7 @@ def responseToMessage(message, watchdog):
 
         case ["LIST_HISTORIC_DATAFILES"]:
             if watchdog.cloud_status():
-                  ## Awaiting Cloud API
-                return ":("
+                return cl.get_historic_data()
             else:
                 path = "" # GET THE PATH SOMEHOW
                 files = lh.list_local_data_files(path)
@@ -46,7 +49,7 @@ def responseToMessage(message, watchdog):
                         return "FILE NOT FOUND"
                 else:
                     return ":("
-
+                
         case ["REQUEST_HISTORIC_DATAFILE_BY_NAME", name]:
             if watchdog.cloud_status():
                 ## Awaiting Cloud API
@@ -62,16 +65,19 @@ def responseToMessage(message, watchdog):
                 else:
                     return ":("
             return "no lol"
+        
         case ["END_SESSION", name]:
             ## TODO NAME DATA FILE
             watchdog.kill()
             return ":)"
+        
         case ["BEGIN_SESSION"]:
             if watchdog.timeToDie.isSet():
                 return "SESSION ALREADY ACTIVE"
             else:
                 watchdog.startWatching()
                 return "SESSION STARTED"
+        
         case _:
             return None
             

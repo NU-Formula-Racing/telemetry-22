@@ -6,7 +6,6 @@ import metatron
 
 client = []
 
-
 class ThreadedServer(object):
 
     def __init__(self, host, port):

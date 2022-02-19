@@ -14,16 +14,19 @@ import scrollright from '../../../assets/scrollright.svg';
 import zoomin from '../../../assets/zoomin.svg';
 import zoomout from '../../../assets/zoomout.svg';
 import { GridRows, GridColumns } from '@visx/grid';
+import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
+import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
+
 
 let t = -1; // init time
 const n = 30; // amount of seconds to show
-const duration = 750;
 let initData = initialise(); //data arr
 
 function initialise() {
     var time = -1;
     var arr = [];
-    for (var i = 0; i < n; i++) {
+    var data_length = 1;
+    for (var i = 0; i < data_length; i++) {
         var obj = {
             time: ++time,
             value: Math.floor(Math.random() * 100)
@@ -45,18 +48,18 @@ const graph_offset = 30
 
 // scales
 let xScaleInit = scaleLinear({
-    domain: [max(initData, getX) - n + 1, max(initData, getX)],
+    domain: [0, max(initData, getX)],
     range: [0, width - 3*graph_offset]
 });
 
 let yScaleInit = scaleLinear({
-    domain: [0, max(initData, getY)],
+    domain: [0, max(initData, getY) * 1.2],
     range: [height * 0.85, height * 0.1]
 });
 
 export default function Graph(props) {
     const curveType = 'curveLinear'
-    const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:n-1});
+    const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
     const wheelTimeout = useRef()
 
     function updateScales(gd){
@@ -65,13 +68,13 @@ export default function Graph(props) {
             range: [0, width - 3*graph_offset]
         });
         gd.yScale = scaleLinear({
-            domain: [0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)],
+            domain: [0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY) * 1.2],
             range: [height * 0.85, height * 0.1]
         })
     }
     function updateData(gd) {
         t++;
-        gd.start++;
+        if (gd.end >= n){gd.start++;}
         gd.end++;
         var obj = {
             time: t,
@@ -84,12 +87,7 @@ export default function Graph(props) {
         props.rerender();
     }
 
-    function handleMouseScroll(e){
-        let gd = graphData;
-        let dir;
-        let scroll_amt = 0.2;
-        let zoom_amt = 0.2;
-        
+    function lockWheel(){
         // while wheel is moving, do not release the lock
         clearTimeout(wheelTimeout.current)
 
@@ -97,6 +95,15 @@ export default function Graph(props) {
         wheelTimeout.current = setTimeout(() => {
         wheelTimeout.current = false
         }, 300)
+    }
+
+    function handleMouseScroll(e){
+        let gd = graphData;
+        let dir;
+        let scroll_amt = 0.2;
+        let zoom_amt = 0.2;
+        
+        lockWheel()
 
         if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 1){
             (e.deltaX < 0) ? dir = "right" : dir = "left"
@@ -109,7 +116,7 @@ export default function Graph(props) {
 
     function zoom(gd, dir, amt){
         if (dir == "in"){
-            if (gd.start < max(gd.lineData, getX)) {
+            if (gd.start < gd.end - 2) {
                 gd.start+= amt
             };
         } else if (dir == "out"){
@@ -138,10 +145,10 @@ export default function Graph(props) {
     }
 
     function checkKey(e) {
-        if (e.keyCode == '38') { zoom(graphData, "in", 1) // up arrow 
-        } else if (e.keyCode == '40') { zoom(graphData, "out", 1) // down arrow
-        } else if (e.keyCode == '37') { scroll(graphData, "left", 1) // left arrow 
-        } else if (e.keyCode == '39') { scroll(graphData, "right", 1) // right arrow
+        if (e.keyCode == '38') { zoom(graphData, "in", 1); lockWheel(); // up arrow 
+        } else if (e.keyCode == '40') { zoom(graphData, "out", 1); lockWheel() // down arrow
+        } else if (e.keyCode == '37') { scroll(graphData, "left", 1); lockWheel() // left arrow 
+        } else if (e.keyCode == '39') { scroll(graphData, "right", 1); lockWheel() // right arrow
         }
     }
 
@@ -151,33 +158,36 @@ export default function Graph(props) {
         return () => document.body.removeEventListener('wheel', cancelWheel)
     }, [])
 
-    // const { showTooltip,
-    //     tooltipData,
-    //     hideTooltip,
-    //     tooltipTop = 0,
-    //     tooltipLeft = 0, } = useTooltip();
+    const { showTooltip,
+        tooltipData,
+        hideTooltip,
+        tooltipTop = 0,
+        tooltipLeft = 0, } = useTooltip();
+
+    const bisectTime = bisector((d) => d.time).left;
 
     // tooltip handler
-    // const handleTooltip = useCallback(
-    //     (event) => {
-    //       let { x } = localPoint(event) || { x: (graph_offset*2) }; // x of mouse
-    //       x -= (graph_offset*2)
-    //       const x0 = xScale.invert(x); // maps x -> time 
-    //       const index = bisectDate(allData, x0, 1); // finds index of the middle time
-    //       const d0 = allData[index - 1]; 
-    //       const d1 = allData[index];
-    //       let d = d0;
-    //       if (d1 && getX(d1)) {
-    //         d = x0.valueOf() - getX(d0).valueOf() > getX(d1).valueOf() - x0.valueOf() ? d1 : d0;
-    //       }
-    //       showTooltip({
-    //         tooltipData: d,
-    //         tooltipLeft: xScale(getX(d)),
-    //         tooltipTop: yScale(getY(d)),
-    //       });
-    //     },
-    //     [showTooltip, yScale, xScale],
-    //   );
+    const handleTooltip = useCallback(
+        (event) => {
+          let { x } = localPoint(event) || { x: (graph_offset*2) }; // x of mouse
+          x -= (graph_offset*2)
+          const x0 = graphData.xScale.invert(x); // maps x -> time 
+          const index = bisectTime(graphData.lineData, x0, 1); // finds index of the middle time
+          const d0 = graphData.lineData[index - 1]; 
+          const d1 = graphData.lineData[index];
+          let d = d0;
+          if (d1 && getX(d1)) {
+            d = x0.valueOf() - getX(d0).valueOf() > getX(d1).valueOf() - x0.valueOf() ? d1 : d0;
+          }
+          showTooltip({
+            tooltipData: d,
+            tooltipLeft: graphData.xScale(getX(d)),
+            tooltipTop: graphData.yScale(getY(d)),
+            // tooltipTop: graphData.yScale(getY(d)),
+          });
+        },
+        [showTooltip, graphData.yScale, graphData.yScale],
+      );
   return (
         <GraphContainer onKeyDown={(e) => checkKey(e)}>
             <button onClick={() => updateData(graphData)}>update</button> <br/>
@@ -199,7 +209,7 @@ export default function Graph(props) {
                     <GridColumns scale={graphData.xScale} height={height-60} stroke="#e0e0e0" top={30}/>
                     <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"bottom axis label"}/>
                     <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={"left axis label"}/>
-                    {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (
+                    {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)+1).map((d, j) => (
                         <circle
                         key={j}
                         r={2}
@@ -210,7 +220,7 @@ export default function Graph(props) {
                     ))}
                     <LinePath
                     curve={allCurves[curveType]}
-                    data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end))}
+                    data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)+1)}
                     x={(d) => graphData.xScale(getX(d)) ?? 0}
                     y={(d) => graphData.yScale(getY(d)) ?? 0}
                     stroke="#5048E5"
@@ -224,7 +234,7 @@ export default function Graph(props) {
                     <AreaClosed
                         fill="#5048E515"
                         curve={allCurves[curveType]}
-                        data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end))}
+                        data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)+1)}
                         x={(d) => graphData.xScale(getX(d)) ?? 0}
                         y={(d) => graphData.yScale(getY(d)) ?? 0}
                         yScale={graphData.yScale}
@@ -236,19 +246,16 @@ export default function Graph(props) {
                         height={height}
                         fill="transparent"
                         rx={14}
-                    //   onTouchStart={handleTooltip}
-                    //   onTouchMove={handleTooltip}
-                    //   onMouseMove={handleTooltip}
-                    //   onMouseLeave={() => hideTooltip()}
+                        onTouchStart={handleTooltip}
+                        onTouchMove={handleTooltip}
+                        onMouseMove={handleTooltip}
+                        onMouseLeave={() => hideTooltip()}
                     />
-                    {/* {tooltipData && (
-                    <Zoom>
-                    {(zoom) => ( 
-                    <g style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab', touchAction: 'none' }}
-                    ref={zoom.containerRef}>
+                    {tooltipData && (
+                    <g>
                         <Line
                         from={{ x: tooltipLeft, y: height * 0.08 }}
-                        to={{ x: tooltipLeft, y: height * 0.9}}
+                        to={{ x: tooltipLeft, y: height * 0.85}}
                         stroke="#5048E5"
                         strokeWidth={2}
                         pointerEvents="none"
@@ -274,7 +281,7 @@ export default function Graph(props) {
                         strokeWidth={2}
                         pointerEvents="none"
                         />
-                        <div>
+                        {/* <div>
                         <TooltipWithBounds
                             key={Math.random()}
                             top={tooltipTop + 150}
@@ -282,26 +289,26 @@ export default function Graph(props) {
                         >
                             {`${getY(tooltipData)}`}
                         </TooltipWithBounds>
-                        </div>
+                        </div> */}
                     </g>
                     )}
-                    </Zoom>
-                    )} */}
+                    )
                 </Group>
                     );
           </svg>
           </SVGContainer>
-          {/* {tooltipData && (
+          {tooltipData && (
             <div>
               <TooltipWithBounds
                 key={Math.random()}
-                top={tooltipTop + 150}
+                top={tooltipTop + 15}
                 left={tooltipLeft + 40}
+                
               >
                 {`${getY(tooltipData)}`}
               </TooltipWithBounds>
             </div>
-          )} */}
+          )}
         </GraphContainer>
     )}
 

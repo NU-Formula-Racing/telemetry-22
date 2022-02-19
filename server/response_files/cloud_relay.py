@@ -49,11 +49,11 @@ def store_live_data(session_id: int, timestamp: str, sensor_data: str) -> bool:
 
 def get_historic_data(session_id: int):
     """
-    Gets historic data by sessionId
+    Gets historic data using the given sessionId.
     Reverts to last stored file if not given sessionId.
 
     Args:
-    - sessionId : int, session for which data is being fetched
+    - session_id: int, session for which data is being fetched
     
     Returns:
     - JSON, data from historic CSV (response 200)
@@ -73,7 +73,7 @@ def store_historic_data(session_id: int, sensor_data: str):
     Uploads and saves a CSV file that contains sensor data for the entire session.
 
     Args:
-    - sessionId: int, session for which data is being recorded
+    - session_id: int, session for which data is being recorded
     - sensor_data: JSON, sensor data that has to be stored
     
     Returns:
@@ -101,3 +101,6 @@ def list_historic_data():
         return response.json()
     else:
         return None
+
+if __name__ == "__main__":
+    print(list_historic_data())

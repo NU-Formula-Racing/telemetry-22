@@ -8,9 +8,11 @@ class ThreadedWatcher(object):
         self.data = []
         self.timeToDie = threading.Event()
         self.cloudActive = threading.Event()
+        self.sesh = threading.Event()
 
     def startWatching(self):
         threading.Thread(target=self.observe).start()
+        self.sesh.set()
 
     def observe(self):
         self.timeToDie.clear()

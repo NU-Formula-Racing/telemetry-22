@@ -14,7 +14,22 @@ def responseToMessage(message, watchdog):
             return {sensorID : rFrame[sensorID] for sensorID in sensorIDs}
                 
         case ["STATUS"]:
-                ## TODO
+            if watchdog.cloud_status():
+                if watchdog.sesh.is_set():
+                    if watchdog.timeToDie.is_set():
+                        return "SESSION ENDED, CLOUD ONLINE"
+                    else:
+                        return "SESSION ONGOING, CLOUD ONLINE"
+                else:
+                    return "SESSION NOT STARTED, CLOUD ONLINE"
+            else:
+                if watchdog.sesh.is_set():
+                    if watchdog.timeToDie.is_set():
+                        return "SESSION ENDED, CLOUD OFFLINE"
+                    else:
+                        return "SESSION ONGOING, CLOUD OFFLINE"
+                else:
+                    return "SESSION NOT STARTED, CLOUD OFFLINE"
             return ":)"
         
         case ["SWITCH_SOURCE", newstate]:
@@ -42,7 +57,7 @@ def responseToMessage(message, watchdog):
             else:
                 path = "" # GET THE PATH SOMEHOW
                 files = lh.find_local_files_by_dt(path, timestamp)
-                if files:
+                if files != None:
                     if len(files) > 0:
                         return files
                     else:
@@ -57,7 +72,7 @@ def responseToMessage(message, watchdog):
             else:
                 path = "" # GET THE PATH SOMEHOW
                 files = lh.find_local_files_by_dt(path, timestamp)
-                if files:
+                if files != None:
                     if len(files) > 0:
                         return files
                     else:

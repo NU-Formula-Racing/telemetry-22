@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import SearchBar from './SearchPage';
+import SearchBar from './SearchBar';
 import Upload from './Upload';
 import ButtonTray from './ButtonTray';
 import RowHolder from '../../shared/RowHolder';
@@ -22,7 +22,7 @@ export default function Topbar(props) {
   } else {
     display =
     <>
-      <SearchBar />
+      <SearchBar/>
       <Upload />
     </>;
   }

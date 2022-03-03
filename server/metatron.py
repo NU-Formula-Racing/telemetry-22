@@ -71,7 +71,7 @@ def responseToMessage(message, watchdog):
                 return ":("
             else:
                 path = "" # GET THE PATH SOMEHOW
-                files = lh.find_local_files_by_dt(path, timestamp)
+                files = lh.find_local_files_by_name(path, name)
                 if files != None:
                     if len(files) > 0:
                         return files

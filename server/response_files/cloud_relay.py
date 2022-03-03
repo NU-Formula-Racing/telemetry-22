@@ -47,33 +47,31 @@ def store_live_data(session_id: int, timestamp: str, sensor_data: str) -> bool:
     return url # Dummy
     return requests.post(url, data = sensor_data).status_code == 201
 
-def get_historic_data(session_id: int):
+def get_historic_data(session_id: str):
     """
     Gets historic data using the given sessionId.
     Reverts to last stored file if not given sessionId.
 
     Args:
-    - session_id: int, session for which data is being fetched
+    - session_id: str, session timestamp for which data is being fetched, in ISO 8601 format
     
     Returns:
     - JSON, data from historic CSV (response 200)
     - None, if invalid input (response 405)
     """
     url = f"{base_url}/getHistoricData?sessionId={session_id}"
-    
-    return url # Dummy
     response = requests.get(url)
     if response.status_code == 405:
         return response.json()
     else:
         return None
 
-def store_historic_data(session_id: int, sensor_data: str):
+def store_historic_data(session_id: str, sensor_data: str):
     """
     Uploads and saves a CSV file that contains sensor data for the entire session.
 
     Args:
-    - session_id: int, session for which data is being recorded
+    - session_id: str, session timestamp for which data is being fetched, in ISO 8601 format
     - sensor_data: JSON, sensor data that has to be stored
     
     Returns:
@@ -81,7 +79,6 @@ def store_historic_data(session_id: int, sensor_data: str):
     - bool, if invalid input (response 405)
     """
     url = f"{base_url}/storeHistoricData?sessionId={session_id}"
-    return url # Dummy
     return requests.post(url, data = sensor_data).status_code == 201
 
 def list_historic_data():
@@ -95,11 +92,11 @@ def list_historic_data():
     - None, if otherwise
     """
     url = f"{base_url}/listHistoricData"
-    return url # Dummy
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
     else:
+        print(response.status_code)
         return None
 
 if __name__ == "__main__":

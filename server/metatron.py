@@ -1,4 +1,5 @@
 from response_files import list_sensors_by_subteam as sub, local_historic as lh, cloud_relay as cl
+### Handles incoming messages for Pythia
 
 def responseToMessage(message, watchdog):
     match message.split():
@@ -33,7 +34,8 @@ def responseToMessage(message, watchdog):
             return ":)"
         
         case ["SWITCH_SOURCE", newstate]:
-            if lh.set_state(newstate):
+            #lh.set_state(newstate):
+            if False: 
                 return ":)"
             else:
                 return ":("

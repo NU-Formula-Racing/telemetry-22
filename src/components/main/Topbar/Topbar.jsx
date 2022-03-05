@@ -23,7 +23,7 @@ export default function Topbar(props) {
     display =
     <>
       <SearchBar/>
-      <Upload />
+      {/* <Upload /> */}
     </>;
   }
 

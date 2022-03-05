@@ -1,3 +1,4 @@
+from ast import AsyncFunctionDef
 import requests
 import json
 
@@ -11,7 +12,7 @@ def get_live_data(session_id = None, timestamp = None):
     Args: None
     Kwargs:
     - session_id: int, session for which data is being fetched from
-    - timestamp: string, timestamp for which data is fetched, formatted 'HH:MM:SS'
+    - timestamp: string, timestamp for which data is fetched, in ISO 8601 date-time UTC "Z" format
     
     Returns:
     - JSON, data from session (response 200)
@@ -26,7 +27,7 @@ def get_live_data(session_id = None, timestamp = None):
     
     return url # Dummy result until Cloud is functional
     response = requests.get(url)
-    if response.status_code == 405:
+    if response.status_code == 200:
         return response.json()
     else:
         return None
@@ -61,7 +62,7 @@ def get_historic_data(session_id: str):
     """
     url = f"{base_url}/getHistoricData?sessionId={session_id}"
     response = requests.get(url)
-    if response.status_code == 405:
+    if response.status_code == 200:
         return response.json()
     else:
         return None
@@ -96,8 +97,10 @@ def list_historic_data():
     if response.status_code == 200:
         return response.json()
     else:
-        print(response.status_code)
         return None
 
 if __name__ == "__main__":
-    print(list_historic_data())
+    df_list = list_historic_data()
+    print(get_historic_data(df_list[1]))
+    # for d in df_list:
+        

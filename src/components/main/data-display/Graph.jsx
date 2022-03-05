@@ -43,18 +43,18 @@ const getY = (d) => d.value;
 
 const graph_offset = 30
 
-// scales
-let xScaleInit = scaleLinear({
-    domain: [max(initData, getX) - n + 1, max(initData, getX)],
-    range: [0, width - 3*graph_offset]
-});
+    // scales
+    let xScaleInit = scaleLinear({
+        domain: [max(initData, getX) - n + 1, max(initData, getX)],
+        range: [0, width - 3*graph_offset]
+    });
 
-let yScaleInit = scaleLinear({
-    domain: [0, max(initData, getY)],
-    range: [height * 0.85, height * 0.1]
-});
-
+    let yScaleInit = scaleLinear({
+        domain: [0, max(initData, getY)],
+        range: [height * 0.85, height * 0.1]
+    });
 export default function Graph(props) {
+
     const curveType = 'curveLinear'
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:n-1});
     const wheelTimeout = useRef()

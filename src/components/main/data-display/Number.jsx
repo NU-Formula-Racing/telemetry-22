@@ -2,13 +2,25 @@ import styled from 'styled-components';
 
 export default function Number(props) {
   return(
-    <NumberContainer onMouseDown={() => {props.sendIndex()}}>
-      <Value percentage={props.percentage}>{Math.round(props.value * 100) / 100}</Value>
-      <Label unit>{props.unit}</Label>
-      <Label>{props.label}</Label>
-    </NumberContainer>
+    <ScuffedAF spacing={props.spacing} onMouseEnter={() => {props.sendIndex()}}>
+      <NumberContainer translucent={props.isDragging} hovering={props.hovering}>
+        <Value>{props.value}</Value>
+        <Label unit>{props.unit}</Label>
+        <Label>{props.label}</Label>
+      </NumberContainer>
+    </ScuffedAF>
   );
 }
+
+const ScuffedAF = styled.div`
+  margin-left: -${props => props.spacing}px;
+  margin-right: -${props => props.spacing}px;
+  padding-left: ${props => props.spacing}px;
+  padding-right: ${props => props.spacing}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const NumberContainer = styled.div`
   width: 240px;
@@ -18,8 +30,9 @@ const NumberContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #818181;
+  border: 1px solid #424242;
   user-select: none;
+  opacity: ${props => ((props.translucent) ? '0.4' : '1')};
 `;
 
 const Value = styled.div`

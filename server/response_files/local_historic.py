@@ -1,17 +1,17 @@
-import os.path as osp
+import os
 import glob
 
 def list_local_data_files(path):
-    if not osp.isdir(path):
+    if not os.path.isdir(path):
         return False
     files = glob.glob(path+"/**/*.csv", recursive=True)
     result = {}
     for file in files:
-        print(osp.basename(file))
+        print(os.path.basename(file))
         with open(file, 'r', newline='') as f: 
             first = f.readline().strip()
-            if first == "FORMULASAEDATA": # Check for Formula identification header
-                result[osp.basename(file)] = f.readline().strip()
+            if first == "# FORMULASAEDATA": # Check for Formula identification header
+                result[os.path.basename(file)] = f.readline().strip().lstrip("# ")
     return result
 
 # def find_local_files_by_name(path, name):
@@ -38,3 +38,10 @@ def list_local_data_files(path):
 #         return sorted(json_f.items)
 #     else:
 #         return False
+
+if __name__ == "__main__":
+    os.chdir("..")
+    os.chdir("..")
+    path = os.path.abspath("server/")
+    print(path)
+    print(list_local_data_files(path))

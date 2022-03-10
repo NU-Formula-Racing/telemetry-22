@@ -33,7 +33,6 @@ export default function DndList(props) {
   }, [props.children]);
 
   useEffect(() => {
-    let x = context.mouseX;
     let y = context.mouseY;
 
     if (!context.dragging) {
@@ -57,7 +56,7 @@ export default function DndList(props) {
       return React.cloneElement(child, {
         isDragging: index === startInd && context.dragging,
         hovering: index === hoverInd && context.dragging,
-        sendIndex: () => handleHover(index),
+        onMouseOver: () => handleHover(index),
       })
     })
 

@@ -146,6 +146,7 @@ export default function DndFlex(props) {
         (hoverInd !== startInd && context.dragging) &&
         <VertIndicator
           height={props.itemHeight}
+          x={xRanges[hoverInd] + ((2 * (xRanges[hoverInd] > xRanges[startInd]) * (yRanges[hoverInd] === yRanges[startInd])) - 1)*((props.itemWidth / 2) + magicNumbers[+ (hoverInd > (magicNumbers[2] * magicNumbers[3]))] + 1)}
           y={yRanges[hoverInd] - props.vSpace}
         />
       }

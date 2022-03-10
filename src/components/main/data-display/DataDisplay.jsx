@@ -35,6 +35,7 @@ export default class DataDisplay extends Component {
             />
           : <Numbers
               viewState={this.props.viewState}
+              scrollHeight={this.state.scrollAmt}
               sensors={this.props.sensors}
               setCurrentSensors={(newState) => this.props.setCurrentSensors(newState)}
             />;

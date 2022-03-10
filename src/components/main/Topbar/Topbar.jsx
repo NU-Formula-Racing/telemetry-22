@@ -16,7 +16,7 @@ export default function Topbar(props) {
           Status:
           {props.receiving
             ? <StyledStatus valid> Reading Live Data</StyledStatus> // Keep whitespace before text
-            : <StyledStatus> No Data Received</StyledStatus>            // Keep whitespace before text
+            : <StyledStatus> No Data Received</StyledStatus>        // Keep whitespace before text
           }
         </RowHolder>
         <ButtonTray viewState={props.viewState} setViewState={props.setViewState} />

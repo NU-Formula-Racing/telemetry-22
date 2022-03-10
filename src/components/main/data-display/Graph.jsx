@@ -62,6 +62,14 @@ export default function Graph(props) {
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
     const wheelTimeout = useRef()
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            updateData(graphData);
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, [])
+
     function updateScales(gd){
         gd.xScale = scaleLinear({
             domain: [getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])],
@@ -74,7 +82,11 @@ export default function Graph(props) {
     }
     function updateData(gd) {
         t++;
+<<<<<<< HEAD
         if (gd.end >= n){gd.start++;}
+=======
+        if (gd.end >= n) { gd.start++ }
+>>>>>>> df2aa57000e0566b6cd2f036b8772df20c1e5ec7
         gd.end++;
         var obj = {
             time: t,

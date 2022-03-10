@@ -18,7 +18,6 @@ export default class SensorDropdown extends Component {
         if (prevProps.selectedGroup !== this.props.selectedGroup) {
             this.updateSelectedGroup(this.props.selectedGroup)
             this.updateOptions(this.props.selectedGroup)
-
         }
     }
     updateSelectedGroup(newSelectedGroup) {

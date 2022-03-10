@@ -1,32 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import Select from 'react-select';
-
-
-
-// export default function SearchBar(props){
-//     let fileList = [{name:"file1", date:Date()}, {name: "file2", date:Date()}];
-//     const filterOptions = (option, input) => {
-//     if (input) {
-//         return option.data.name.toLowerCase().includes(input.toLowerCase())
-//     }
-//     return true;
-//     };
-
-//     return (
-//       <Select
-//         // defaultValue={fileList[0]}
-//         isClearable
-//         isSearchable
-//         name="search"
-//         options={fileList}
-//         // filterOption={filterOptions}
-//         getOptionLabel={option =>
-//             `${option.name} ${option.date}`
-//         }
-//       />
-//     );
-// }
-
 import React, { Component } from 'react';
 import Select from 'react-select';
 
@@ -42,8 +13,8 @@ const filterOptions = (option, input) => {
     return true;
     };
 
-let fileList = [{name:"file1", date: new Date(2022,3,5)}, {name: "file2", date:new Date(2021,10,12)}, 
-{name: "file3", date:new Date(2002,11,11)},{name: "file4", date:new Date(2021,9,5)}];
+let fileList = [{name:"file1", date: new Date(2022,3,5), label: "cloud"}, {name: "file2", date:new Date(2021,10,12), label: "local"}, 
+{name: "file3", date:new Date(2002,11,11), label: "cloud"},{name: "file4", date:new Date(2021,9,5), label: "local"}];
 
 const dateString = (date) => {
     let day = date.getDate()
@@ -81,7 +52,7 @@ export default class SearchBar extends Component {
         onFocus={this.handleFocus}
         onChange={this.handleChange}
         getOptionLabel={option =>
-            `${option.name} (${dateString(option.date)})`
+            `${option.name} (${dateString(option.date)}) - ${option.label}`
         }
         value = {this.state.searchVal}
       />

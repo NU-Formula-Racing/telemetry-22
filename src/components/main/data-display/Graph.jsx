@@ -82,11 +82,7 @@ export default function Graph(props) {
     }
     function updateData(gd) {
         t++;
-<<<<<<< HEAD
-        if (gd.end >= n){gd.start++;}
-=======
         if (gd.end >= n) { gd.start++ }
->>>>>>> df2aa57000e0566b6cd2f036b8772df20c1e5ec7
         gd.end++;
         var obj = {
             time: t,

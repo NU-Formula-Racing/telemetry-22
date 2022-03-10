@@ -1,6 +1,5 @@
 import DndFlex from '../../shared/DnDFlex';
 import Number from './Number';
-import VertIndicator from '../../shared/VertIndicator';
 
 export default function Numbers(props) {
   return (
@@ -13,14 +12,6 @@ export default function Numbers(props) {
       itemWidth={240}
       itemHeight={190}
     >
-      {
-        (hoverInd !== startInd && context.dragging) &&
-        <VertIndicator
-          height={numberHeight}
-          x={xRanges[hoverInd] + ((2 * (xRanges[hoverInd] > xRanges[startInd]) * (yRanges[hoverInd] === yRanges[startInd])) - 1)*((numberWidth / 2) + magicNumbers[+ (hoverInd > (magicNumbers[2] * magicNumbers[3]))] + 1)}
-          y={yRanges[hoverInd] - 12}
-        />
-      }
       {props.sensors.map((e, index) => {
         return (
           <Number
@@ -29,10 +20,6 @@ export default function Numbers(props) {
             unit={'m/s'}
             label={e.label}
             key={index}
-            isDragging={index === startInd && context.dragging}
-            hovering={index === hoverInd && context.dragging}
-            sendIndex={() => {handleHover(index)}}
-            spacing={magicNumbers[+ (index >= (magicNumbers[2] * magicNumbers[3]))]}
           />
         );
       })}

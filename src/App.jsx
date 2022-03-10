@@ -25,9 +25,9 @@ export default function App() {
     context.setDragging(false);
   }
 
-  useEffect(() => {
+  /*useEffect(() => {
     //console.log(`${context.mouseX} ${context.mouseY}`);
-  }, [context.mouseX, context.mouseY, context.dragging])
+  }, [context.mouseX, context.mouseY, context.dragging])*/
 
   return (
     <div onMouseDown={(e) => {handleMouseDown(e)}} onMouseUp={(e) => {handleMouseUp(e)}}>

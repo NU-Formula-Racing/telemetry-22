@@ -6,18 +6,16 @@ import VertIndicator from '../../shared/VertIndicator';
 
 import { Context } from '../../shared/Context';
 
-const numberWidth = 240;
-const numberHeight = 190;
-
-export default function Numbers(props) {
+export default function DndFlex(props) {
   let context = useContext(Context);
 
+  const [proppedChildren, setChildren] = useState(props.items)
   const [dndRect, setRect] = useState(0);
   const [xRanges, setxRanges] = useState([]);
   const [yRanges, setyRanges] = useState([]);
   const [startInd, setStartInd] = useState(0);
   const [hoverInd, setHoverInd] = useState(0);
-  const [magicNumbers, setMagic] = useState([0, 0]);
+  const [magicNumbers, setMagic] = useState([0, 0, 0, 0, 0]);
   const dndRef = useRef(null);
 
   useEffect(() => {
@@ -37,6 +35,10 @@ export default function Numbers(props) {
   }, [dndRect, props]);
 
   useEffect(() => {
+    setChildren(addProps(props.items));
+  }, [props.items]);
+
+  useEffect(() => {
     let x = context.mouseX;
     let y = context.mouseY;
     console.log(y);
@@ -52,6 +54,22 @@ export default function Numbers(props) {
     }
   }, [context.dragging]);
 
+  const addProps = (initProps) => {
+    const updatedChildren = initProps.map((child, index) => {
+      // isDragging={index === startInd && context.dragging}
+      // hovering={index === hoverInd && context.dragging}
+      // sendIndex={() => {handleHover(index)}}
+      // spacing={magicNumbers[+ (index >= (magicNumbers[2] * magicNumbers[3]))]}
+
+      return React.cloneElement(child, {
+        isDragging: index === startInd && context.dragging,
+        hovering: index === hoverInd && context.dragging,
+        sendIndex: handleHover(index),
+        spacing: magicNumbers[+ (index >= (magicNumbers[2] * magicNumbers[3]))]
+      })
+    })
+  }
+
   const getItemIndex = (x, y) => {
     let index = 0;
     if ((dndRect.left > x) || (dndRect.right < x) || (dndRect.bottom < y) || (dndRect.top > y)) {
@@ -59,14 +77,14 @@ export default function Numbers(props) {
     }
     for (let i = 0; i < magicNumbers[2]; i++) {
       for (let j = 0; j < magicNumbers[3]; j++) {
-        if ((y < (yRanges[index] + numberHeight)) && (x < xRanges[index] + (numberWidth / 2) + magicNumbers[0])) {
+        if ((y < (yRanges[index] + props.itemHeight)) && (x < xRanges[index] + (props.itemWidth / 2) + magicNumbers[0])) {
           return index
         }
         index++;
       }
     }
     for (let i = 0; i < magicNumbers[4]; i++) {
-      if ((y < (yRanges[index] + numberHeight)) && (x < xRanges[index] + (numberWidth / 2) + magicNumbers[1])) {
+      if ((y < (yRanges[index] + props.itemHeight)) && (x < xRanges[index] + (props.itemWidth / 2) + magicNumbers[1])) {
         return index
       }
       index++;
@@ -80,12 +98,12 @@ export default function Numbers(props) {
   }
 
   const getRanges = () => {
-    let itemsPerRow = Math.floor(dndRect.width / numberWidth);
-    let spaceSize = (dndRect.width - (itemsPerRow * numberWidth)) / (2 * itemsPerRow);
+    let itemsPerRow = Math.floor(dndRect.width / props.itemWidth);
+    let spaceSize = (dndRect.width - (itemsPerRow * props.itemWidth)) / (2 * itemsPerRow);
     let fullRows = Math.floor(props.sensors.length / itemsPerRow);
 
     let extraItems = props.sensors.length % itemsPerRow;
-    let extraSize = (dndRect.width - (extraItems * numberWidth)) / (2 * extraItems);
+    let extraSize = (dndRect.width - (extraItems * props.itemWidth)) / (2 * extraItems);
 
     setMagic([spaceSize, extraSize, fullRows, itemsPerRow, extraItems]);
 
@@ -93,12 +111,12 @@ export default function Numbers(props) {
     let tempY = Array(((itemsPerRow * fullRows) + extraItems));
     let tempE = Array(((itemsPerRow * fullRows) + extraItems));
     for (let i = 0; i < itemsPerRow; i++) {
-      let x = dndRect.x +  (spaceSize + (numberWidth / 2)) + (i * (numberWidth + (2 * spaceSize)));
+      let x = dndRect.x +  (spaceSize + (props.itemWidth / 2)) + (i * (props.itemWidth + (2 * spaceSize)));
       for (let j = 0; j < fullRows; j++) {
         let ind = i + (j * itemsPerRow);
         tempX[ind] = x;
 
-        let y = j * (numberHeight + 14) + dndRect.y + 13;
+        let y = j * (props.itemHeight + props.vSpace + 2) + dndRect.y + props.vSpace + 1;
         tempY[ind] = y - props.scrollHeight;
 
         if (i === 0 || i === itemsPerRow - 1) {
@@ -110,10 +128,10 @@ export default function Numbers(props) {
     }
 
     for (let i = 0; i < extraItems; i++) {
-      let x = dndRect.x + (extraSize + (numberWidth / 2)) + (i * (numberWidth + (2 * extraSize)));
+      let x = dndRect.x + (extraSize + (props.itemWidth / 2)) + (i * (props.itemWidth + (2 * extraSize)));
       tempX[(itemsPerRow * fullRows) + i] = x;
       
-      let y = fullRows * (numberHeight + 14) + dndRect.y + 13;
+      let y = fullRows * (props.itemHeight + props.vSpace + 2) + dndRect.y + props.vSpace + 1;
       tempY[i + (fullRows * itemsPerRow)] = y - props.scrollHeight;
     }
 
@@ -128,27 +146,28 @@ export default function Numbers(props) {
   }
 
   return (
-    <NumberTray
-      className="numbers"
+    <FlexTray
+      vSpace={props.vSpace}
       ref={dndRef}
     >
       {
         (hoverInd !== startInd && context.dragging) &&
         <VertIndicator
-          height={numberHeight}
-          x={xRanges[hoverInd] + ((2 * (xRanges[hoverInd] > xRanges[startInd]) * (yRanges[hoverInd] === yRanges[startInd])) - 1)*((numberWidth / 2) + magicNumbers[+ (hoverInd > (magicNumbers[2] * magicNumbers[3]))] + 1)}
-          y={yRanges[hoverInd] - 12}
+          height={props.itemHeight}
+          x={xRanges[hoverInd] + ((2 * (xRanges[hoverInd] > xRanges[startInd]) * (yRanges[hoverInd] === yRanges[startInd])) - 1)*((props.itemWidth / 2) + magicNumbers[+ (hoverInd > (magicNumbers[2] * magicNumbers[3]))] + 1)}
+          y={yRanges[hoverInd] - props.vSpace}
         />
       }
       {props.sensors.map((e, index) => {
-        console.log(e);
+        let val = Math.random();
         return (
           <Number
-            value={e.id*30}
-            percentage={e.id}
+            value={val*30}
+            percentage={val}
             unit={'m/s'}
             label={e.label}
             key={index}
+
             isDragging={index === startInd && context.dragging}
             hovering={index === hoverInd && context.dragging}
             sendIndex={() => {handleHover(index)}}
@@ -156,19 +175,19 @@ export default function Numbers(props) {
           />
         );
       })}
-    </NumberTray>
+    </FlexTray>
   );
 }
 
-const NumberTray = styled.div`
+const FlexTray = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  margin-top: -12px;
+  margin-top: -${props.vSpace}px;
   > * {
-    margin-top: 12px;
+    margin-top: ${props.vSpace}px;
   }
 `;

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import Select from 'react-select';
+import Select, { components } from 'react-select';
+import cloud_icon from '../../../assets/cloud.svg';
+import local_icon from '../../../assets/local.svg'
 
 const filterOptions = (option, input) => {
     if (input) {
@@ -23,6 +25,24 @@ const dateString = (date) => {
     month = (month + 1 < 10) ? "0" + (month + 1) : (month + 1)
     day = (day < 10) ? "0" + day : day
     return month + "/" + day + "/" + year;
+}
+
+const { Option } = components;
+const IconOption = props => {
+  let icon = (props.data.label == "cloud") ? cloud_icon : local_icon 
+  return(
+  <Option {...props}>
+    {props.data.name} 
+    <div style={{display: "inline", float: "right"}}>
+    {dateString(props.data.date)}
+    <img
+      src={icon}
+      style={{ width: 15, marginLeft: 20 }}
+      alt={props.data.label}
+    />
+    </div>
+  </Option>
+);
 }
 
 export default class SearchBar extends Component {
@@ -52,8 +72,9 @@ export default class SearchBar extends Component {
         onFocus={this.handleFocus}
         onChange={this.handleChange}
         getOptionLabel={option =>
-            `${option.name} (${dateString(option.date)}) - ${option.label}`
+            `${option.name} (${dateString(option.date)})`
         }
+        components={{ Option: IconOption }}
         value = {this.state.searchVal}
       />
       </div>

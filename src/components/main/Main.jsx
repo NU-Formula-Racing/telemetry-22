@@ -17,11 +17,15 @@ export default function Main(props) {
         setViewState={(newState) => setViewState(newState)}
       />
       <VertSpacer />
+<<<<<<< HEAD
       <DataDisplay
         viewState={viewState}
         sensors={props.currentSensors}
         setCurrentSensors={(newState) => props.setCurrentSensors(newState)}
       />
+=======
+      <DataDisplay viewState={viewState} sensors={props.currentSensors} />
+>>>>>>> searchbar
     </MainContainer>
   );
 }
@@ -29,7 +33,11 @@ export default function Main(props) {
 const MainContainer = styled.div`
   position: absolute;
   top: 0;
+<<<<<<< HEAD
   left: 300px;
+=======
+  left: 330px;
+>>>>>>> searchbar
   height: calc(100vh - 80px);
   width: calc(100vw - 420px);
   display: flex;

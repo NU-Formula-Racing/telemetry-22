@@ -62,13 +62,13 @@ export default function Graph(props) {
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
     const wheelTimeout = useRef()
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            updateData(graphData);
-        }, 100);
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         updateData(graphData);
+    //     }, 100);
 
-        return () => clearInterval(interval);
-    }, [])
+    //     return () => clearInterval(interval);
+    // }, [])
 
     function updateScales(gd){
         gd.xScale = scaleLinear({
@@ -88,6 +88,8 @@ export default function Graph(props) {
             time: t,
             value: Math.floor(Math.random() * 100)
         };
+        let temp = [...gd.lineData];
+        temp.push(obj);
         gd.lineData.push(obj); // push new data into data set
         // gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
         // gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);

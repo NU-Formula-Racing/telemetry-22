@@ -3,6 +3,8 @@ import Select from 'react-select';
 import styled from "styled-components";
 import SensorButton from './SensorButton';
 
+import DndList from '../shared/DnDList';
+
 export default class SensorDropdown extends Component {
     constructor(props){
         super(props)
@@ -65,12 +67,17 @@ export default class SensorDropdown extends Component {
                 />
                 <SmallVertSpace/>
                 {this.props.selectedSensors.length !== 0 &&  <StyledButton onClick={e => this.clearSelected()}>Clear All</StyledButton>}
-                {this.props.selectedSensors.map((e) => 
-                (<SensorButton 
-                  onClick={this.removeSelected} 
-                  label={e.label} 
-                  selectedSensors={this.props.selectedSensors} 
-                  setCurrentSensors={this.props.setCurrentSensors}/>))}
+                <DndList
+                >
+                  {this.props.selectedSensors.map((e) => (
+                    <SensorButton 
+                      onClick={this.removeSelected} 
+                      label={e.label} 
+                      selectedSensors={this.props.selectedSensors} 
+                      setCurrentSensors={this.props.setCurrentSensors}
+                    />
+                  ))}
+                </DndList>
             </>
 
 

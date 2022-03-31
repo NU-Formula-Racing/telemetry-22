@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export default function Number(props) {
   return(
-    <ScuffedAF spacing={props.spacing} onMouseEnter={() => {props.sendIndex()}}>
+    <ScuffedAF spacing={props.spacing} onMouseEnter={() => {props.sendIndex()}} onMouseLeave={() => {props.remove()}}>
       <NumberContainer translucent={props.isDragging} hovering={props.hovering}>
         <Value>{props.value}</Value>
         <Label unit>{props.unit}</Label>

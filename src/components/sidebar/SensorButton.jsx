@@ -13,7 +13,7 @@ class SensorButton extends Component {
     state = {  }
     render() { 
         return ( 
-        <>
+        <Div>
             <BasicContainer>
                 <Holder>
                     <>{this.props.label}</>
@@ -25,7 +25,7 @@ class SensorButton extends Component {
                 </Holder> 
             </BasicContainer>
             <SmallVertSpace/>
-        </>
+        </Div>
         );
     }
 }
@@ -36,7 +36,8 @@ const Holder = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-`
+`;
+
 let StyledButton = styled.button`
   width: 20px;
   height: 20x;
@@ -44,7 +45,11 @@ let StyledButton = styled.button`
   cursor: pointer;
   border: 0px;
   background-color: white;
-`
+`;
+
 let SmallVertSpace = styled.div`
   height: 5px;
-` 
+`;
+
+const Div = styled.div`
+`;

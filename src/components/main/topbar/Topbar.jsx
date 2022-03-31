@@ -4,6 +4,7 @@ import SearchBar from './SearchBar';
 import Upload from './Upload';
 import ButtonTray from './ButtonTray';
 import RowHolder from '../../shared/RowHolder';
+import StyledStatus from '../../shared/StyledStatus';
 
 export default function Topbar(props) {
   var display;

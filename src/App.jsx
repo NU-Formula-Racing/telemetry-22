@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 import { Component, useContext } from 'react';
-=======
-import { useState } from 'react';
->>>>>>> searchbar
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
 import Main from './components/main/Main';
 
-<<<<<<< HEAD
 import { Context } from './components/shared/Context';
 
 export default class App extends Component {
@@ -102,19 +97,10 @@ export default function App() {
 
   return (
     <div onMouseDown={(e) => {handleMouseDown(e)}} onMouseUp={(e) => {handleMouseUp(e)}}>
-=======
-export default function App() {
-  var [isLive, setIsLive] = useState(false);
-  var [currentSensors, setCurrentSensors] = useState([]);
-
-  return (
-    <>
->>>>>>> searchbar
       <GlobalStyle/>
       <Sidebar
         isLive={isLive} setIsLive={(next) => setIsLive(next)}
         currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
-<<<<<<< HEAD
         setSessionName={(newState) => setSessionName(newState)}
       />
       <Main
@@ -123,11 +109,6 @@ export default function App() {
         setCurrentSensors={(newState) => setCurrentSensors(newState)}
       />
     </div>
-=======
-      />
-      <Main isLive={isLive} currentSensors={currentSensors} />
-    </>
->>>>>>> searchbar
   );
 }
 

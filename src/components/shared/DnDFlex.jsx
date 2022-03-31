@@ -12,9 +12,10 @@ export default function DndFlex(props) {
   const [dndRect, setRect] = useState(0);
   const [xRanges, setxRanges] = useState([]);
   const [yRanges, setyRanges] = useState([]);
-  const [startInd, setStartInd] = useState(0);
+  const [startInd, setStartInd] = useState(-1);
   const [hoverInd, setHoverInd] = useState(0);
   const [magicNumbers, setMagic] = useState([0, 0, 0, 0, 0]);
+  const [canDrop, setCanDrop] = useState(true);
   const dndRef = useRef(null);
 
   useEffect(() => {
@@ -40,7 +41,7 @@ export default function DndFlex(props) {
     let x = context.mouseX;
     let y = context.mouseY;
 
-    if (!context.dragging) {
+    if (!context.dragging && startInd >= 0 && canDrop) {
       let temp = props.items[startInd];
       props.items.splice(startInd, 1);
       props.items.splice(hoverInd, 0, temp);
@@ -53,15 +54,11 @@ export default function DndFlex(props) {
 
   const addProps = (initProps) => {
     const updatedChildren = initProps.map((child, index) => {
-      // isDragging={index === startInd && context.dragging}
-      // hovering={index === hoverInd && context.dragging}
-      // sendIndex={() => {handleHover(index)}}
-      // spacing={magicNumbers[+ (index >= (magicNumbers[2] * magicNumbers[3]))]}
-
       return React.cloneElement(child, {
         isDragging: index === startInd && context.dragging,
-        hovering: index === hoverInd && context.dragging,
+        hovering: index === hoverInd && context.dragging && canDrop,
         sendIndex: () => handleHover(index),
+        remove: () => handleExit(),
         spacing: magicNumbers[+ (index >= (magicNumbers[2] * magicNumbers[3]))]
       })
     })
@@ -137,13 +134,21 @@ export default function DndFlex(props) {
     }
   }
 
+  const handleExit = () => {
+    if (!context.dragging) {
+      setStartInd(-1);
+    }
+  }
+
   return (
     <FlexTray
       vSpace={props.vSpace}
       ref={dndRef}
+      onMouseEnter={() => setCanDrop(true)}
+      onMouseLeave={() => setCanDrop(false)}
     >
       {
-        (hoverInd !== startInd && context.dragging) &&
+        (hoverInd !== startInd && context.dragging && startInd >= 0 && canDrop) &&
         <VertIndicator
           height={props.itemHeight}
           x={xRanges[hoverInd] + ((2 * (xRanges[hoverInd] > xRanges[startInd]) * (yRanges[hoverInd] === yRanges[startInd])) - 1)*((props.itemWidth / 2) + magicNumbers[+ (hoverInd > (magicNumbers[2] * magicNumbers[3]))] + 1)}

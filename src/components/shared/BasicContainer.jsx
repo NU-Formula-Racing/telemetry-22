@@ -1,8 +1,26 @@
 import styled from 'styled-components';
 
 export default function BasicContainer(props) {
+  const handleEnter = () => {
+    if (props.hoverHandler) {
+      props.hoverHandler();
+    }
+  }
+
+  const handleLeave = () => {
+    if (props.exitHandler) {
+      props.exitHandler();
+    }
+  }
+
   return (
-    <Container isFlex={props.flex} expand={props.expand} scroll={props.scroll}>
+    <Container
+      onMouseEnter={() => {handleEnter()}}
+      onMouseLeave={() => {handleLeave()}}
+      isFlex={props.flex}
+      expand={props.expand}
+      scroll={props.scroll}
+    >
       {props.children}
     </Container>
   );

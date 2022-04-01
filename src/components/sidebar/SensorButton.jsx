@@ -13,8 +13,17 @@ class SensorButton extends Component {
     state = {  }
     render() { 
         return ( 
-        <Div>
-            <BasicContainer>
+        <Div
+            onMouseEnter={() => {this.props.sendIndex()}}
+            onMouseLeave={() => {this.props.removeIndex()}}
+            transluscent={this.props.isDragging}
+            target={this.props.isHovering}
+        >
+            <SmallVertSpace/>
+            <BasicContainer
+                hoverHandler={() => {this.props.sendStart()}}
+                exitHandler={() => {this.props.removeStart()}}
+            >
                 <Holder>
                     <>{this.props.label}</>
                     <StyledButton
@@ -48,8 +57,9 @@ let StyledButton = styled.button`
 `;
 
 let SmallVertSpace = styled.div`
-  height: 5px;
+  height: 3px;
 `;
 
 const Div = styled.div`
+    opacity: ${props => ((props.transluscent) ? '0.4' : '1')};
 `;

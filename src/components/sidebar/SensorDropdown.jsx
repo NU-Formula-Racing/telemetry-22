@@ -68,9 +68,13 @@ export default class SensorDropdown extends Component {
                 <SmallVertSpace/>
                 {this.props.selectedSensors.length !== 0 &&  <StyledButton onClick={e => this.clearSelected()}>Clear All</StyledButton>}
                 <DndList
+                  vspace={3}
+                  items={this.props.selectedSensors}
+                  setCurrentItems={(x) => this.props.setCurrentSensors(x)}
                 >
-                  {this.props.selectedSensors.map((e) => (
+                  {this.props.selectedSensors.map((e, i) => (
                     <SensorButton 
+                      key={i}
                       onClick={this.removeSelected} 
                       label={e.label} 
                       selectedSensors={this.props.selectedSensors} 

@@ -35,6 +35,10 @@ def responseToMessage(message, watchdog):
         
         case ["SWITCH_SOURCE", newstate]:
             #lh.set_state(newstate):
+            if newstate != "cloud" or newstate != "local":
+                return "INVALID STATE"
+            watchdog.switch_source(newstate)
+            return "SWITCHED STATE TO "+ newstate
             if False: 
                 return ":)"
             else:

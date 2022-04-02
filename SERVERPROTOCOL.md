@@ -51,7 +51,8 @@ The server shall return the FIRST of the following JSON formats:
         "timestamp": frame_timestamp,
         "sensor_id1": current_value_of_sensor,
         ...
-    }
+    },
+    ...
 ]
 ```
 ```

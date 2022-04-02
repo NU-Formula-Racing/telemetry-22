@@ -73,9 +73,16 @@ The server shall return either `":)"` or `":("`.
 - `LIST_HISTORIC_DATAFILES path`
 The server shall return the following (exhaustive) JSON:
 ```
-[["historic_datafile_name", "historic_datafile_timestamp"], ...]
+[
+    {
+        "name": historic_datafile_name, 
+        "timestamp": historic_datafile_timestamp,
+        "local": true/false
+    },
+    ...
+]
 ```
-This JSON is comprised of all of the local historic Telemetry related CSV files in the given file path.
+This JSON is comprised of both local historic and cloud (if active) Telemetry related CSV files in the given file path.
 
 - `REQUEST_HISTORIC_DATAFILE_BY_TIME timestamp`
 The server shall return the structured contents of the requested datafile in the following JSON:

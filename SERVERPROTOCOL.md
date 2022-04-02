@@ -22,7 +22,7 @@ The server shall return the following (exhaustive) JSON:
 ```
 
 - `CUR_VALS sensor_id ...`
-The server shall return the FIRST of the following JSON formats:
+The server shall return the value of the given `sensor_ids` in the current frame in the FIRST of the following JSON formats:
 ```
 {
     "timestamp": frame_timestamp,
@@ -31,20 +31,17 @@ The server shall return the FIRST of the following JSON formats:
 }
 ```
 ```
-{
-    "sensors": 
-        [
-            {
-                "timestamp": frame_timestamp,
-                "sensor_id1": current_value_of_sensor
-            },
-            ...
-        ]
-}
+[
+    {
+        "timestamp": frame_timestamp,
+        "sensor_id1": current_value_of_sensor
+    },
+    ...
+]
 ```
 
 - `HITHERTO_VALS sensor_id`
-The server shall return the FIRST of the following JSON formats:
+The server shall return all values of the given `sensor_ids` up to this frame in the FIRST of the following JSON formats:
 ```
 [
     {
@@ -85,7 +82,7 @@ The server shall return the following (exhaustive) JSON:
 This JSON is comprised of both local historic and cloud (if active) Telemetry related CSV files in the given file path.
 
 - `REQUEST_HISTORIC_DATAFILE_BY_TIME timestamp`
-The server shall return the structured contents of the requested datafile in the following JSON:
+The server shall return the structured contents of the requested datafile (if found) in the following JSON:
 ```
 {
     "name": filename,
@@ -93,17 +90,18 @@ The server shall return the structured contents of the requested datafile in the
     "data":
         [
             {
-                "timestamp":
-                "sensor1
+                "timestamp": timestamp1,
+                "sensor1": value1,
                 ...
             },
             ...
         ]
 }
 ```
+Otherwise, it will return `"FILE NOT FOUND"`.
 
 - `REQUEST_HISTORIC_DATAFILE_BY_NAME name`
-The server shall return the structured contents of the requested datafile in the same JSON format as `REQUEST_HISTORIC_DATAFILE_BY_TIME`.
+The server shall return the structured contents of the requested datafile (if found) in the same JSON format as `REQUEST_HISTORIC_DATAFILE_BY_TIME`. Otherwise, it will return `"FILE NOT FOUND"`.
 
 - `END_SESSION name`
 Ends the session and renames the datafile. No commands may be sent other than `"BEGIN_SESSION"` until `"BEGIN_SESSION"` is sent.

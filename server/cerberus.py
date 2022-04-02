@@ -39,3 +39,11 @@ class ThreadedWatcher(object):
     
     def cloud_stop(self):
         self.cloudActive.clear()
+    
+    def switch_source(self, newstate):
+        if newstate == "cloud":
+            self.cloud_start()
+        elif newstate == "local":
+            self.cloud_stop()
+        else:
+            pass

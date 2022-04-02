@@ -10,9 +10,12 @@ def responseToMessage(message, watchdog):
         case ["LIST_SENSORS_BY_SUBTEAM"]:
             return sub.list_sensors_by_subteam()
         
-        case ["VALS", *sensorIDs]: 
+        case ["CUR_VALS", *sensorIDs]: 
             rFrame = watchdog.mostRecentFrame()
             return {sensorID : rFrame[sensorID] for sensorID in sensorIDs}
+        
+        case ["HITHERTO_VALS", *sensorIDs]:
+            return ":("
                 
         case ["STATUS"]:
             if watchdog.cloud_status():
@@ -36,7 +39,7 @@ def responseToMessage(message, watchdog):
         case ["SWITCH_SOURCE", newstate]:
             #lh.set_state(newstate):
             if newstate != "cloud" or newstate != "local":
-                return "INVALID STATE"
+                return "INVALID SOURCE"
             watchdog.switch_source(newstate)
             return "SWITCHED STATE TO "+ newstate
             if False: 
@@ -44,11 +47,11 @@ def responseToMessage(message, watchdog):
             else:
                 return ":("
 
-        case ["LIST_HISTORIC_DATAFILES"]:
+        case ["LIST_HISTORIC_DATAFILES", path]:
             if watchdog.cloud_status():
                 return cl.get_historic_data()
             else:
-                path = "" # GET THE PATH SOMEHOW
+                #path = "" # GET THE PATH SOMEHOW
                 files = lh.list_local_data_files(path)
                 if files:
                     return files

@@ -9,8 +9,8 @@
 
 The server must accept the following commands:
 
-- `SWITCH_SOURCE source`
-where `source` is either `"cloud"` or `"local"`. The server shall return either `"SWITCHED STATE TO *source*"` or `"INVALID SOURCE"`.
+- `SWITCH_STATE state`
+where `state` is either `"cloud"` or `"local"`. The server shall return either `"SWITCHED STATE TO *state*"` or `"INVALID STATE"`.
 
 - `LIST_SENSORS_BY_SUBTEAM` 
 The server shall return the following (exhaustive) JSON:
@@ -21,29 +21,81 @@ The server shall return the following (exhaustive) JSON:
 }
 ```
 
-- `VALS sensor_id ...`
-The server shall return the following JSON:
+- `CUR_VALS sensor_id ...`
+The server shall return the FIRST of the following JSON formats:
 ```
 {
-    "sensor_id": current_value_of_sensor,
+    "timestamp": frame_timestamp,
+    "sensor_id1": current_value_of_sensor,
     ...
 }
 ```
+```
+{
+    "sensors": 
+        [
+            {
+                "timestamp": frame_timestamp,
+                "sensor_id1": current_value_of_sensor
+            },
+            ...
+        ]
+}
+```
+
+- `HITHERTO_VALS sensor_id`
+The server shall return the FIRST of the following JSON formats:
+```
+[
+    {
+        "timestamp": frame_timestamp,
+        "sensor_id1": current_value_of_sensor,
+        ...
+    }
+]
+```
+```
+[
+    {
+        "sensor_id": sensor_id,
+        "timestamps": [timestamp1, ...]
+        "values": [value_of_sensor1, ...]
+    },
+    ...
+]
+```
+
 
 - `STATUS`
 The server shall return either `":)"` or `":("`.
 
-- `LIST_HISTORIC_DATAFILES`
+- `LIST_HISTORIC_DATAFILES path`
 The server shall return the following (exhaustive) JSON:
 ```
 [["historic_datafile_name", "historic_datafile_timestamp"], ...]
 ```
+This JSON is comprised of all of the local historic Telemetry related CSV files in the given file path.
 
 - `REQUEST_HISTORIC_DATAFILE_BY_TIME timestamp`
-The server shall return the structured contents of the requested datafile.
+The server shall return the structured contents of the requested datafile in the following JSON:
+```
+{
+    "name": filename,
+    "filecreation": datetime,
+    "data":
+        [
+            {
+                "timestamp":
+                "sensor1
+                ...
+            },
+            ...
+        ]
+}
+```
 
 - `REQUEST_HISTORIC_DATAFILE_BY_NAME name`
-The server shall return the structured contents of the requested datafile.
+The server shall return the structured contents of the requested datafile in the same JSON format as `REQUEST_HISTORIC_DATAFILE_BY_TIME`.
 
 - `END_SESSION name`
 Ends the session and renames the datafile. No commands may be sent other than `"BEGIN_SESSION"` until `"BEGIN_SESSION"` is sent.

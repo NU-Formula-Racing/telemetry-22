@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/NFR21-Telemetry/static/js/main.12218b42.chunk.js",
-    "main.js.map": "/NFR21-Telemetry/static/js/main.12218b42.chunk.js.map",
+    "main.js": "/NFR21-Telemetry/static/js/main.b2360b26.chunk.js",
+    "main.js.map": "/NFR21-Telemetry/static/js/main.b2360b26.chunk.js.map",
     "runtime-main.js": "/NFR21-Telemetry/static/js/runtime-main.5433eae3.js",
     "runtime-main.js.map": "/NFR21-Telemetry/static/js/runtime-main.5433eae3.js.map",
     "static/js/2.ed302c20.chunk.js": "/NFR21-Telemetry/static/js/2.ed302c20.chunk.js",
@@ -23,6 +23,6 @@
   "entrypoints": [
     "static/js/runtime-main.5433eae3.js",
     "static/js/2.ed302c20.chunk.js",
-    "static/js/main.12218b42.chunk.js"
+    "static/js/main.b2360b26.chunk.js"
   ]
 }

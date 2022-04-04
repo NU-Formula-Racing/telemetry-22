@@ -6,6 +6,7 @@ import Graphs from './Graphs';
 import Numbers from './Numbers';
 
 import StyledStatus from '../../shared/StyledStatus';
+import ScrollZone from '../../shared/ScrollZone';
 
 export default class DataDisplay extends Component {
   constructor(props) {
@@ -88,6 +89,7 @@ export default class DataDisplay extends Component {
 }
 
 const Container = styled.div`
+  position: relative;
   width: 100%;
   border: 1px solid #818181;
   border-radius: 9px;

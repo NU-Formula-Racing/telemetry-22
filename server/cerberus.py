@@ -28,6 +28,19 @@ class ThreadedWatcher(object):
     def mostRecentFrame(self):
         return self.data[-1]
 
+    def hithertoData(self, sensorID):
+        result = [] # {}
+        timestamp_id = "" ### CHANGE THIS TO ACTUAL TIMESTAMP ID
+        try:
+            for frame in self.data:
+                dvpair = {}
+                dvpair["timestamp"] = frame[timestamp_id]
+                dvpair["value"] = frame[sensorID]
+                result.append(dvpair)
+            return result
+        except:
+            return None
+
     def bark(self):
         return "woof"
 

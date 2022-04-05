@@ -15,7 +15,7 @@ def responseToMessage(message, watchdog):
             return {sensorID : rFrame[sensorID] for sensorID in sensorIDs}
         
         case ["HITHERTO_VALS", *sensorIDs]:
-            return ":("
+            return watchdog.hithertoData(sensorIDs)
                 
         case ["STATUS"]:
             if watchdog.cloud_status():

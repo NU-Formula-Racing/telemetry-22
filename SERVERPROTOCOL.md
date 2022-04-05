@@ -25,29 +25,29 @@ The server shall return the following (exhaustive) JSON:
 The server shall return the value of the given `sensor_ids` in the current frame in the FIRST of the following JSON formats:
 ```
 {
+    "sensor1": [{
+        "timestamp": frame_timestamp,
+        "value": current_value_of_sensor
+    }],
+    ...
+}
+```
+```
+{
     "timestamp": frame_timestamp,
     "sensor_id1": current_value_of_sensor,
     ...
 }
 ```
-```
-[
-    {
-        "timestamp": frame_timestamp,
-        "sensor_id1": current_value_of_sensor
-    },
-    ...
-]
-```
+
 
 - `HITHERTO_VALS sensor_id`
-The server shall return all values of the given `sensor_ids` up to this frame in the FIRST of the following JSON formats:
+The server shall return all values of the given `sensor_id` up to this frame in the FIRST of the following JSON formats:
 ```
 [
     {
         "timestamp": frame_timestamp,
-        "sensor_id1": current_value_of_sensor,
-        ...
+        "value": current_value_of_sensor
     },
     ...
 ]
@@ -57,7 +57,7 @@ The server shall return all values of the given `sensor_ids` up to this frame in
     {
         "sensor_id": sensor_id,
         "timestamps": [timestamp1, ...]
-        "values": [value_of_sensor1, ...]
+        "values": [value1, ...]
     },
     ...
 ]

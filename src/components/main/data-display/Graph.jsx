@@ -37,38 +37,30 @@ function initialise() {
     return arr;
 }
 
-const height = 300
-const width = 800
-
-const getX = (d) => d.time;
-const getY = (d) => d.value;
-
-
-const graph_offset = 30
-
-// scales
-let xScaleInit = scaleLinear({
-    domain: [0, max(initData, getX)],
-    range: [0, width - 3*graph_offset]
-});
-
-let yScaleInit = scaleLinear({
-    domain: [0, max(initData, getY) * 1.2],
-    range: [height * 0.85, height * 0.1]
-});
-
 export default function Graph(props) {
+    const height = 300
+    const width = props.width * 0.9
+
+    const getX = (d) => d.time;
+    const getY = (d) => d.value;
+
+
+    const graph_offset = 30
+
+    // scales
+    let xScaleInit = scaleLinear({
+        domain: [0, max(initData, getX)],
+        range: [0, width - 3*graph_offset]
+    });
+
+    let yScaleInit = scaleLinear({
+        domain: [0, max(initData, getY) * 1.2],
+        range: [height * 0.85, height * 0.1]
+    });
+
     const curveType = 'curveLinear'
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
     const wheelTimeout = useRef()
-
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         updateData(graphData);
-    //     }, 100);
-
-    //     return () => clearInterval(interval);
-    // }, [])
 
     function updateScales(gd){
         gd.xScale = scaleLinear({

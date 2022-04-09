@@ -39,7 +39,7 @@ function initialise() {
 
 export default function Graph(props) {
     const height = 300
-    const width = props.width * 0.9
+    const width = props.width > 500 ? props.width * 0.9 : 450
 
     const getX = (d) => d.time;
     const getY = (d) => d.value;
@@ -63,30 +63,38 @@ export default function Graph(props) {
     const wheelTimeout = useRef()
 
     function updateScales(gd){
-        gd.xScale = scaleLinear({
+        let xscale = scaleLinear({
             domain: [getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])],
             range: [0, width - 3*graph_offset]
         });
-        gd.yScale = scaleLinear({
+        let yscale = scaleLinear({
             domain: [0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY) * 1.2],
             range: [height * 0.85, height * 0.1]
         })
+        setGD(prevState => ({
+            ...prevState,
+            xScale: xscale,
+            yScale: yscale
+        }));
     }
-    function updateData(gd) {
+    function updateData(gd, e) {
         t++;
-        if (gd.end >= n) { gd.start++ }
-        gd.end++;
+        let start = gd.start
+        if (gd.end >= n) { start = gd.start + 1}
+        let end = gd.end + 1;
         var obj = {
             time: t,
             value: Math.floor(Math.random() * 100)
         };
         let temp = [...gd.lineData];
         temp.push(obj);
-        gd.lineData.push(obj); // push new data into data set
-        // gd.xScale.domain([getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])]); // update scales
-        // gd.yScale.domain([0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY)]);
-        updateScales(gd);
-        props.rerender();
+        setGD(prevState => ({
+            ...prevState,
+            lineData: temp,
+            start: start,
+            end: end
+          }));
+        handleTooltip(e);
     }
 
     function lockWheel(){
@@ -117,33 +125,40 @@ export default function Graph(props) {
     }
 
     function zoom(gd, dir, amt){
+        let start;
         if (dir == "in"){
-            if (gd.start < gd.end - 2) {
-                gd.start+= amt
-            };
+            if (gd.start < (gd.end - 2)) {
+                start = gd.start + amt
+            } else {return}
         } else if (dir == "out"){
             if (gd.start > amt) {
-                gd.start-= amt
-            } 
+                start = gd.start - amt
+            } else {return}
         }
-        updateScales(gd);
-        props.rerender();
+        setGD(prevState => ({
+            ...prevState,
+            start: start,
+        }));
     }
 
     function scroll(gd, dir, amt){
+        let start, end;
         if (dir == "right"){
             if (gd.end < max(gd.lineData, getX) - amt) {
-                gd.start+= amt
-                gd.end+= amt
-            };
+                start = gd.start + amt
+                end = gd.end + amt
+            } else {return}
         } else if (dir == "left"){
             if (gd.start > amt) {
-                gd.start-= amt
-                gd.end-= amt
-            }
+                start = gd.start - amt
+                end = gd.end - amt
+            } else {return}
         }
-        updateScales(gd);
-        props.rerender();
+        setGD(prevState => ({
+            ...prevState,
+            start: start,
+            end: end
+        }));
     }
 
     function checkKey(e) {
@@ -151,6 +166,7 @@ export default function Graph(props) {
         } else if (e.keyCode == '40') { zoom(graphData, "out", 1); lockWheel() // down arrow
         } else if (e.keyCode == '37') { scroll(graphData, "left", 1); lockWheel() // left arrow 
         } else if (e.keyCode == '39') { scroll(graphData, "right", 1); lockWheel() // right arrow
+        } else if (e.keyCode == '65') { updateData(graphData, e)// space
         }
     }
 
@@ -159,6 +175,10 @@ export default function Graph(props) {
         document.body.addEventListener('wheel', cancelWheel, {passive:false})
         return () => document.body.removeEventListener('wheel', cancelWheel)
     }, [])
+
+    useEffect(() => {
+        updateScales(graphData)
+    }, [graphData.lineData, graphData.start, graphData.end])
 
     const { showTooltip,
         tooltipData,
@@ -185,14 +205,13 @@ export default function Graph(props) {
             tooltipData: d,
             tooltipLeft: graphData.xScale(getX(d)),
             tooltipTop: graphData.yScale(getY(d)),
-            // tooltipTop: graphData.yScale(getY(d)),
           });
         },
-        [showTooltip, graphData.yScale, graphData.yScale],
+        [showTooltip, graphData.yScale, graphData.xScale],
       );
   return (
         <GraphContainer onKeyDown={(e) => checkKey(e)}>
-            <button onClick={() => updateData(graphData)}>update</button> <br/>
+            <button onClick={(e) => updateData(graphData,e)}>update</button> <br/>
             <ButtonTray width={width}>
                 <div>
                 <Clickable src={scrollleft} alt='scroll left' width='25px' height='25px' onClick={() => {scroll(graphData, "left", 1)}} />

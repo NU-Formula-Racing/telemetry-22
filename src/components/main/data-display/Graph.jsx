@@ -16,11 +16,12 @@ import zoomout from '../../../assets/zoomout.svg';
 import { GridRows, GridColumns } from '@visx/grid';
 import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
 import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
-
+import {Context} from '../../shared/Context.jsx'
 
 let t = -1; // init time
 const n = 30; // amount of seconds to show
 let initData = initialise(); //data arr
+
 
 function initialise() {
     var time = -1;
@@ -38,6 +39,7 @@ function initialise() {
 }
 
 export default function Graph(props) {
+    let context = useContext(Context)
     const height = 300
     const width = props.width > 500 ? props.width * 0.9 : 450
 
@@ -63,12 +65,15 @@ export default function Graph(props) {
     const wheelTimeout = useRef()
 
     function updateScales(gd){
+        console.log('kms')
+        let start_idx = Math.floor(graphData.start)
+        let end_idx = Math.ceil(graphData.end)
         let xscale = scaleLinear({
-            domain: [getX(gd.lineData[Math.floor(gd.start)]), getX(gd.lineData[Math.floor(gd.end)])],
+            domain: [getX(graphData.lineData[start_idx]), getX(graphData.lineData[end_idx])],
             range: [0, width - 3*graph_offset]
         });
         let yscale = scaleLinear({
-            domain: [0, max(gd.lineData.slice(Math.floor(gd.start), Math.floor(gd.end)), getY) * 1.2],
+            domain: [0, max(graphData.lineData.slice(start_idx, end_idx), getY) * 1.2],
             range: [height * 0.85, height * 0.1]
         })
         setGD(prevState => ({
@@ -117,14 +122,14 @@ export default function Graph(props) {
 
         if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 1){
             (e.deltaX < 0) ? dir = "right" : dir = "left"
-            scroll(gd, dir, scroll_amt)
+            scroll(gd, dir, scroll_amt,e)
         } else {
             (e.deltaY < 0) ? dir = "in" : dir = "out"
-            zoom(gd, dir, zoom_amt)
+            zoom(gd, dir, zoom_amt,e)
         }
     }
 
-    function zoom(gd, dir, amt){
+    function zoom(gd, dir, amt,e){
         let start;
         if (dir == "in"){
             if (gd.start < (gd.end - 2)) {
@@ -139,9 +144,10 @@ export default function Graph(props) {
             ...prevState,
             start: start,
         }));
+        handleTooltip(e);
     }
 
-    function scroll(gd, dir, amt){
+    function scroll(gd, dir, amt,e){
         let start, end;
         if (dir == "right"){
             if (gd.end < max(gd.lineData, getX) - amt) {
@@ -159,6 +165,7 @@ export default function Graph(props) {
             start: start,
             end: end
         }));
+        handleTooltip(e);
     }
 
     function checkKey(e) {
@@ -191,7 +198,7 @@ export default function Graph(props) {
     // tooltip handler
     const handleTooltip = useCallback(
         (event) => {
-          let { x } = localPoint(event) || { x: (graph_offset*2) }; // x of mouse
+          let {x} = localPoint(event) || {x: graph_offset*2}; // x of mouse
           x -= (graph_offset*2)
           const x0 = graphData.xScale.invert(x); // maps x -> time 
           const index = bisectTime(graphData.lineData, x0, 1); // finds index of the middle time
@@ -214,11 +221,11 @@ export default function Graph(props) {
             <button onClick={(e) => updateData(graphData,e)}>update</button> <br/>
             <ButtonTray width={width}>
                 <div>
-                <Clickable src={scrollleft} alt='scroll left' width='25px' height='25px' onClick={() => {scroll(graphData, "left", 1)}} />
-                <Clickable src={scrollright} alt='scroll right' width='25px' height='25px' onClick={() => {scroll(graphData, "right", 1)}} />
+                <Clickable src={scrollleft} alt='scroll left' width='25px' height='25px' onClick={(e) => {scroll(graphData, "left", 1, e)}} />
+                <Clickable src={scrollright} alt='scroll right' width='25px' height='25px' onClick={(e) => {scroll(graphData, "right", 1, e)}} />
                 </div>
-                <Clickable src={zoomin} alt='zoom in' width='25px' height='25px' onClick={() => {zoom(graphData, "in", 1)}} />
-                <Clickable src={zoomout} alt='zoom out' width='25px' height='25px' onClick={() => {zoom(graphData, "out", 1)}} />
+                <Clickable src={zoomin} alt='zoom in' width='25px' height='25px' onClick={(e) => {zoom(graphData, "in", 1,e)}} />
+                <Clickable src={zoomout} alt='zoom out' width='25px' height='25px' onClick={(e) => {zoom(graphData, "out", 1,e)}} />
             </ButtonTray>
             <SVGContainer width={width}>
             <div>{props.sensorName}</div>
@@ -241,7 +248,7 @@ export default function Graph(props) {
                     ))}
                     <LinePath
                     curve={allCurves[curveType]}
-                    data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)+1)}
+                    data={graphData.lineData.slice(Math.floor(graphData.start), Math.ceil(graphData.end)+1)}
                     x={(d) => graphData.xScale(getX(d)) ?? 0}
                     y={(d) => graphData.yScale(getY(d)) ?? 0}
                     stroke="#5048E5"
@@ -255,7 +262,7 @@ export default function Graph(props) {
                     <AreaClosed
                         fill="#5048E515"
                         curve={allCurves[curveType]}
-                        data={graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)+1)}
+                        data={graphData.lineData.slice(Math.floor(graphData.start), Math.ceil(graphData.end)+1)}
                         x={(d) => graphData.xScale(getX(d)) ?? 0}
                         y={(d) => graphData.yScale(getY(d)) ?? 0}
                         yScale={graphData.yScale}

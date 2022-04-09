@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 
 export default function useMouse() {
   const [pos, setPos] = useState({
-    x: 0,
-    y: 0
+    mouseX: 0,
+    mouseY: 0
   });
 
   const update = (e) => {
-    setPos({ x: e.clientX, y: e.clientY });
+    setPos({ mouseX: e.clientX, mouseY: e.clientY });
   };
 
   useEffect(() => {

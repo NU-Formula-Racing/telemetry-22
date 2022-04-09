@@ -5,7 +5,6 @@ export default function Graphs(props) {
   return (
     <>
       {props.sensors.map((e, index) => {
-        console.log(e);
         return (
           <div key={index}>
             {index !== 0 && <VertSpacer />}

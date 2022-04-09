@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select';
 import styled from "styled-components";
 import SensorButton from './SensorButton';

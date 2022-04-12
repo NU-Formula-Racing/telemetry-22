@@ -63,7 +63,8 @@ def get_historic_data(session_id: str):
     url = f"{base_url}/getHistoricData?sessionId={session_id}"
     response = requests.get(url)
     if response.status_code == 200:
-        return response.json()
+        return response.text
+        # return response.json()
     else:
         return None
 
@@ -101,6 +102,8 @@ def list_historic_data():
 
 if __name__ == "__main__":
     df_list = list_historic_data()
-    print(get_historic_data(df_list[1]))
+    # print(df_list)
+    with open("cloud_test.txt", 'w') as f:
+        f.write(get_historic_data(df_list[0]))
     # for d in df_list:
         

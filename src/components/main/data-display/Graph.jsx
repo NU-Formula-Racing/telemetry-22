@@ -67,7 +67,7 @@ export default function Graph(props) {
     function updateScales(gd){
         console.log('kms')
         let start_idx = Math.floor(graphData.start)
-        let end_idx = Math.ceil(graphData.end)
+        let end_idx = max([Math.ceil(graphData.end), 0])
         let xscale = scaleLinear({
             domain: [getX(graphData.lineData[start_idx]), getX(graphData.lineData[end_idx])],
             range: [0, width - 3*graph_offset]
@@ -83,12 +83,11 @@ export default function Graph(props) {
         }));
     }
     function updateData(gd, e) {
-        t++;
         let start = gd.start
         if (gd.end >= n) { start = gd.start + 1}
         let end = gd.end + 1;
         var obj = {
-            time: t,
+            time: gd.lineData.length,
             value: Math.floor(Math.random() * 100)
         };
         let temp = [...gd.lineData];
@@ -237,7 +236,7 @@ export default function Graph(props) {
                     <GridColumns scale={graphData.xScale} height={height-60} stroke="#e0e0e0" top={30}/>
                     <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"bottom axis label"}/>
                     <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={"left axis label"}/>
-                    {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)+1).map((d, j) => (
+                    {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (
                         <circle
                         key={j}
                         r={2}
@@ -248,7 +247,7 @@ export default function Graph(props) {
                     ))}
                     <LinePath
                     curve={allCurves[curveType]}
-                    data={graphData.lineData.slice(Math.floor(graphData.start), Math.ceil(graphData.end)+1)}
+                    data={graphData.lineData.slice(Math.floor(graphData.start), Math.ceil(graphData.end))}
                     x={(d) => graphData.xScale(getX(d)) ?? 0}
                     y={(d) => graphData.yScale(getY(d)) ?? 0}
                     stroke="#5048E5"
@@ -262,7 +261,7 @@ export default function Graph(props) {
                     <AreaClosed
                         fill="#5048E515"
                         curve={allCurves[curveType]}
-                        data={graphData.lineData.slice(Math.floor(graphData.start), Math.ceil(graphData.end)+1)}
+                        data={graphData.lineData.slice(Math.floor(graphData.start), Math.ceil(graphData.end))}
                         x={(d) => graphData.xScale(getX(d)) ?? 0}
                         y={(d) => graphData.yScale(getY(d)) ?? 0}
                         yScale={graphData.yScale}

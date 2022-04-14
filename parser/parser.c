@@ -23,7 +23,10 @@ int readAndShift(byte *bytes, FILE *f);
 void printBuffer(twoBytes *buff);
 
 int main(int argc, char **argv) {
+  /* Header line, WIP
+  */
 
+  /// Open raw binary file, if given
   FILE *f;
   if (argc > 1) {
     f = fopen(argv[1], "rb");
@@ -31,13 +34,17 @@ int main(int argc, char **argv) {
     f = stdin;
   }
 
-  twoBytes *curBytes = (twoBytes *)malloc(sizeof(twoBytes));
+  /// File location trackers
+  // Short tracker
+  twoBytes *curBytes = (twoBytes *)malloc(sizeof(twoBytes)); // No free() function?
+  
+  // Individual byte pointers
   byte *hByte = (byte *)curBytes;
   byte *tByte = (byte *)curBytes + 1;
-
   *hByte = 0;
   *tByte = 0;
 
+  // Sensor counter
   int curIdx = 0;
 
   twoBytes *readBuffer = malloc(sizeof(twoBytes) * NUM_SENSORS);

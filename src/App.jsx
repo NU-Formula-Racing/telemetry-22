@@ -1,4 +1,4 @@
-import { Component, useContext } from 'react';
+import { Component } from 'react';
 import { createGlobalStyle } from 'styled-components';
 
 import Sidebar from './components/sidebar/Sidebar';
@@ -56,65 +56,3 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Open Sans', sans-serif;
   }
 `;
-
-/*import styled from 'styled-components';
-
-import { useState, useContext, useEffect } from 'react';
-import { createGlobalStyle } from 'styled-components';
-
-import Sidebar from './components/sidebar/Sidebar';
-import Main from './components/main/Main';
-
-import { Context } from './components/shared/Context';
-
-function useForceUpdate(){
-  const [value, setValue] = useState(0); // integer state
-  return () => setValue(value => value + 1); // update the state to force render
-}
-
-export default function App() {
-  let context = useContext(Context);
-
-  const forceUpdate = useForceUpdate();
-
-  var [isLive, setIsLive] = useState(false);
-  var [currentSensors, setCurrentSensors] = useState([]);
-  var [sessionName, setSessionName] = useState('');
-
-  const handleMouseDown = (e) => {
-    context.setMouseCoords(e.clientX, e.clientY);
-    context.setDragging(true);
-  }
-
-  const handleMouseUp = (e) => {
-    context.setMouseCoords(e.clientX, e.clientY);
-    context.setDragging(false);
-  }
-
-  useEffect(() => {
-    console.log('WHAT')
-  }, [currentSensors])
-
-  return (
-    <div onMouseDown={(e) => {handleMouseDown(e)}} onMouseUp={(e) => {handleMouseUp(e)}}>
-      <GlobalStyle/>
-      <Sidebar
-        isLive={isLive} setIsLive={(next) => setIsLive(next)}
-        currentSensors={currentSensors} setCurrentSensors={(newState) => setCurrentSensors(newState)}
-        setSessionName={(newState) => setSessionName(newState)}
-      />
-      <Main
-        isLive={isLive}
-        currentSensors={currentSensors}
-        setCurrentSensors={(newState) => setCurrentSensors(newState)}
-      />
-    </div>
-  );
-}
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-    font-family: 'Open Sans', sans-serif;
-  }
-`;*/

@@ -68,7 +68,7 @@ export default class SensorDropdown extends Component {
                 <SmallVertSpace/>
                 {this.props.selectedSensors.length !== 0 &&  <StyledButton onClick={e => this.clearSelected()}>Clear All</StyledButton>}
                 <DndList
-                  vspace={3}
+                  vspace={5}
                   items={this.props.selectedSensors}
                   setCurrentItems={(x) => this.props.setCurrentSensors(x)}
                 >

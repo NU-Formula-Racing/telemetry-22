@@ -23,6 +23,8 @@ class SensorButton extends Component {
             <BasicContainer
                 hoverHandler={() => {this.props.sendStart()}}
                 exitHandler={() => {this.props.removeStart()}}
+                grabbable
+                grabbing={this.props.mouseIsDown}
             >
                 <Holder>
                     <>{this.props.label}</>
@@ -57,7 +59,7 @@ let StyledButton = styled.button`
 `;
 
 let SmallVertSpace = styled.div`
-  height: 3px;
+  height: 5px;
 `;
 
 const Div = styled.div`

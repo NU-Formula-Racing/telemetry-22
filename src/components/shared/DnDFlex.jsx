@@ -3,20 +3,33 @@ import styled from 'styled-components';
 
 import VertIndicator from './VertIndicator';
 
+import useMouse from './useMouse';
+
 import { Context } from './Context';
 
 export default function DndFlex(props) {
   let context = useContext(Context);
 
-  const [proppedChildren, setChildren] = useState(props.children)
-  const [dndRect, setRect] = useState(0);
-  const [xRanges, setxRanges] = useState([]);
-  const [yRanges, setyRanges] = useState([]);
-  const [startInd, setStartInd] = useState(-1);
-  const [hoverInd, setHoverInd] = useState(0);
-  const [magicNumbers, setMagic] = useState([0, 0, 0, 0, 0]);
-  const [canDrop, setCanDrop] = useState(true);
+  const [state, setState] = useState({
+    startInd: -1,
+    hoverInd: -1,
+    indicator: 0,
+    flexProps: {
+      cols: 0,
+      extraCols: 0,
+      rows: 0,
+      sectorWidth: 0,
+      extraWidth: 0,
+      sectorHeight: 0,
+    },
+    canDrop: true,
+    prevChildrenLen: 0,
+  });
+  const [proppedChildren, setChildren] = useState(props.children);
+
   const dndRef = useRef(null);
+  
+  const { mouseX, mouseY } = useMouse();
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -26,117 +39,148 @@ export default function DndFlex(props) {
   }, []);
 
   useEffect(() => {
-    if (dndRect) {
-      let ranges = getRanges();
-      setxRanges(ranges[0]);
-      setyRanges(ranges[1]);
+    if (props.children.length !== state.prevChildrenLen) {
+      setState(prevState => ({
+        ...prevState,
+        prevChildrenLen: props.children.length,
+      }));
+      handleResize();
     }
-  }, [dndRect, props]);
-
-  useEffect(() => {
-    setChildren(addProps(props.children));
   }, [props.children]);
 
   useEffect(() => {
-    let x = context.mouseX;
-    let y = context.mouseY;
+    const addProps = (initProps) => {      
+      const updatedChildren = initProps.map((child, index) => {
+        return React.cloneElement(child, {
+          isDragging: context.dragging && index === state.startInd,
+          isHovering: context.dragging && index === state.hoverInd && index !== state.startInd && state.canDrop,
+          mouseIsDown: context.dragging,
+        });
+      });
 
-    if (!context.dragging && startInd >= 0 && canDrop) {
-      let temp = props.items[startInd];
-      props.items.splice(startInd, 1);
-      props.items.splice(hoverInd, 0, temp);
-      props.setCurrentItems(props.items);
-    } else {
-      setStartInd(getItemIndex(x, y));
-      setHoverInd(getItemIndex(x, y));
+      return updatedChildren;
+    }
+
+    setChildren(addProps(props.children));
+  }, [props.children, state.startInd, state.hoverInd]);
+
+  useEffect(() => {
+    if (state.bounds) {
+      let sector = getSector(mouseX, mouseY);
+      if (sector >= 0) {
+        // if Drop
+        if (!context.dragging && state.startInd >= 0 && state.canDrop) {
+          let drop = getDrop(sector);
+          
+          let temp = props.items[state.startInd];
+          props.items.splice(state.startInd, 1);
+          props.items.splice(drop, 0, temp);
+          props.setCurrentItems(props.items);
+          handleHover(Math.floor(sector / 2));
+        // if Drag
+        } else {
+          setState(prevState => ({
+            ...prevState,
+            startInd: Math.floor(sector / 2),
+          }));
+        }
+      }
     }
   }, [context.dragging]);
 
-  const addProps = (initProps) => {
-    const updatedChildren = initProps.map((child, index) => {
-      return React.cloneElement(child, {
-        isDragging: index === startInd && context.dragging,
-        hovering: index === hoverInd && context.dragging && canDrop,
-        sendIndex: () => handleHover(index),
-        remove: () => handleExit(),
-        spacing: magicNumbers[+ (index >= (magicNumbers[2] * magicNumbers[3]))]
-      })
-    })
+  useEffect(() => {
+    if (state.bounds && state.canDrop) {
+      setState(prevState => ({
+        ...prevState,
+        indicator: updateIndicator(getSector(mouseX, mouseY)),
+      }));
+      handleHover(Math.floor(getSector(mouseX, mouseY) / 2));
+    }
+  }, [mouseY, mouseX]);
 
-    return updatedChildren;
+  useEffect(() => {
+    if (state.bounds) {
+      let cols = Math.floor(state.bounds.width / props.itemWidth);
+      let extraCols = props.items.length % cols;
+      setState(prevState => ({
+        ...prevState,
+        flexProps: {
+          cols,
+          extraCols,
+          rows: Math.floor(props.items.length / cols),
+          sectorWidth: state.bounds.width / (cols * 2),
+          extraWidth: state.bounds.width / (extraCols * 2),
+          sectorHeight: props.itemHeight + props.vSpace,
+        },
+      }));
+    }
+  }, [state.bounds]);
+
+  const getSector = (_x, _y) => {
+    let dy = _y - (state.bounds.top + (.5 * props.vSpace));
+    let dx = _x - state.bounds.left;
+
+    // Out of Bounds
+    if (dy < 0 || dy > (state.bounds.height - props.vSpace) || dx < 0 || dx > state.bounds.width) {
+      return -1;
+    }
+
+    let sector = 0;
+    for (let i = 0; i < state.flexProps.rows; i++) {
+      if (dy < state.flexProps.sectorHeight * (i + 1)) {
+        for (let j = 0; j < (state.flexProps.cols * 2); j++) {
+          if (dx < state.flexProps.sectorWidth * (j + 1)) {
+            return sector;
+          }
+          sector++;
+        }
+      } else {
+        sector += state.flexProps.cols * 2;
+      }
+    }
+    for (let j = 0; j < (state.flexProps.extraCols * 2); j++) {
+      if (dx < state.flexProps.extraWidth * (j + 1)) {
+        return sector;
+      }
+      sector++;
+    }
+
+    return -1;
   }
 
-  const getItemIndex = (x, y) => {
-    let index = 0;
-    if ((dndRect.left > x) || (dndRect.right < x) || (dndRect.bottom < y) || (dndRect.top > y)) {
-      return startInd;
+  const getDrop = (sector) => {
+    let startSector = 2 * state.startInd;
+    if (startSector - 1 <= sector && sector <= startSector + 2) {
+      return state.startInd;
+    } else if (sector < startSector) {
+      return state.startInd - Math.floor((startSector - sector) / 2);
+    } else {
+      return state.startInd + Math.floor((sector - startSector - 1) / 2);
     }
-    for (let i = 0; i < magicNumbers[2]; i++) {
-      for (let j = 0; j < magicNumbers[3]; j++) {
-        if ((y < (yRanges[index] + props.itemHeight)) && (x < xRanges[index] + (props.itemWidth / 2) + magicNumbers[0])) {
-          return index
-        }
-        index++;
-      }
-    }
-    for (let i = 0; i < magicNumbers[4]; i++) {
-      if ((y < (yRanges[index] + props.itemHeight)) && (x < xRanges[index] + (props.itemWidth / 2) + magicNumbers[1])) {
-        return index
-      }
-      index++;
-    }
+  }
+
+  // NEEDS WORK
+  const updateIndicator = (sector) => {
+    let startSector = 2 * state.startInd;
+
+    return state.startInd - Math.floor((startSector - sector) / 2);
   }
 
   const handleResize = () => {
     if (dndRef.current) {
-      setRect(dndRef.current.getBoundingClientRect());
+      setState(prevState => ({
+        ...prevState,
+        bounds: dndRef.current.getBoundingClientRect(),
+      }));
     }
-  }
-
-  const getRanges = () => {
-    let itemsPerRow = Math.floor(dndRect.width / props.itemWidth);
-    let spaceSize = (dndRect.width - (itemsPerRow * props.itemWidth)) / (2 * itemsPerRow);
-    let fullRows = Math.floor(props.items.length / itemsPerRow);
-
-    let extraItems = props.items.length % itemsPerRow;
-    let extraSize = (dndRect.width - (extraItems * props.itemWidth)) / (2 * extraItems);
-
-    setMagic([spaceSize, extraSize, fullRows, itemsPerRow, extraItems]);
-
-    let tempX = Array(((itemsPerRow * fullRows) + extraItems));
-    let tempY = Array(((itemsPerRow * fullRows) + extraItems));
-    for (let i = 0; i < itemsPerRow; i++) {
-      let x = dndRect.x +  (spaceSize + (props.itemWidth / 2)) + (i * (props.itemWidth + (2 * spaceSize)));
-      for (let j = 0; j < fullRows; j++) {
-        let ind = i + (j * itemsPerRow);
-        tempX[ind] = x;
-
-        let y = j * (props.itemHeight + props.vSpace + 2) + dndRect.y + props.vSpace + 1;
-        tempY[ind] = y - props.scrollHeight;
-      }
-    }
-
-    for (let i = 0; i < extraItems; i++) {
-      let x = dndRect.x + (extraSize + (props.itemWidth / 2)) + (i * (props.itemWidth + (2 * extraSize)));
-      tempX[(itemsPerRow * fullRows) + i] = x;
-      
-      let y = fullRows * (props.itemHeight + props.vSpace + 2) + dndRect.y + props.vSpace + 1;
-      tempY[i + (fullRows * itemsPerRow)] = y - props.scrollHeight;
-    }
-
-    return [tempX, tempY];
   }
 
   const handleHover = (i) => {
-    setHoverInd(i);
     if (!context.dragging) {
-      setStartInd(i);
-    }
-  }
-
-  const handleExit = () => {
-    if (!context.dragging) {
-      setStartInd(-1);
+      setState(prevState => ({
+        ...prevState,
+        startInd: i,
+      }));
     }
   }
 
@@ -144,16 +188,23 @@ export default function DndFlex(props) {
     <FlexTray
       vSpace={props.vSpace}
       ref={dndRef}
-      onMouseEnter={() => setCanDrop(true)}
-      onMouseLeave={() => setCanDrop(false)}
+      onMouseEnter={() => {setState(prevState => ({
+        ...prevState,
+        canDrop: true,
+      }))}}
+      onMouseLeave={() => {setState(prevState => ({
+        ...prevState,
+        canDrop: false,
+      }))}}
     >
       {
-        (hoverInd !== startInd && context.dragging && startInd >= 0 && canDrop) &&
-        <VertIndicator
-          height={props.itemHeight}
-          x={xRanges[hoverInd] + ((2 * (xRanges[hoverInd] > xRanges[startInd]) * (yRanges[hoverInd] === yRanges[startInd])) - 1)*((props.itemWidth / 2) + magicNumbers[+ (hoverInd > (magicNumbers[2] * magicNumbers[3]))] + 1)}
-          y={yRanges[hoverInd] - props.vSpace}
-        />
+        /*(context.dragging && state.startInd >= 0 && state.canDrop) &&
+          <VertIndicator
+            height={props.itemHeight}
+            x={xRanges[hoverInd] + ((2 * (xRanges[hoverInd] > xRanges[startInd]) * (yRanges[hoverInd] === yRanges[startInd])) - 1)*((props.itemWidth / 2) + magicNumbers[+ (hoverInd > (magicNumbers[2] * magicNumbers[3]))] + 1)}
+            y={yRanges[hoverInd] - props.vSpace}
+          />
+        */
       }
       {proppedChildren}
     </FlexTray>

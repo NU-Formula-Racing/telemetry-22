@@ -1,7 +1,9 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 
-import VertIndicator from './VertIndicator';
+import HorizIndicator from './HorizIndicator';
+
+import useMouse from './useMouse';
 
 import { Context } from './Context';
 
@@ -11,10 +13,15 @@ export default function DndList(props) {
   const [state, setState] = useState({
     startInd: -1,
     hoverInd: -1,
+    vIndex: 0,
+    sector: 0,
+    canDrop: true,
   });
   const [proppedChildren, setChildren] = useState(props.children);
 
   const dndRef = useRef(null);
+
+  const { mouseX, mouseY } = useMouse();
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -25,34 +32,50 @@ export default function DndList(props) {
 
   useEffect(() => {
     handleResize();
-  }, [props.children]);
+  }, [props.children.length]);
 
   // Assigns Dnd Props to Children
   useEffect(() => {
+    const addProps = (initProps) => {
+      const handleUnhover = () => {
+        if (!context.dragging) {
+          setState(prevState => ({
+            ...prevState,
+            startInd: -1
+          }));
+        }
+      }
+      
+      const updatedChildren = initProps.map((child, index) => {
+        return React.cloneElement(child, {
+          sendIndex: () => setState(prevState => ({
+            ...prevState,
+            hoverInd: index,
+          })),
+          sendStart: () => handleHover(index),
+          removeIndex: () => setState(prevState => ({
+            ...prevState,
+            hoverInd: -1
+          })),
+          removeStart: () => handleUnhover(),
+          isDragging: context.dragging && index === state.startInd,
+          isHovering: context.dragging && index === state.hoverInd && index !== state.startInd && state.canDrop,
+          mouseIsDown: context.dragging,
+        });
+      });
+  
+      return updatedChildren;
+    }
+
     setChildren(addProps(props.children));
   }, [props.children, state.startInd, state.hoverInd]);
 
   useEffect(() => {
-    if (state.startInd >= 0 && !context.dragging) {
+    if (state.startInd >= 0 && !context.dragging && state.canDrop) {
       if (state.bounds) {
-        let sector = getSector(context.mouseX, context.mouseY);
-        let start = 2 * state.startInd;
-
+        let sector = getSector(mouseX, mouseY);
         if (sector >= 0) {
-          // Michelin Star Spaghetti✨✨
-          let drop = 0;
-
-          if (sector < start - 3) {
-            drop = Math.ceil(sector / 2);
-          } else if (sector < start) {
-            drop = state.startInd - 1;
-          } else if (sector < start + 2) {
-            drop = state.startInd;
-          } else if (sector < start + 5) {
-            drop = state.startInd + 1;
-          } else {
-            drop = Math.ceil(sector / 2) - 1;
-          }
+          let drop = getDrop(sector);
           
           let temp = props.items[state.startInd];
           props.items.splice(state.startInd, 1);
@@ -62,74 +85,72 @@ export default function DndList(props) {
         }
       }
     }
+    // console.log(mouseX);
   }, [context.dragging])
 
-  const addProps = (initProps) => {
-    const updatedChildren = initProps.map((child, index) => {
-      return React.cloneElement(child, {
-        sendIndex: () => handleEnter(index),
-        sendStart: () => handleHover(index),
-        removeIndex: () => handleExit(),
-        removeStart: () => handleUnhover(),
-        isDragging: context.dragging && index === state.startInd,
-        isHovering: context.dragging && index === state.hoverInd && index != state.startInd,
-      })
-    })
+  useEffect(() => {
+    if (state.bounds) {
+      setState(prevState => ({
+        ...prevState,
+        vIndex: getVindex(getSector(mouseX, mouseY)),
+      }));
+    }
+  }, [mouseY]);
 
-    return updatedChildren;
+  useEffect(() => {
+    if (state.bounds) {
+      let l = props.children.length;
+      let ih = (state.bounds.height - (l * props.vspace * 2)) / l;
+      setState(prevState => ({
+        ...prevState,
+        sector: props.vspace + (ih / 2),
+      }))
+    }
+  }, [state.bounds]);
+
+  const getDrop = (sector) => {
+    let startSector = 2 * state.startInd;
+    if (startSector - 1 <= sector && sector <= startSector + 2) {
+      return state.startInd;
+    } else if (sector < startSector) {
+      return state.startInd - Math.floor((startSector - sector) / 2);
+    } else {
+      return state.startInd + Math.floor((sector - startSector - 1) / 2);
+    }
+  }
+  
+  const getVindex = (sector) => {
+    let startSector = 2 * state.startInd;
+
+    return state.startInd - Math.floor((startSector - sector) / 2);
   }
 
   const handleResize = () => {
     if (dndRef.current) {
       setState(prevState => ({
         ...prevState,
-        bounds: dndRef.current.getBoundingClientRect()
+        bounds: dndRef.current.getBoundingClientRect(),
       }));
     }
-  }
-
-  const handleEnter = (i) => {
-    setState(prevState => ({
-      ...prevState,
-      hoverInd: i
-    }));
   }
 
   const handleHover = (i) => {
     if (!context.dragging) {
       setState(prevState => ({
         ...prevState,
-        startInd: i
+        startInd: i,
       }));
     }
   }
 
-  const handleExit = () => {
-    setState(prevState => ({
-      ...prevState,
-      hoverInd: -1
-    }));
-  }
-
-  const handleUnhover = () => {
-    if (!context.dragging) {
-      setState(prevState => ({
-        ...prevState,
-        startInd: -1
-      }));
-    }
-  }
-
-  const getSector = (x, y) => {
-    let dy = y - state.bounds.top;
-    if (dy < 0 || dy > state.bounds.height || x < state.bounds.left || x > state.bounds.right) {
+  const getSector = (_x, _y) => {
+    let dy = _y - state.bounds.top;
+    if (dy < 0 || dy > state.bounds.height || _x < state.bounds.left || _x > state.bounds.right) {
       return -1;
     }
     let l = props.children.length;
-    let ih = (state.bounds.height - (l * props.vspace * 2)) / l;
-    let sectorHeight = props.vspace + (ih / 2);
     for (let i = 0; i < (l * 2); i++) {
-      if ((sectorHeight * (i + 1)) > dy) {
+      if ((state.sector * (i + 1)) > dy) {
         return i;
       }
     }
@@ -139,7 +160,21 @@ export default function DndList(props) {
   return (
     <FlexTray
       ref={dndRef}
+      onMouseEnter={() => {setState(prevState => ({
+        ...prevState,
+        canDrop: true,
+      }))}}
+      onMouseLeave={() => {setState(prevState => ({
+        ...prevState,
+        canDrop: false,
+      }))}}
     >
+      {
+        (context.dragging && state.startInd >= 0 && state.canDrop) &&
+        <HorizIndicator
+          y={(state.vIndex * state.sector * 2) - 0.5}
+        />
+      }      
       {proppedChildren}
     </FlexTray>
   );
@@ -151,4 +186,5 @@ const FlexTray = styled.div`
   justify-content: center;
   width: 100%;
   user-select: none;
+  position: relative;
 `;

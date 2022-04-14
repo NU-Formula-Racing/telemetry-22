@@ -20,6 +20,8 @@ export default function BasicContainer(props) {
       isFlex={props.flex}
       expand={props.expand}
       scroll={props.scroll}
+      grabbable={props.grabbable}
+      grabbing={props.grabbing}
     >
       {props.children}
     </Container>
@@ -36,4 +38,5 @@ const Container = styled.div`
   display: ${props => (props.isFlex ? 'flex' : 'auto')};
   align-items: center;
   justify-content: center;
+  ${''/*cursor: ${props => (props.grabbing ? 'grabbing' : (props.grabbable ? 'grab' : 'auto'))};*/}
 `;

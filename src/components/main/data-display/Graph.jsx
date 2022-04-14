@@ -1,12 +1,12 @@
-import React, { useContext, useMemo, useCallback, useState, useEffect, useRef } from 'react'
-import { extent, max, bisector } from 'd3-array';
-import { MarkerArrow, MarkerCross, MarkerX, MarkerCircle, MarkerLine } from '@visx/marker';
+import React, { useCallback, useState, useEffect, useRef } from 'react'
+import { max, bisector } from 'd3-array';
+import { MarkerCircle } from '@visx/marker';
 import { useTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { Group } from '@visx/group';
-import { LinePath, Bar, Line, stackOffset, AreaClosed } from '@visx/shape';
+import { LinePath, Bar, Line, AreaClosed } from '@visx/shape';
 import * as allCurves from '@visx/curve';
-import { scaleTime, scaleLinear } from '@visx/scale';
+import { scaleLinear } from '@visx/scale';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import styled from "styled-components";
 import scrollleft from '../../../assets/scrollleft.svg';
@@ -14,15 +14,11 @@ import scrollright from '../../../assets/scrollright.svg';
 import zoomin from '../../../assets/zoomin.svg';
 import zoomout from '../../../assets/zoomout.svg';
 import { GridRows, GridColumns } from '@visx/grid';
-import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
-import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
-import {Context} from '../../shared/Context.jsx'
+import { TooltipWithBounds } from '@visx/tooltip';
 
-let t = -1; // init time
+/*****************  INIT (but its british??)  ****************/
 const n = 30; // amount of seconds to show
 let initData = initialise(); //data arr
-
-
 function initialise() {
     var time = -1;
     var arr = [];
@@ -34,42 +30,44 @@ function initialise() {
         };
         arr.push(obj);
     }
-    t = time;
     return arr;
 }
 
 export default function Graph(props) {
-    let context = useContext(Context)
+    /*****************  CONSTANTS  ****************/
     const height = 300
     const width = props.width > 500 ? props.width * 0.9 : 450
+    const graph_offset = 30
+    const curveType = 'curveLinear'
 
+    // data accessors
     const getX = (d) => d.time;
     const getY = (d) => d.value;
-
-
-    const graph_offset = 30
 
     // scales
     let xScaleInit = scaleLinear({
         domain: [0, max(initData, getX)],
         range: [0, width - 3*graph_offset]
     });
-
     let yScaleInit = scaleLinear({
         domain: [0, max(initData, getY) * 1.2],
         range: [height * 0.85, height * 0.1]
     });
-
-    const curveType = 'curveLinear'
+    
+    // state variables
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
+    const [liveData, setLive] = useState(false)
     const wheelTimeout = useRef()
 
-    function updateScales(gd){
+    
+    /*****************  UPDATERS  ****************/
+    function updateScales(){
         console.log('kms')
         let start_idx = Math.floor(graphData.start)
+        let fake_idx = max([Math.ceil(graphData.end)-1, 0])
         let end_idx = max([Math.ceil(graphData.end), 0])
         let xscale = scaleLinear({
-            domain: [getX(graphData.lineData[start_idx]), getX(graphData.lineData[end_idx])],
+            domain: [getX(graphData.lineData[start_idx]), getX(graphData.lineData[fake_idx])],
             range: [0, width - 3*graph_offset]
         });
         let yscale = scaleLinear({
@@ -101,6 +99,7 @@ export default function Graph(props) {
         handleTooltip(e);
     }
 
+    /*****************  MOUSE AND KEY SHITSHOW  ****************/
     function lockWheel(){
         // while wheel is moving, do not release the lock
         clearTimeout(wheelTimeout.current)
@@ -147,6 +146,7 @@ export default function Graph(props) {
     }
 
     function scroll(gd, dir, amt,e){
+        if (liveData) {return}
         let start, end;
         if (dir == "right"){
             if (gd.end < max(gd.lineData, getX) - amt) {
@@ -176,24 +176,31 @@ export default function Graph(props) {
         }
     }
 
+    /*****************  USE EFFECT BULLSHIT  ****************/
     useEffect(() => {
         const cancelWheel = e => wheelTimeout.current && e.preventDefault()
         document.body.addEventListener('wheel', cancelWheel, {passive:false})
         return () => document.body.removeEventListener('wheel', cancelWheel)
     }, [])
-
     useEffect(() => {
-        updateScales(graphData)
+        updateScales()
     }, [graphData.lineData, graphData.start, graphData.end])
+    useEffect(() => {
+        if (graphData.end = graphData.lineData.length - 1){
+            setLive(true);
+        }
+    }, [graphData.end])
 
+   
+    /*****************  TOOLTIP BULLSHIT  ****************/
+    // takes left of time
+    const bisectTime = bisector((d) => d.time).left;
+     // a bunch of tooltip defs
     const { showTooltip,
         tooltipData,
         hideTooltip,
         tooltipTop = 0,
         tooltipLeft = 0, } = useTooltip();
-
-    const bisectTime = bisector((d) => d.time).left;
-
     // tooltip handler
     const handleTooltip = useCallback(
         (event) => {
@@ -215,9 +222,11 @@ export default function Graph(props) {
         },
         [showTooltip, graphData.yScale, graphData.xScale],
       );
+
   return (
         <GraphContainer onKeyDown={(e) => checkKey(e)}>
             <button onClick={(e) => updateData(graphData,e)}>update</button> <br/>
+            {/* navigation buttons */}
             <ButtonTray width={width}>
                 <div>
                 <Clickable src={scrollleft} alt='scroll left' width='25px' height='25px' onClick={(e) => {scroll(graphData, "left", 1, e)}} />
@@ -228,14 +237,17 @@ export default function Graph(props) {
             </ButtonTray>
             <SVGContainer width={width}>
             <div>{props.sensorName}</div>
+            {/* graph  */}
             <svg width={width} height={height} onWheel={(e) => handleMouseScroll(e)}>
-                <MarkerCircle id="marker-circle" fill="#5048E5" size={1} refX={2} />
-                <rect width={width} height={height } fill="#fff" rx={14} ry={14} />
+                <MarkerCircle id="marker-circle" fill="#5048E5" size={1} refX={2} /> {/* pretty point */}
+                <rect width={width} height={height } fill="#fff" rx={14} ry={14} /> {/* border rect */}
                 <Group left={graph_offset*2}>
-                <GridRows scale={graphData.yScale} width={width - graph_offset*3} stroke="#e0e0e0"/>
+                    {/* axis and grids */}
+                    <GridRows scale={graphData.yScale} width={width - graph_offset*3} stroke="#e0e0e0"/>
                     <GridColumns scale={graphData.xScale} height={height-60} stroke="#e0e0e0" top={30}/>
                     <AxisBottom left={0} top={height-45} scale={graphData.xScale} stroke='#838181' label={"bottom axis label"}/>
                     <AxisLeft left={0} scale={graphData.yScale} stroke='#838181' label={"left axis label"}/>
+                    {/* plots line */}
                     {graphData.lineData.slice(Math.floor(graphData.start), Math.floor(graphData.end)).map((d, j) => (
                         <circle
                         key={j}
@@ -258,6 +270,7 @@ export default function Graph(props) {
                     markerStart="url(#marker-circle)"
                     markerEnd="url(#marker-circle)"
                     />
+                    {/* shades in area under the curve */}
                     <AreaClosed
                         fill="#5048E515"
                         curve={allCurves[curveType]}
@@ -266,6 +279,7 @@ export default function Graph(props) {
                         y={(d) => graphData.yScale(getY(d)) ?? 0}
                         yScale={graphData.yScale}
                     />
+                    {/* tooltip handling (just line and bar) */}
                     <Bar
                         x={0}
                         y={0}
@@ -279,60 +293,51 @@ export default function Graph(props) {
                         onMouseLeave={() => hideTooltip()}
                     />
                     {tooltipData && (
-                    <g>
-                        <Line
-                        from={{ x: tooltipLeft, y: height * 0.08 }}
-                        to={{ x: tooltipLeft, y: height * 0.85}}
-                        stroke="#5048E5"
-                        strokeWidth={2}
-                        pointerEvents="none"
-                        strokeDasharray="5,2"
-                        />
-                        <circle
-                        cx={tooltipLeft}
-                        cy={tooltipTop + 1}
-                        r={4}
-                        fill="black"
-                        fillOpacity={0.1}
-                        stroke="black"
-                        strokeOpacity={0.1}
-                        strokeWidth={2}
-                        pointerEvents="none"
-                        />
-                        <circle
-                        cx={tooltipLeft}
-                        cy={tooltipTop}
-                        r={4}
-                        fill="#5048E5"
-                        stroke="white"
-                        strokeWidth={2}
-                        pointerEvents="none"
-                        />
-                        {/* <div>
-                        <TooltipWithBounds
-                            key={Math.random()}
-                            top={tooltipTop + 150}
-                            left={tooltipLeft + 40}
-                        >
-                            {`${getY(tooltipData)}`}
-                        </TooltipWithBounds>
-                        </div> */}
-                    </g>
-                    )}
-                    )
+                        <g>
+                            <Line
+                            from={{ x: tooltipLeft, y: height * 0.08 }}
+                            to={{ x: tooltipLeft, y: height * 0.85}}
+                            stroke="#5048E5"
+                            strokeWidth={2}
+                            pointerEvents="none"
+                            strokeDasharray="5,2"
+                            />
+                            <circle
+                            cx={tooltipLeft}
+                            cy={tooltipTop + 1}
+                            r={4}
+                            fill="black"
+                            fillOpacity={0.1}
+                            stroke="black"
+                            strokeOpacity={0.1}
+                            strokeWidth={2}
+                            pointerEvents="none"
+                            />
+                            <circle
+                            cx={tooltipLeft}
+                            cy={tooltipTop}
+                            r={4}
+                            fill="#5048E5"
+                            stroke="white"
+                            strokeWidth={2}
+                            pointerEvents="none"
+                            />
+                        </g>
+                    )})
                 </Group>
-                    );
-          </svg>
-          </SVGContainer>
-          {tooltipData && (
+                );
+            </svg>
+            </SVGContainer>
+            {/* tooltip labeling */}
+            {tooltipData && (
             <div>
-              <TooltipWithBounds
-                key={Math.random()}
-                top={tooltipTop + 15}
-                left={tooltipLeft + 40}
-                
-              >
-                {`${getY(tooltipData)}`}
+                <TooltipWithBounds
+                    key={Math.random()}
+                    top={tooltipTop + 15}
+                    left={tooltipLeft + 40}
+                    
+                >
+                    {`${getY(tooltipData)}`}
               </TooltipWithBounds>
             </div>
           )}

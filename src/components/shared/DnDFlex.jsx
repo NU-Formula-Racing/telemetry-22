@@ -13,7 +13,10 @@ export default function DndFlex(props) {
   const [state, setState] = useState({
     startInd: -1,
     hoverInd: -1,
-    indicator: 0,
+    indicator: {
+      x: 0,
+      y: 0,
+    },
     flexProps: {
       cols: 0,
       extraCols: 0,
@@ -23,7 +26,6 @@ export default function DndFlex(props) {
       sectorHeight: 0,
     },
     canDrop: true,
-    prevChildrenLen: 0,
   });
   const [proppedChildren, setChildren] = useState(props.children);
 
@@ -39,13 +41,7 @@ export default function DndFlex(props) {
   }, []);
 
   useEffect(() => {
-    if (props.children.length !== state.prevChildrenLen) {
-      setState(prevState => ({
-        ...prevState,
-        prevChildrenLen: props.children.length,
-      }));
-      handleResize();
-    }
+    handleResize();
   }, [props.children]);
 
   useEffect(() => {
@@ -161,9 +157,29 @@ export default function DndFlex(props) {
 
   // NEEDS WORK
   const updateIndicator = (sector) => {
-    let startSector = 2 * state.startInd;
-
-    return state.startInd - Math.floor((startSector - sector) / 2);
+    let x = Math.ceil((sector % (2 * state.flexProps.cols)) / 2);
+    let y = Math.floor(sector / (2 * state.flexProps.cols));
+    switch(y < state.flexProps.rows) {
+      case true:
+        x *= (state.bounds.width / state.flexProps.cols) - 0.5;
+        break;
+      default:
+        switch(state.flexProps.extraCols) {
+          case 1:
+            x *= (state.bounds.width / (2 * state.flexProps.extraCols)) - 0.5;
+            x += (state.bounds.width / (4 * state.flexProps.extraCols));
+            break;
+          default:
+            x *= (state.bounds.width / state.flexProps.extraCols) - 0.5;
+        }
+    }
+    y *= props.itemHeight + props.vSpace;
+    x += state.bounds.left;
+    y += state.bounds.top;
+    return {
+      x,
+      y,
+    };
   }
 
   const handleResize = () => {
@@ -198,13 +214,12 @@ export default function DndFlex(props) {
       }))}}
     >
       {
-        /*(context.dragging && state.startInd >= 0 && state.canDrop) &&
+        (context.dragging && state.startInd >= 0 && state.canDrop) &&
           <VertIndicator
             height={props.itemHeight}
-            x={xRanges[hoverInd] + ((2 * (xRanges[hoverInd] > xRanges[startInd]) * (yRanges[hoverInd] === yRanges[startInd])) - 1)*((props.itemWidth / 2) + magicNumbers[+ (hoverInd > (magicNumbers[2] * magicNumbers[3]))] + 1)}
-            y={yRanges[hoverInd] - props.vSpace}
+            x={state.indicator.x}
+            y={state.indicator.y}
           />
-        */
       }
       {proppedChildren}
     </FlexTray>

@@ -12,7 +12,6 @@ export default function DndFlex(props) {
 
   const [state, setState] = useState({
     startInd: -1,
-    hoverInd: -1,
     indicator: {
       x: 0,
       y: 0,
@@ -49,7 +48,6 @@ export default function DndFlex(props) {
       const updatedChildren = initProps.map((child, index) => {
         return React.cloneElement(child, {
           isDragging: context.dragging && index === state.startInd,
-          isHovering: context.dragging && index === state.hoverInd && index !== state.startInd && state.canDrop,
           mouseIsDown: context.dragging,
         });
       });
@@ -58,7 +56,7 @@ export default function DndFlex(props) {
     }
 
     setChildren(addProps(props.children));
-  }, [props.children, state.startInd, state.hoverInd]);
+  }, [props.children, state.startInd]);
 
   useEffect(() => {
     if (state.bounds) {
@@ -72,7 +70,7 @@ export default function DndFlex(props) {
           props.items.splice(state.startInd, 1);
           props.items.splice(drop, 0, temp);
           props.setCurrentItems(props.items);
-          handleHover(Math.floor(sector / 2));
+          handleHover(-1);
         // if Drag
         } else {
           setState(prevState => ({
@@ -90,7 +88,6 @@ export default function DndFlex(props) {
         ...prevState,
         indicator: updateIndicator(getSector(mouseX, mouseY)),
       }));
-      handleHover(Math.floor(getSector(mouseX, mouseY) / 2));
     }
   }, [mouseY, mouseX]);
 

@@ -56,13 +56,12 @@ export default function Graph(props) {
     
     // state variables
     const [graphData, setGD] = useState({lineData: initData, xScale: xScaleInit, yScale: yScaleInit, start:0, end:initData.length-1});
-    const [liveData, setLive] = useState(false)
+    const [isScrolling, setScrolling] = useState(false)
     const wheelTimeout = useRef()
 
     
     /*****************  UPDATERS  ****************/
     function updateScales(){
-        console.log('kms')
         let start_idx = Math.floor(graphData.start)
         let fake_idx = max([Math.ceil(graphData.end)-1, 0])
         let end_idx = max([Math.ceil(graphData.end), 0])
@@ -90,12 +89,19 @@ export default function Graph(props) {
         };
         let temp = [...gd.lineData];
         temp.push(obj);
-        setGD(prevState => ({
-            ...prevState,
-            lineData: temp,
-            start: start,
-            end: end
-          }));
+        if (isScrolling){
+            setGD(prevState => ({
+                ...prevState,
+                lineData: temp,
+              }));
+        } else {
+            setGD(prevState => ({
+                ...prevState,
+                lineData: temp,
+                start: start,
+                end: end
+              }));
+        }
         handleTooltip(e);
     }
 
@@ -120,7 +126,11 @@ export default function Graph(props) {
 
         if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 1){
             (e.deltaX < 0) ? dir = "right" : dir = "left"
+            if (!isScrolling){
+                setScrolling(true)
+            }
             scroll(gd, dir, scroll_amt,e)
+            
         } else {
             (e.deltaY < 0) ? dir = "in" : dir = "out"
             zoom(gd, dir, zoom_amt,e)
@@ -146,7 +156,10 @@ export default function Graph(props) {
     }
 
     function scroll(gd, dir, amt,e){
-        if (liveData) {return}
+        // if (liveData) {
+        //     console.log("kill me now")
+        //     return
+        // }
         let start, end;
         if (dir == "right"){
             if (gd.end < max(gd.lineData, getX) - amt) {
@@ -158,6 +171,9 @@ export default function Graph(props) {
                 start = gd.start - amt
                 end = gd.end - amt
             } else {return}
+        }
+        if (Math.ceil(end) == graphData.lineData.length - 1){
+            setScrolling(false);
         }
         setGD(prevState => ({
             ...prevState,
@@ -185,12 +201,14 @@ export default function Graph(props) {
     useEffect(() => {
         updateScales()
     }, [graphData.lineData, graphData.start, graphData.end])
+    // useEffect(() => {
+    //     if (!isScrolling){
+    //         updateScales()
+    //     }
+    // }, [graphData.lineData])
     useEffect(() => {
-        if (graphData.end = graphData.lineData.length - 1){
-            setLive(true);
-        }
-    }, [graphData.end])
-
+        console.log(isScrolling)
+    }, [isScrolling])
    
     /*****************  TOOLTIP BULLSHIT  ****************/
     // takes left of time

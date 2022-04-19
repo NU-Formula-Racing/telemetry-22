@@ -20,6 +20,8 @@ export default function BasicContainer(props) {
       isFlex={props.flex}
       expand={props.expand}
       scroll={props.scroll}
+      // grabbable={props.grabbable}
+      // grabbing={props.grabbing}
     >
       {props.children}
     </Container>

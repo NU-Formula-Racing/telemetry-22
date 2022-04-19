@@ -8,7 +8,7 @@ export default function VertIndicator(props) {
 
 const Line = styled.div`
   height: ${props => props.height}px;
-  border-left: 2px solid black;
+  border-left: 2px solid #564fe6;
   position: fixed;
   left: ${props => props.x}px;
   top: ${props => props.y}px;

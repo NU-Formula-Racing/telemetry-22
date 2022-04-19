@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Select from 'react-select';
 import styled from "styled-components";
 import SensorButton from './SensorButton';
@@ -68,7 +68,7 @@ export default class SensorDropdown extends Component {
                 <SmallVertSpace/>
                 {this.props.selectedSensors.length !== 0 &&  <StyledButton onClick={e => this.clearSelected()}>Clear All</StyledButton>}
                 <DndList
-                  vspace={3}
+                  vspace={5}
                   items={this.props.selectedSensors}
                   setCurrentItems={(x) => this.props.setCurrentSensors(x)}
                 >
@@ -83,9 +83,6 @@ export default class SensorDropdown extends Component {
                   ))}
                 </DndList>
             </>
-
-
-
         )
     }
 }

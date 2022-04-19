@@ -8,13 +8,12 @@ export default function Numbers(props) {
   return (
     <SemiContext>
       <DndFlex
-        viewState={props.viewState}
-        scrollHeight={props.scrollHeight}
-        items={props.sensors}
-        setCurrentItems={(x) => props.setCurrentSensors(x)}
+        //scrollHeight={props.scrollHeight}
         vSpace={12}
         itemWidth={240}
         itemHeight={190}
+        items={props.sensors}
+        setCurrentItems={(x) => props.setCurrentSensors(x)}
       >
         {props.sensors.map((e, index) => {
           return (

@@ -83,9 +83,6 @@ export default class SensorDropdown extends Component {
                   ))}
                 </DndList>
             </>
-
-
-
         )
     }
 }

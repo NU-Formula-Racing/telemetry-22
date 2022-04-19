@@ -16,7 +16,7 @@ class ContextProvider extends Component{
       },
       setDragging: (x) => {
         this.setState({ dragging: x });
-      }
+      },
     };
   }
 

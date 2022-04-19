@@ -32,7 +32,7 @@ export default function DndList(props) {
 
   useEffect(() => {
     handleResize();
-  }, [props.children.length]);
+  }, [props.children]);
 
   // Assigns Dnd Props to Children
   useEffect(() => {
@@ -71,8 +71,8 @@ export default function DndList(props) {
   }, [props.children, state.startInd, state.hoverInd]);
 
   useEffect(() => {
-    if (state.startInd >= 0 && !context.dragging) {
-      if (state.bounds && state.canDrop) {
+    if (state.startInd >= 0 && !context.dragging && state.canDrop) {
+      if (state.bounds) {
         let sector = getSector(mouseX, mouseY);
         if (sector >= 0) {
           let drop = getDrop(sector);
@@ -83,8 +83,6 @@ export default function DndList(props) {
           props.setCurrentItems(props.items);
           handleHover(Math.floor(sector / 2));
         }
-      } else {
-        handleHover(-1);
       }
     }
     // console.log(mouseX);

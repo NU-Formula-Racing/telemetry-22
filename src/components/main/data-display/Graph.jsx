@@ -13,6 +13,7 @@ import scrollleft from '../../../assets/scrollleft.svg';
 import scrollright from '../../../assets/scrollright.svg';
 import zoomin from '../../../assets/zoomin.svg';
 import zoomout from '../../../assets/zoomout.svg';
+import recent from '../../../assets/recent.svg';
 import { GridRows, GridColumns } from '@visx/grid';
 import { TooltipWithBounds } from '@visx/tooltip';
 
@@ -192,6 +193,19 @@ export default function Graph(props) {
         }
     }
 
+    function jump_recent(e){
+        let start, end
+        let jump = graphData.lineData.length - 1 - graphData.end
+        end = graphData.end + jump
+        start = graphData.start + jump
+        setScrolling(false);
+        setGD(prevState => ({
+            ...prevState,
+            start: start,
+            end: end
+        }));
+    }
+
     /*****************  USE EFFECT BULLSHIT  ****************/
     useEffect(() => {
         const cancelWheel = e => wheelTimeout.current && e.preventDefault()
@@ -202,13 +216,8 @@ export default function Graph(props) {
         updateScales()
     }, [graphData.lineData, graphData.start, graphData.end])
     // useEffect(() => {
-    //     if (!isScrolling){
-    //         updateScales()
-    //     }
-    // }, [graphData.lineData])
-    useEffect(() => {
-        console.log(isScrolling)
-    }, [isScrolling])
+    //     console.log(isScrolling)
+    // }, [isScrolling])
    
     /*****************  TOOLTIP BULLSHIT  ****************/
     // takes left of time
@@ -250,8 +259,11 @@ export default function Graph(props) {
                 <Clickable src={scrollleft} alt='scroll left' width='25px' height='25px' onClick={(e) => {scroll(graphData, "left", 1, e)}} />
                 <Clickable src={scrollright} alt='scroll right' width='25px' height='25px' onClick={(e) => {scroll(graphData, "right", 1, e)}} />
                 </div>
+                <div>
                 <Clickable src={zoomin} alt='zoom in' width='25px' height='25px' onClick={(e) => {zoom(graphData, "in", 1,e)}} />
                 <Clickable src={zoomout} alt='zoom out' width='25px' height='25px' onClick={(e) => {zoom(graphData, "out", 1,e)}} />
+                </div>
+                <Clickable src={recent} alt='recent' width='25px' height='25px' onClick={(e) => {jump_recent(e)}} />
             </ButtonTray>
             <SVGContainer width={width}>
             <div>{props.sensorName}</div>

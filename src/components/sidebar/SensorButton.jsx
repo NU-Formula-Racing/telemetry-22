@@ -23,7 +23,6 @@ class SensorButton extends Component {
             <BasicContainer
                 hoverHandler={() => {this.props.sendStart()}}
                 exitHandler={() => {this.props.removeStart()}}
-                grabbing={this.props.mouseIsDown}
             >
                 <Holder>
                     <>{this.props.label}</>

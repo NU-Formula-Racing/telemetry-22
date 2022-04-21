@@ -7,178 +7,45 @@ import useMouse from './useMouse';
 
 import { Context } from './Context';
 
+// Expected Props:
+/// items             list of dnd items
+/// itemWidth         width of child element
+/// itemHeight        height of child element
+/// vspace            vertical space between rows
+/// setCurrentItems   item setter
 export default function DndFlex(props) {
   let context = useContext(Context);
+  const { mouseX, mouseY } = useMouse();
 
   const [state, setState] = useState({
-    startInd: -1,
+    startInd: -1,   // index of item that is being dragged
     indicator: {
-      x: 0,
+      x: 0,         // coordinates of the dnd indicator
       y: 0,
     },
     flexProps: {
-      cols: 0,
-      extraCols: 0,
-      rows: 0,
-      sectorWidth: 0,
-      extraWidth: 0,
-      sectorHeight: 0,
+      cols: 0,      // # of columns in normal row
+      extraCols: 0, // # of columns in extra row
+      rows: 0,      // # of full rows
     },
     canDrop: true,
   });
   const [proppedChildren, setChildren] = useState(props.children);
 
   const dndRef = useRef(null);
-  
-  const { mouseX, mouseY } = useMouse();
 
+  // Resize Listerners
   useEffect(() => {
     window.addEventListener('resize', handleResize);
     handleResize();
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
   useEffect(() => {
     handleResize();
   }, [props.children]);
 
-  useEffect(() => {
-    const addProps = (initProps) => {      
-      const updatedChildren = initProps.map((child, index) => {
-        return React.cloneElement(child, {
-          isDragging: context.dragging && index === state.startInd,
-          mouseIsDown: context.dragging,
-        });
-      });
-
-      return updatedChildren;
-    }
-
-    setChildren(addProps(props.children));
-  }, [props.children, state.startInd]);
-
-  useEffect(() => {
-    if (state.bounds) {
-      let sector = getSector(mouseX, mouseY);
-      if (sector >= 0) {
-        // if Drop
-        if (!context.dragging && state.startInd >= 0 && state.canDrop) {
-          let drop = getDrop(sector);
-          
-          let temp = props.items[state.startInd];
-          props.items.splice(state.startInd, 1);
-          props.items.splice(drop, 0, temp);
-          props.setCurrentItems(props.items);
-          handleHover(-1);
-        // if Drag
-        } else {
-          setState(prevState => ({
-            ...prevState,
-            startInd: Math.floor(sector / 2),
-          }));
-        }
-      }
-    }
-  }, [context.dragging]);
-
-  useEffect(() => {
-    if (state.bounds && state.canDrop) {
-      setState(prevState => ({
-        ...prevState,
-        indicator: updateIndicator(getSector(mouseX, mouseY)),
-      }));
-    }
-  }, [mouseY, mouseX]);
-
-  useEffect(() => {
-    if (state.bounds) {
-      let cols = Math.floor(state.bounds.width / props.itemWidth);
-      let extraCols = props.items.length % cols;
-      setState(prevState => ({
-        ...prevState,
-        flexProps: {
-          cols,
-          extraCols,
-          rows: Math.floor(props.items.length / cols),
-          sectorWidth: state.bounds.width / (cols * 2),
-          extraWidth: state.bounds.width / (extraCols * 2),
-          sectorHeight: props.itemHeight + props.vSpace,
-        },
-      }));
-    }
-  }, [state.bounds]);
-
-  const getSector = (_x, _y) => {
-    let dy = _y - (state.bounds.top + (.5 * props.vSpace));
-    let dx = _x - state.bounds.left;
-
-    // Out of Bounds
-    if (dy < 0 || dy > (state.bounds.height - props.vSpace) || dx < 0 || dx > state.bounds.width) {
-      return -1;
-    }
-
-    let sector = 0;
-    for (let i = 0; i < state.flexProps.rows; i++) {
-      if (dy < state.flexProps.sectorHeight * (i + 1)) {
-        for (let j = 0; j < (state.flexProps.cols * 2); j++) {
-          if (dx < state.flexProps.sectorWidth * (j + 1)) {
-            return sector;
-          }
-          sector++;
-        }
-      } else {
-        sector += state.flexProps.cols * 2;
-      }
-    }
-    for (let j = 0; j < (state.flexProps.extraCols * 2); j++) {
-      if (dx < state.flexProps.extraWidth * (j + 1)) {
-        return sector;
-      }
-      sector++;
-    }
-
-    return -1;
-  }
-
-  const getDrop = (sector) => {
-    let startSector = 2 * state.startInd;
-    if (startSector - 1 <= sector && sector <= startSector + 2) {
-      return state.startInd;
-    } else if (sector < startSector) {
-      return state.startInd - Math.floor((startSector - sector) / 2);
-    } else {
-      return state.startInd + Math.floor((sector - startSector - 1) / 2);
-    }
-  }
-
-  // NEEDS WORK
-  const updateIndicator = (sector) => {
-    let x = Math.ceil((sector % (2 * state.flexProps.cols)) / 2);
-    let y = Math.floor(sector / (2 * state.flexProps.cols));
-    switch(y < state.flexProps.rows) {
-      case true:
-        x *= (state.bounds.width / state.flexProps.cols) - 0.5;
-        break;
-      default:
-        switch(state.flexProps.extraCols) {
-          case 1:
-            x *= (state.bounds.width / (2 * state.flexProps.extraCols)) - 0.5;
-            x += (state.bounds.width / (4 * state.flexProps.extraCols));
-            break;
-          default:
-            x *= (state.bounds.width / state.flexProps.extraCols) - 0.5;
-        }
-    }
-    y *= props.itemHeight + props.vSpace;
-    x += state.bounds.left;
-    y += state.bounds.top;
-    return {
-      x,
-      y,
-    };
-  }
-
+  // Updates the bounding box upon resize
   const handleResize = () => {
     if (dndRef.current) {
       setState(prevState => ({
@@ -188,13 +55,166 @@ export default function DndFlex(props) {
     }
   }
 
-  const handleHover = (i) => {
-    if (!context.dragging) {
+  // Passes drag state to element as prop
+  useEffect(() => {
+    const addProps = (initProps) => {      
+      const updatedChildren = initProps.map((child, index) => {
+        return React.cloneElement(child, {
+          isDragging: context.dragging && index === state.startInd,
+        });
+      });
+
+      return updatedChildren;
+    }
+
+    setChildren(addProps(props.children));
+  }, [props.children, state.startInd]);
+
+  // DnD Handler
+  useEffect(() => {
+    // Helper for converting drop sector into drop index based on start index
+    const getDrop = (sector) => {
+      let startSector = 2 * state.startInd;
+      if (startSector - 1 <= sector && sector <= startSector + 2) {
+        return state.startInd;
+      } else if (sector < startSector) {
+        return state.startInd - Math.floor((startSector - sector) / 2);
+      } else {
+        return state.startInd + Math.floor((sector - startSector - 1) / 2);
+      }
+    }
+
+    // Ensures that the bounding box has loaded
+    if (state.bounds) {
+      // Ensures that mouse is in dnd zone
+      let sector = getSector(mouseX, mouseY);
+      if (sector >= 0) {
+        // If item getting dropped
+        // if (!context.dragging && state.startInd >= 0 && state.canDrop) {
+        if (!context.dragging && state.startInd >= 0) {
+          let drop = getDrop(sector);
+          
+          // Reorder items and propagate change
+          let temp = props.items[state.startInd];
+          props.items.splice(state.startInd, 1);
+          props.items.splice(drop, 0, temp);
+          props.setCurrentItems(props.items);
+
+          // Resets dnd start index
+          setState(prevState => ({
+            ...prevState,
+            startInd: -1,
+          }));
+        }
+
+        // Sets dnd start index if starting to drag
+        else {
+          setState(prevState => ({
+            ...prevState,
+            startInd: Math.floor(sector / 2),
+          }));
+        }
+      }
+    }
+  }, [context.dragging]);
+
+  // DnD Indicator Updating
+  useEffect(() => {
+    // Helper for updating indicator's coordinates
+    const indicatorCoords = (sector) => {
+      // Offset based on thickness of indicator in styling
+      let indicator_offset = 0.5
+
+      let x = Math.ceil((sector % (2 * state.flexProps.cols)) / 2);
+      let y = Math.floor(sector / (2 * state.flexProps.cols));
+
+      // Converts x index to x coordinate
+      switch(y < state.flexProps.rows) {
+        case true:
+          x *= (state.bounds.width / state.flexProps.cols) - indicator_offset;
+          break;
+        default:
+          switch(state.flexProps.extraCols) {
+            case 1:
+              x *= (state.bounds.width / (2 * state.flexProps.extraCols)) - indicator_offset;
+              x += (state.bounds.width / (4 * state.flexProps.extraCols));
+              break;
+            default:
+              x *= (state.bounds.width / state.flexProps.extraCols) - indicator_offset;
+          }
+      }
+      // Converts y index to y coordinate
+      y *= props.itemHeight + props.vSpace;
+
+      // Translates to be position relative to screen (rather than bounding box)
+      x += state.bounds.left;
+      y += state.bounds.top;
+      return {
+        x,
+        y,
+      };
+    }
+
+    // If bounds are loaded and mouse is in dnd zone
+    // updates the dnd indicator coordinates
+    if (state.bounds && state.canDrop) {
       setState(prevState => ({
         ...prevState,
-        startInd: i,
+        indicator: indicatorCoords(getSector(mouseX, mouseY)),
       }));
     }
+  }, [mouseY, mouseX]);
+
+  // Stores relevent dimension data when bounds get loaded
+  useEffect(() => {
+    if (state.bounds) {
+      let cols = Math.floor(state.bounds.width / props.itemWidth);
+      setState(prevState => ({
+        ...prevState,
+        flexProps: {
+          cols,
+          extraCols: props.items.length % cols,
+          rows: Math.floor(props.items.length / cols),
+        },
+      }));
+    }
+  }, [state.bounds]);
+
+  // Gets the dnd sector that the mouse is in
+  const getSector = (_x, _y) => {
+    // Relative distance of mouse from corner of bounding box
+    let dy = _y - (state.bounds.top + (.5 * props.vSpace));
+    let dx = _x - state.bounds.left;
+
+    // If out of Bounds
+    if (dy < 0 || dy > (state.bounds.height - props.vSpace) || dx < 0 || dx > state.bounds.width) {
+      return -1;
+    }
+
+    // Iterates through full rows
+    let sector = 0;
+    for (let i = 0; i < state.flexProps.rows; i++) {
+      if (dy < (props.itemHeight + props.vSpace) * (i + 1)) {
+        for (let j = 0; j < (state.flexProps.cols * 2); j++) {
+          if (dx < (state.bounds.width / (state.flexProps.cols * 2)) * (j + 1)) {
+            return sector;
+          }
+          sector++;
+        }
+      } else {
+        sector += state.flexProps.cols * 2;
+      }
+    }
+
+    // Iterates through extra row
+    for (let j = 0; j < (state.flexProps.extraCols * 2); j++) {
+      if (dx < (state.bounds.width / (state.flexProps.extraCols * 2)) * (j + 1)) {
+        return sector;
+      }
+      sector++;
+    }
+
+    return -1;
   }
 
   return (

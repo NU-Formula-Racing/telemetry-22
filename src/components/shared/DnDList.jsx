@@ -7,6 +7,11 @@ import useMouse from './useMouse';
 
 import { Context } from './Context';
 
+// Works Kind of like DnD Flex
+// Expected Props
+/// items             dnd items
+/// vspace            space between items
+/// setCurrentItems   item setter
 export default function DndList(props) {
   let context = useContext(Context);
 
@@ -60,7 +65,6 @@ export default function DndList(props) {
           removeStart: () => handleUnhover(),
           isDragging: context.dragging && index === state.startInd,
           isHovering: context.dragging && index === state.hoverInd && index !== state.startInd && state.canDrop,
-          mouseIsDown: context.dragging,
         });
       });
   

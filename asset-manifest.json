@@ -1,18 +1,19 @@
 {
   "files": {
-    "main.js": "/NFR21-Telemetry/static/js/main.b2360b26.chunk.js",
-    "main.js.map": "/NFR21-Telemetry/static/js/main.b2360b26.chunk.js.map",
+    "main.js": "/NFR21-Telemetry/static/js/main.c8ea0e45.chunk.js",
+    "main.js.map": "/NFR21-Telemetry/static/js/main.c8ea0e45.chunk.js.map",
     "runtime-main.js": "/NFR21-Telemetry/static/js/runtime-main.5433eae3.js",
     "runtime-main.js.map": "/NFR21-Telemetry/static/js/runtime-main.5433eae3.js.map",
-    "static/js/2.ed302c20.chunk.js": "/NFR21-Telemetry/static/js/2.ed302c20.chunk.js",
-    "static/js/2.ed302c20.chunk.js.map": "/NFR21-Telemetry/static/js/2.ed302c20.chunk.js.map",
+    "static/js/2.9804f378.chunk.js": "/NFR21-Telemetry/static/js/2.9804f378.chunk.js",
+    "static/js/2.9804f378.chunk.js.map": "/NFR21-Telemetry/static/js/2.9804f378.chunk.js.map",
     "index.html": "/NFR21-Telemetry/index.html",
-    "static/js/2.ed302c20.chunk.js.LICENSE.txt": "/NFR21-Telemetry/static/js/2.ed302c20.chunk.js.LICENSE.txt",
+    "static/js/2.9804f378.chunk.js.LICENSE.txt": "/NFR21-Telemetry/static/js/2.9804f378.chunk.js.LICENSE.txt",
     "static/media/cloud.adf8a46f.svg": "/NFR21-Telemetry/static/media/cloud.adf8a46f.svg",
     "static/media/local.289b4992.svg": "/NFR21-Telemetry/static/media/local.289b4992.svg",
     "static/media/logo.7c344053.png": "/NFR21-Telemetry/static/media/logo.7c344053.png",
     "static/media/pause.d6780492.svg": "/NFR21-Telemetry/static/media/pause.d6780492.svg",
     "static/media/play.04c7d97b.svg": "/NFR21-Telemetry/static/media/play.04c7d97b.svg",
+    "static/media/recent.59f0d284.svg": "/NFR21-Telemetry/static/media/recent.59f0d284.svg",
     "static/media/scrollleft.021006b1.svg": "/NFR21-Telemetry/static/media/scrollleft.021006b1.svg",
     "static/media/scrollright.87918043.svg": "/NFR21-Telemetry/static/media/scrollright.87918043.svg",
     "static/media/stop.a5149737.svg": "/NFR21-Telemetry/static/media/stop.a5149737.svg",
@@ -22,7 +23,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.5433eae3.js",
-    "static/js/2.ed302c20.chunk.js",
-    "static/js/main.b2360b26.chunk.js"
+    "static/js/2.9804f378.chunk.js",
+    "static/js/main.c8ea0e45.chunk.js"
   ]
 }

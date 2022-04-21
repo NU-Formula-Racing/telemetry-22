@@ -16,13 +16,16 @@ Runs the electron app
 
 ## Tasks
 ## TODO
-- Graph handles + dnd
+- Graph dnd + handles
 - Dnd autoscroll
-- Scroll Height Aggregation on dnd
 
 #### Experiments
-- Test alternative cursors on dnd
-- Add dnd symbol next to list items
+- Test alternative cursors (grab) on dnd
+- Add dnd symbol next to list items?
 
 ### Bugs
 - Flex getSector is fucked up (fix y calibration)
+- Scroll Height Aggregation for dnd...
+- Graph tooltip dies when using zoom buttons
+- Graph tooltip locks onto points that are past the end
+- Graph state is still being shared somehow

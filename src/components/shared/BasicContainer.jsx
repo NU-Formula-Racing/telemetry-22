@@ -38,4 +38,14 @@ const Container = styled.div`
   display: ${props => (props.isFlex ? 'flex' : 'auto')};
   align-items: center;
   justify-content: center;
+  ::-webkit-scrollbar-thumb {
+    background-color: #dadce0;
+    border: 4px solid transparent;
+    border-radius: 8px;
+    background-clip: padding-box;  
+  }
+  
+  ::-webkit-scrollbar {
+    width: 16px;
+  }
 `;

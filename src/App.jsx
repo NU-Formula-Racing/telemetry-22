@@ -32,7 +32,7 @@ export default class App extends Component {
   render() {
     return (
       <div onMouseDown={(e) => {this.handleMouseDown(e)}} onMouseUp={(e) => {this.handleMouseUp(e)}}>
-        <GlobalStyle grabbing={false}/>
+        <GlobalStyle />
         <Sidebar
           isLive={this.state.isLive}
           setIsLive={(next) => this.setState({ isLive: next })}

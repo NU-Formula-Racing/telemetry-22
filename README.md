@@ -15,17 +15,18 @@ Runs the React frontend which can then be accessed at localhost:3000
 Runs the electron app
 
 ## Tasks
-## TODO
+### TODO
 - Graph dnd + handles
 - Dnd autoscroll
 
-#### Experiments
+### Experiments
 - Test alternative cursors (grab) on dnd
 - Add dnd symbol next to list items?
 
 ### Bugs
 - Flex getSector is fucked up (fix y calibration)
-- Scroll Height Aggregation for dnd...
+- Indicator persists when you remove everything
+- Datadisplay doesn't mask dnd indicator
 - Graph tooltip dies when using zoom buttons
 - Graph tooltip locks onto points that are past the end
 - Graph state is still being shared somehow

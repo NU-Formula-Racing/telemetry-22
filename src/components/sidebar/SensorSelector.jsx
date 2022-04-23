@@ -18,7 +18,7 @@ export default function SensorSelector(props) {
         />
       </BasicContainer>
       <VertSpacer />
-      <BasicContainer expand>
+      <BasicContainer expand scroll>
         <SensorDropdown 
         selectedGroup={selectedGroup}
         selectedSensors={props.currentSensors}
@@ -35,6 +35,8 @@ const SelectorContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: hidden;
+  overflow-x: hidden;
 `;
 
 

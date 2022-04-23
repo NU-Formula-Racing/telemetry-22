@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import VertIndicator from './VertIndicator';
 
-import useMouse from './useMouse';
+import useMouse from '../hooks/useMouse';
 
 import { Context } from './Context';
 

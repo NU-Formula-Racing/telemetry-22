@@ -251,7 +251,11 @@ export default function Graph(props) {
       );
 
   return (
-        <GraphContainer onKeyDown={(e) => checkKey(e)}>
+        <GraphContainer
+            onKeyDown={(e) => checkKey(e)}
+            onMouseEnter={() => {props.sendIndex(); props.sendStart();}}
+            onMouseLeave={() => {props.removeIndex(); props.removeStart();}}
+        >
             <button onClick={(e) => updateData(graphData,e)}>update</button> <br/>
             {/* navigation buttons */}
             <ButtonTray width={width}>
@@ -389,6 +393,8 @@ const ButtonTray = styled.div`
 
 const GraphContainer = styled.div`
   position: relative;
+  margin-top: 7px;
+  margin-bottom: 7px;
 `;
 
 const SVGContainer = styled.div`

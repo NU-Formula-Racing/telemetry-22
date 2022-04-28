@@ -3,12 +3,12 @@
 const {
     time
 } = require('console');
-let SerialPort = require('serialport'); //.SerialPort
+let Sport = require('serialport'); //.SerialPort
+let SerialPort = Sport.SerialPort;
 let xbee_api = require('xbee-api');
 const fs = require('fs');
 const yargs = require('yargs');
 const bufReplace = require('buffer-replace');
-
 
 const argv = yargs.option('raw', {
     type: 'boolean'
@@ -23,13 +23,11 @@ if (!snail) {
 
 var C = xbee_api.constants;
 
-
 var xbeeAPI = new xbee_api.XBeeAPI({
     api_mode: 1
 });
 
 var curFileName = 'binout/xbee-timespliced-' + Date.now().toString() + '.bin'
-
 
 // USE LOG IF VERBOSE
 // INSTEAD OF CONSOLE . LOG
@@ -60,7 +58,6 @@ function shortToBytes(s) {
 }
 
 let timeBuf = () => {
-
     var timenow = Date.now() % 0xFFFFFFFF
 
     var timep1 = timenow >> 16;
@@ -70,9 +67,8 @@ let timeBuf = () => {
 }
 
 let listenToPortPath = (portPath) => {
-
-    
-    var serialport = new SerialPort(portPath, {
+    var serialport = new SerialPort({
+        path: portPath,
         baudRate: 9600,
     });
 
@@ -82,18 +78,15 @@ let listenToPortPath = (portPath) => {
     var maybeSplitSigil = false;
 
     serialport.on('data', function(data) {
-
         lastByte = data[data.length-1]
         pentByte = data[data.length-2]
         
-        if (maybeSplitSigil && data[0] == 0x01)
-        {
+        if (maybeSplitSigil && data[0] == 0x01) {
             var augHalf = Buffer.concat([Buffer.from([0x01]), timeBuf()])
             data = bufReplace(data, Buffer.from([0x01]), augHalf)
             logIfVerbose("\n\nsplit sigil")
         }
-        else if ((lastByte == 0x01) && (pentByte == 0x80))
-        {
+        else if ((lastByte == 0x01) && (pentByte == 0x80)) {
             data = bufReplace(data, sigil, Buffer.concat([sigil, timeBuf()]))
 
             logIfVerbose("\n\na framesigil! time to splice")

@@ -1,4 +1,4 @@
-from response_files import list_sensors_by_subteam as sub, local_historic as lh, cloud_relay as cl
+from response_files import list_sensors_by_subteam as sub, local_historic as lh #, cloud_relay as cl
 ### Handles incoming messages for Pythia
 
 def responseToMessage(message, watchdog):
@@ -15,26 +15,11 @@ def responseToMessage(message, watchdog):
             return {sensorID : rFrame[sensorID] for sensorID in sensorIDs}
         
         case ["HITHERTO_VALS", *sensorIDs]:
-            return watchdog.hithertoData(sensorIDs)
+            res = watchdog.hithertoData(sensorIDs)
+            return res if res else ":("
                 
         case ["STATUS"]:
-            if watchdog.cloud_status():
-                if watchdog.sesh.is_set():
-                    if watchdog.timeToDie.is_set():
-                        return "SESSION ENDED, CLOUD ONLINE"
-                    else:
-                        return "SESSION ONGOING, CLOUD ONLINE"
-                else:
-                    return "SESSION NOT STARTED, CLOUD ONLINE"
-            else:
-                if watchdog.sesh.is_set():
-                    if watchdog.timeToDie.is_set():
-                        return "SESSION ENDED, CLOUD OFFLINE"
-                    else:
-                        return "SESSION ONGOING, CLOUD OFFLINE"
-                else:
-                    return "SESSION NOT STARTED, CLOUD OFFLINE"
-            return ":)"
+            return {"CLOUD": watchdog.cloud_status(), "SESSION_CREATED": watchdog.sesh.is_set(), "SESSION_ONGOING": not watchdog.timeToDie.is_set()}
         
         case ["SWITCH_SOURCE", newstate]:
             #lh.set_state(newstate):
@@ -49,7 +34,7 @@ def responseToMessage(message, watchdog):
 
         case ["LIST_HISTORIC_DATAFILES", path]:
             if watchdog.cloud_status():
-                return cl.get_historic_data()
+                return cl.list_historic_data()
             else:
                 #path = "" # GET THE PATH SOMEHOW
                 files = lh.list_local_data_files(path)
@@ -80,7 +65,7 @@ def responseToMessage(message, watchdog):
                 return ":("
             else:
                 path = "" # GET THE PATH SOMEHOW
-                files = lh.find_local_files_by_name(path, name)
+                files = lh.return_local_file_data_by_name(path, name)
                 if files != None:
                     if len(files) > 0:
                         return files

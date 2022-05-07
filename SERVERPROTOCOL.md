@@ -65,7 +65,14 @@ The server shall return all values of the given `sensor_id` up to this frame in 
 
 
 - `STATUS`
-The server shall return either `":)"` or `":("`.
+The server shall return the following JSON:
+```
+{
+    "CLOUD": True/False,
+    "SESSION_CREATED": True/False,
+    "SESSION_ONGOING": True/False
+}
+```
 
 - `LIST_HISTORIC_DATAFILES path`
 The server shall return the following (exhaustive) JSON:

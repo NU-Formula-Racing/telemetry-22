@@ -26,7 +26,7 @@ class ThreadedWatcher(object):
         self.timeToDie.set()
 
     def mostRecentFrame(self):
-        return self.data[-1]
+        return self.data[-1] if len(self.data) > 0 else None
 
     def hithertoData(self, sensorID):
         result = [] # {}

@@ -7,28 +7,32 @@ def list_local_data_files(path):
     if not os.path.isdir(path):
         return False
     files = glob.glob(path+"/**/*.csv", recursive=True)
+    # print(files)
     result = []
     for file in files:
-        print(os.path.basename(file))
+        # print(os.path.basename(file))
         with open(file, 'r', newline='') as f: 
             first = f.readline().strip()
             if first == "# FORMULASAEDATA": # Check for Formula identification header
                 newentry = {}
                 newentry["name"] = os.path.basename(file)
-                newentry["datetime"] = f.readline().strip().lstrip("# ")
+                newentry["filecreation"] = f.readline().strip().lstrip("# ")
                 newentry["local"] = True
                 result.append(newentry)
     return result
 
 
-def return_local_file_data_by_name(path):
-    name = os.path.basename(path)
-    with open(path, 'r') as f: 
+def return_local_file_data_by_path(path):
+    print(path)
+    if not os.path.isfile(path):
+        return "INVAlID PATH"
+    with open(path, 'r', newline='') as f: 
+        name = os.path.basename(path)
         first = f.readline().strip()
         if first == "# FORMULASAEDATA":
-            sensor_df = pd.read_csv(open(name, 'r'),comment='#')
+            sensor_df = pd.read_csv(open(path, 'r'),comment='#')
             sensor_names = sensor_df.columns.values
-            sensor_json = {"name": name, "datetime": f.readline().strip().lstrip("# "), "data": []}
+            sensor_json = {"name": name, "filecreation": f.readline().strip().lstrip("# "), "data": []}
             for i, row in sensor_df.iterrows():
                 json_row={}
                 for name in sensor_names:
@@ -55,7 +59,6 @@ def return_local_file_data_by_name(path):
 if __name__ == "__main__":
     os.chdir("..")
     os.chdir("..")
-    #path = os.path.abspath("server/")
-    path = "C:/Users/vince/OneDrive/Actually Useful/College/Formula/NFR21-Telemetry"
+    path = os.path.abspath("server/")
     print(path)
     print(list_local_data_files(path))

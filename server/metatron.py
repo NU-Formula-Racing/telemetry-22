@@ -10,11 +10,14 @@ def responseToMessage(message, watchdog):
         case ["LIST_SENSORS_BY_SUBTEAM"]:
             return sub.list_sensors_by_subteam()
         
-        case ["CUR_VALS", *sensorIDs]: 
-            rFrame = watchdog.mostRecentFrame()
-            return {sensorID : rFrame[sensorID] for sensorID in sensorIDs}
+        case ["CUR_VALS", *sensorIDs]: #NOT WORKING
+            if watchdog.sesh.is_set() and not watchdog.timeToDie.is_set():
+                rFrame = watchdog.mostRecentFrame()
+                return {sensorID : rFrame[sensorID] for sensorID in sensorIDs}
+            else:
+                return "SESSION NOT ACTIVE, NO CURRENT DATA"
         
-        case ["HITHERTO_VALS", *sensorIDs]:
+        case ["HITHERTO_VALS", *sensorIDs]: #NOT WORKING
             res = watchdog.hithertoData(sensorIDs)
             return res if res else ":("
                 
@@ -44,7 +47,7 @@ def responseToMessage(message, watchdog):
                     return ":("
             return [["name1", 420], ["name2", 69]]
 
-        case ["REQUEST_HISTORIC_DATAFILE_BY_TIME", timestamp]:
+        case ["REQUEST_HISTORIC_DATAFILE_BY_TIME", timestamp]: #NOT WORKING
             if watchdog.cloud_status():
                 ## Awaiting Cloud API
                 return ":("
@@ -59,21 +62,12 @@ def responseToMessage(message, watchdog):
                 else:
                     return ":("
                 
-        case ["REQUEST_HISTORIC_DATAFILE_BY_NAME", name]:
+        case ["REQUEST_HISTORIC_DATAFILE_BY_NAME", path]:
             if watchdog.cloud_status():
                 ## Awaiting Cloud API
-                return ":("
+                return "CLOUD NOT WORKING YET"
             else:
-                path = "" # GET THE PATH SOMEHOW
-                files = lh.return_local_file_data_by_name(path, name)
-                if files != None:
-                    if len(files) > 0:
-                        return files
-                    else:
-                        return "FILE NOT FOUND"
-                else:
-                    return ":("
-            return "no lol"
+                return lh.return_local_file_data_by_path(path)
         
         case ["END_SESSION", name]:
             ## TODO NAME DATA FILE

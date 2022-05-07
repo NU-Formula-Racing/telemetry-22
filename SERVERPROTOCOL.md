@@ -68,9 +68,9 @@ The server shall return all values of the given `sensor_id` up to this frame in 
 The server shall return the following JSON:
 ```
 {
-    "CLOUD": True/False,
-    "SESSION_CREATED": True/False,
-    "SESSION_ONGOING": True/False
+    "CLOUD": true/false,
+    "SESSION_CREATED": true/false,
+    "SESSION_ONGOING": true/false
 }
 ```
 

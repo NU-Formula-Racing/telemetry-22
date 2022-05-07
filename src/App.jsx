@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { createGlobalStyle } from 'styled-components';
+import { w3cwebsocket as W3WebSocket } from 'websocket';
 
 import Sidebar from './components/sidebar/Sidebar';
 import Main from './components/main/Main';
@@ -16,7 +17,11 @@ export default class App extends Component {
       isLive: false,
       currentSensors: [],
       sessionName: '',
-    }
+      socketURL: 'ws://localhost:42069',
+      connected: false,
+    };
+
+    this.client = new W3WebSocket(this.state.socketURL, "echo-protocol");
   }
 
   handleMouseDown = (e) => {
@@ -29,6 +34,16 @@ export default class App extends Component {
     this.context.setDragging(false);
   }
 
+  componentDidMount() {
+    this.client.onopen = () => {
+      console.log('WebSocket Client Connected');
+    }
+
+    this.client.onmessage = (mes) => {
+      console.log(mes);
+    }
+  }
+
   render() {
     return (
       <div onMouseDown={(e) => {this.handleMouseDown(e)}} onMouseUp={(e) => {this.handleMouseUp(e)}}>
@@ -39,6 +54,8 @@ export default class App extends Component {
           currentSensors={this.state.currentSensors}
           setCurrentSensors={(newState) => this.setState({ currentSensors: newState })}
           setSessionName={(newState) => this.setState({ sessionName: newState })}
+          setSocketURL={(url) => this.setState({ socketURL: `ws://${url}:42069` })}
+          connected={this.state.connected}
         />
         <Main
           isLive={this.state.isLive}

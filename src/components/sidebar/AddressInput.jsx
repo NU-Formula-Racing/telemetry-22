@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
@@ -6,7 +6,10 @@ import BasicContainer from '../shared/BasicContainer';
 export default function AddressInput(props) {
   let [focus, setFocus] = useState(false);
   let [input, setInput] = useState('');
-  let [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    props.setSocketURL(input);
+  }, [input])
 
   const handleKeyPress = (e) => {
       if (e.keyCode === 13) {
@@ -29,6 +32,7 @@ export default function AddressInput(props) {
             onBlur={(e) => handleBlur()}
             onKeyDown={(e) => {handleKeyPress(e)}}
             focus={focus}
+            connected={props.connected}
         />
     </BasicContainer>
   );

@@ -24,7 +24,10 @@ export default function Sidebar(props) {
           <VertSpacer />
         </>
       }
-      <AddressInput/>
+      <AddressInput
+        setSocketURL={(url) => props.setSocketURL(url)}
+        connected={props.connected}
+      />
       <VertSpacer />
       <SensorSelector
         currentSensors={props.currentSensors}

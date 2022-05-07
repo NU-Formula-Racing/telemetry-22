@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Toggle from './Toggle';
 import SensorSelector from './SensorSelector';
 import NameInput from './NameInput';
+import AddressInput from './AddressInput';
 import BasicContainer from '../shared/BasicContainer';
 import VertSpacer from '../shared/VertSpacer';
 
@@ -23,6 +24,8 @@ export default function Sidebar(props) {
           <VertSpacer />
         </>
       }
+      <AddressInput/>
+      <VertSpacer />
       <SensorSelector
         currentSensors={props.currentSensors}
         setCurrentSensors={(newState) => props.setCurrentSensors(newState)}

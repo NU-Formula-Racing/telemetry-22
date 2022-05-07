@@ -3,9 +3,10 @@ import styled from 'styled-components';
 
 import BasicContainer from '../shared/BasicContainer';
 
-export default function NameInput(props) {
+export default function AddressInput(props) {
   let [focus, setFocus] = useState(false);
   let [input, setInput] = useState('');
+  let [connected, setConnected] = useState(false);
 
   const handleKeyPress = (e) => {
       if (e.keyCode === 13) {
@@ -15,14 +16,13 @@ export default function NameInput(props) {
 
   const handleBlur = () => {
       setFocus(false);
-      props.setSessionName(input);
   }
 
   return(
     <BasicContainer flex>
         <StyledInput 
             type="text" 
-            placeholder = "Enter Session Name"
+            placeholder = "Enter Server Address"
             value={input}
             onInput={(e) => setInput(e.target.value)}
             onFocus={(e) => setFocus(true)}
@@ -46,4 +46,5 @@ const StyledInput = styled.input`
     :focus {
         outline: none;
     }
+    color: ${props => (props.focus ? "black" : (props.connected ? '#42D060' : '#BE0707')) } ;
 `;
